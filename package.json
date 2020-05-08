@@ -1,0 +1,25 @@
+{
+  "name": "wscode",
+  "version": "0.1.0-alpha",
+  "description": "💪 An Editor Used on the Browser Side.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yelloxing/Web-Studio-Code.git"
+  },
+  "keywords": [
+    "wscode",
+    "vscode",
+    "edit",
+    "web"
+  ],
+  "author": "心叶",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/yelloxing/Web-Studio-Code/issues"
+  },
+  "homepage": "https://github.com/yelloxing/Web-Studio-Code#readme"
+}
