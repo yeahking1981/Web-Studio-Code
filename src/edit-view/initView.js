@@ -4,7 +4,10 @@ export default function (el) {
 
     $$(el).css({
         "font-szie": "16px",
-        position: "relative"
+        position: "relative",
+        cursor: "text",
+        // 这里必须设置为等宽字体
+        "font-family": "新宋体"
     });
 
     // 添加输入光标
@@ -20,7 +23,8 @@ export default function (el) {
             left: "10px",
             top: "10px",
             width: "20px",
-            height: "16px",
+            height: "21px",
+            "line-height": "21px",
             resize: "none",
             overflow: "hidden",
             padding: "0",
@@ -37,9 +41,20 @@ export default function (el) {
         })
         .appendTo(el);
 
+    let help = $$("<span></span>")
+        .css({
+            position: "absolute",
+            "z-index": "-1",
+            "white-space": "pre",
+            "top": 0,
+            "left": 0
+        })
+        .appendTo(el);
+
     return {
         focus,
-        content
+        content,
+        help
     };
 
 };

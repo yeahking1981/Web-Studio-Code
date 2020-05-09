@@ -1,5 +1,5 @@
 import initView from './initView';
-import updateView from './updateView';
+import updateView, { updateCursorPosition } from './updateView';
 
 export default function (el, format, colors) {
 
@@ -9,11 +9,15 @@ export default function (el, format, colors) {
 
     let update = () => {
 
+        // 更新光标位置
+        updateCursorPosition(handler.focus, handler.help, handler.focus[0].value);
+
         text += handler.focus[0].value;
         handler.focus[0].value = "";
 
-        // 更新视图11
+        // 更新视图
         updateView(handler.content, format(text, colors));
+
     };
 
     handler.focus.bind('compositionstart', () => {

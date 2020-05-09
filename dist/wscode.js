@@ -11,7 +11,7 @@
 * Copyright yelloxing
 * Released under the MIT license
 *
-* Date:Sat May 09 2020 15:26:07 GMT+0800 (GMT+08:00)
+* Date:Sat May 09 2020 17:56:16 GMT+0800 (GMT+08:00)
 */
 
 "use strict";
@@ -2019,7 +2019,9 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
   function initView(el) {
     image2D_min(el).css({
       "font-szie": "16px",
-      position: "relative"
+      position: "relative",
+      cursor: "text",
+      "font-family": "新宋体"
     }); // 添加输入光标
 
     var focus = image2D_min('<textarea></textarea>').attr({
@@ -2032,7 +2034,8 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
       left: "10px",
       top: "10px",
       width: "20px",
-      height: "16px",
+      height: "21px",
+      "line-height": "21px",
       resize: "none",
       overflow: "hidden",
       padding: "0",
@@ -2044,18 +2047,73 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
     var content = image2D_min("<div></div>").css({
       padding: "10px"
     }).appendTo(el);
+    var help = image2D_min("<span></span>").css({
+      position: "absolute",
+      "z-index": "-1",
+      "white-space": "pre",
+      "top": 0,
+      "left": 0
+    }).appendTo(el);
     return {
       focus: focus,
-      content: content
+      content: content,
+      help: help
     };
   }
+
+  var xhtml = {
+    // 获取元素大小
+    "size": function size(dom, type) {
+      var elemHeight, elemWidth;
+
+      if (type == 'content') {
+        //内容
+        var domObj = image2D_min(dom);
+        elemWidth = dom.clientWidth - (domObj.css('padding-left') + "").replace('px', '') - (domObj.css('padding-right') + "").replace('px', '');
+        elemHeight = dom.clientHeight - (domObj.css('padding-top') + "").replace('px', '') - (domObj.css('padding-bottom') + "").replace('px', '');
+      } else if (type == 'padding') {
+        //内容+内边距
+        elemWidth = dom.clientWidth;
+        elemHeight = dom.clientHeight;
+      } else if (type == 'border') {
+        //内容+内边距+边框
+        elemWidth = dom.offsetWidth;
+        elemHeight = dom.offsetHeight;
+      } else if (type == 'scroll') {
+        //滚动的宽（不包括border）
+        elemWidth = dom.scrollWidth;
+        elemHeight = dom.scrollHeight;
+      } else {
+        elemWidth = dom.offsetWidth;
+        elemHeight = dom.offsetHeight;
+      }
+
+      return {
+        width: elemWidth,
+        height: elemHeight
+      };
+    }
+  };
+
+  var updateCursorPosition = function updateCursorPosition(focus, help, text) {
+    if (/^\n$/.test(text)) {
+      var preTop = +focus.css('top').replace('px', '');
+      focus.css('top', preTop + 21 + "px");
+      focus.css('left', "10px");
+    } else {
+      var preLeft = +focus.css('left').replace('px', '');
+      help[0].innerText = text;
+      var width = +xhtml.size(help[0]).width;
+      focus.css('left', preLeft + width + "px");
+    }
+  };
 
   function updateView(viewNode, texts) {
     var template = "";
     texts.forEach(function (line) {
-      template += "<div>";
+      template += "<div style='line-height:21px;height:21px;'>";
       line.forEach(function (text) {
-        template += "<span style='color:" + text.color + "'>" + text.content + "</span>";
+        template += "<span style='white-space: pre;color:" + text.color + "'>" + text.content + "</span>";
       });
       template += "</div>";
     });
@@ -2068,8 +2126,10 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
         needUpdate = true;
 
     var update = function update() {
+      // 更新光标位置
+      updateCursorPosition(handler.focus, handler.help, handler.focus[0].value);
       text += handler.focus[0].value;
-      handler.focus[0].value = ""; // 更新视图11
+      handler.focus[0].value = ""; // 更新视图
 
       updateView(handler.content, format(text, colors));
     };
