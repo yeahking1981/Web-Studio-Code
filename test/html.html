@@ -6,13 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <script src="../dist/wscode.js"></script>
-    <title>纯文本模式 | 用例测试</title>
+    <title>html模式 | 用例测试</title>
 
     <style>
         div#wscode {
             width: 300px;
             height: 200px;
-            background-color: rgb(226, 43, 43);
+            background-color: black;
         }
     </style>
 
@@ -26,7 +26,14 @@
         new wscode({
 
             // 编辑器挂载点
-            el: document.getElementById('wscode')
+            el: document.getElementById('wscode'),
+
+            // 文档解析模式
+            lang: 'html',
+            color: {
+                // 普通文本颜色
+                normal: "white"
+            }
         });
     </script>
 
