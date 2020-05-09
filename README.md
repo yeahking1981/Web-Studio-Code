@@ -4,8 +4,6 @@
 <a href="https://www.npmjs.com/package/wscode"><img src="https://img.shields.io/npm/v/wscode.svg" alt="Version"></a>
 <a href="https://github.com/yelloxing/Web-Studio-Code/blob/master/LICENSE"><img src="https://img.shields.io/npm/l/wscode.svg" alt="License"></a>
 
-> 一个前端代码编辑器，开发中
-
 ## 如何使用
 
 ```js
@@ -20,10 +18,10 @@ var wscode = new WSCode({
 
     // 设置颜色（可选）
     color: {
-        normal : "#000"; /*普通文本颜色*/
-        key : "red"; /*关键字颜色*/
-        note : "#8BC34A"; /*注释颜色*/
-        variable: "#0a6893"; /*变量颜色*/
+        normal : "#000", /*普通文本颜色*/
+        key : "red", /*关键字颜色*/
+        note : "#8BC34A", /*注释颜色*/
+        variable: "#0a6893" /*变量颜色*/
     }
 });
 ```
