@@ -11,7 +11,7 @@
 * Copyright yelloxing
 * Released under the MIT license
 *
-* Date:Sat May 09 2020 17:56:16 GMT+0800 (GMT+08:00)
+* Date:Sun May 10 2020 00:18:35 GMT+0800 (GMT+08:00)
 */
 
 "use strict";
@@ -2016,11 +2016,12 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
     })();
   });
 
-  function initView(el) {
+  function initView(el, colors) {
     image2D_min(el).css({
       "font-szie": "16px",
       position: "relative",
       cursor: "text",
+      // 这里必须设置为等宽字体
       "font-family": "新宋体"
     }); // 添加输入光标
 
@@ -2041,7 +2042,8 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
       padding: "0",
       outline: "none",
       border: "none",
-      background: "#ff000000"
+      background: "#ff000000",
+      color: colors.normal
     }).appendTo(el); // 添加格式化文本显示区域
 
     var content = image2D_min("<div></div>").css({
@@ -2092,6 +2094,22 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
         width: elemWidth,
         height: elemHeight
       };
+    },
+    // 触发事件
+    "trigger": function trigger(dom, eventType) {
+      var event; //创建event的对象实例。
+
+      if (document.createEventObject) {
+        // IE浏览器支持fireEvent方法
+        event = document.createEventObject();
+        dom.fireEvent('on' + eventType, event);
+      } // 其他标准浏览器使用dispatchEvent方法
+      else {
+          event = document.createEvent('HTMLEvents'); // 3个参数：事件类型，是否冒泡，是否阻止浏览器的默认行为
+
+          event.initEvent(eventType, true, false);
+          dom.dispatchEvent(event);
+        }
     }
   };
 
@@ -2121,7 +2139,7 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
   }
 
   function renderView(el, format, colors) {
-    var handler = initView(el);
+    var handler = initView(el, colors);
     var text = "",
         needUpdate = true;
 
@@ -2134,6 +2152,10 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
       updateView(handler.content, format(text, colors));
     };
 
+    handler.focus.bind('format', function () {
+      // 更新视图
+      updateView(handler.content, format(text, colors, true));
+    });
     handler.focus.bind('compositionstart', function () {
       needUpdate = false;
     });
@@ -2145,18 +2167,23 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
       if (!needUpdate) return;
       update();
     });
+    return handler;
   }
 
   var wscode = function wscode(options) {
     // 格式化配置
     formatOptions(options); // 启动
 
-    renderView(options.el, options.format, options.color);
+    var handler = renderView(options.el, options.format, options.color);
+
+    this.format = function () {
+      xhtml.trigger(handler.focus[0], 'format');
+    };
   };
 
   if ((typeof module === "undefined" ? "undefined" : _typeof2(module)) === "object" && _typeof2(module.exports) === "object") {
     module.exports = wscode;
   } else {
-    window.wscode = wscode;
+    window.WSCode = wscode;
   }
 })();

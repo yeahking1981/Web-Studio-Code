@@ -1,6 +1,6 @@
 import $$ from 'image2d';
 
-export default function (el) {
+export default function (el, colors) {
 
     $$(el).css({
         "font-szie": "16px",
@@ -30,7 +30,8 @@ export default function (el) {
             padding: "0",
             outline: "none",
             border: "none",
-            background: "#ff000000"
+            background: "#ff000000",
+            color: colors.normal
         })
         .appendTo(el);
 

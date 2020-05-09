@@ -3,7 +3,7 @@ import updateView, { updateCursorPosition } from './updateView';
 
 export default function (el, format, colors) {
 
-    let handler = initView(el);
+    let handler = initView(el, colors);
 
     let text = "", needUpdate = true;
 
@@ -20,6 +20,13 @@ export default function (el, format, colors) {
 
     };
 
+    handler.focus.bind('format', () => {
+
+        // 更新视图
+        updateView(handler.content, format(text, colors, true));
+
+    });
+
     handler.focus.bind('compositionstart', () => {
         needUpdate = false;
     });
@@ -34,4 +41,5 @@ export default function (el, format, colors) {
         update();
     });
 
+    return handler;
 };

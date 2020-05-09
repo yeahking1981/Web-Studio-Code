@@ -1,5 +1,6 @@
 import formatOptions from './options';
 import renderView from './edit-view/index';
+import xhtml from './edit-view/xhtml';
 
 let wscode = function (options) {
 
@@ -7,12 +8,18 @@ let wscode = function (options) {
     formatOptions(options);
 
     // 启动
-    renderView(options.el, options.format, options.color);
+    let handler = renderView(options.el, options.format, options.color);
+
+    this.format = () => {
+
+        xhtml.trigger(handler.focus[0], 'format');
+
+    };
 
 };
 
 if (typeof module === "object" && typeof module.exports === "object") {
     module.exports = wscode;
 } else {
-    window.wscode = wscode;
+    window.WSCode = wscode;
 }

@@ -23,10 +23,14 @@
     <div id="wscode"></div>
 
     <script>
-        new wscode({
+        window.wscode = new WSCode({
 
             // 编辑器挂载点
-            el: document.getElementById('wscode')
+            el: document.getElementById('wscode'),
+            color: {
+                // 普通文本颜色
+                normal: "red"
+            }
         });
     </script>
 
