@@ -1,5 +1,10 @@
 import isElement from '@yelloxing/core.js/isElement';
 
+import normalSplit from './lang/normal';
+import htmlSplit from './lang/html';
+import cssSplit from './lang/css';
+import jsSplit from './lang/js';
+
 /**
  * 
  * 格式化配置
@@ -16,11 +21,11 @@ export default function (options) {
     if (isElement(options.el)) {
 
         // 语言类型，默认纯文本
-        options.lang = {
-            js: "js",
-            css: "css",
-            html: "html"
-        } [options.lang] || "normal";
+        options.format = {
+            js: jsSplit,
+            css: cssSplit,
+            html: htmlSplit
+        }[options.lang] || normalSplit;
 
         // 着色
         options.color = options.color || {};
@@ -28,7 +33,6 @@ export default function (options) {
         options.color.key = options.color.key || "red"; /*关键字颜色*/
         options.color.note = options.color.note || "#8BC34A"; /*注释颜色*/
         options.color.variable = options.color.variable || "#0a6893"; /*变量颜色*/
-
 
     } else {
 
