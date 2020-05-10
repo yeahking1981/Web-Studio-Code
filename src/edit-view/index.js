@@ -11,6 +11,8 @@ export default function (el, format, colors, textArray) {
     let handler = initView(el, colors, lineNum, textArray[textArray.length - 1]);
     handler.focus[0].focus();
 
+    let preFormatData = [];
+
     let update = () => {
 
         let text = handler.focus[0].value;
@@ -35,7 +37,8 @@ export default function (el, format, colors, textArray) {
         }
 
         // 更新视图
-        updateView(handler.content, format(textArray.join('\n'), colors), colors, lineNum);
+        preFormatData = format(textArray.join('\n'), colors);
+        updateView(handler.content, preFormatData, colors, lineNum);
 
     };
 
@@ -44,7 +47,8 @@ export default function (el, format, colors, textArray) {
     handler.focus.bind('format', () => {
 
         // 更新视图
-        updateView(handler.content, format(text, colors, true), colors, lineNum);
+        preFormatData = format(text, colors, true);
+        updateView(handler.content, preFormatData, colors, lineNum);
 
     });
 
@@ -76,6 +80,7 @@ export default function (el, format, colors, textArray) {
                     left: (40 + xhtml.textWidth(handler.help, textArray[lineNum])) + "px",
                     top: (10 + lineNum * 21) + "px",
                 });
+                updateView(handler.content, preFormatData, colors, lineNum);
                 break;
             }
             case "down": {
@@ -86,6 +91,7 @@ export default function (el, format, colors, textArray) {
                     left: (40 + xhtml.textWidth(handler.help, textArray[lineNum])) + "px",
                     top: (10 + lineNum * 21) + "px",
                 });
+                updateView(handler.content, preFormatData, colors, lineNum);
                 break;
             }
             case "left": {
@@ -123,7 +129,8 @@ export default function (el, format, colors, textArray) {
                 }
 
                 // 更新视图
-                updateView(handler.content, format(textArray.join('\n'), colors), colors, lineNum);
+                preFormatData = format(textArray.join('\n'), colors);
+                updateView(handler.content, preFormatData, colors, lineNum);
 
                 break;
             }

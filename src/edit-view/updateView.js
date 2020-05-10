@@ -32,7 +32,7 @@ export default function (viewNode, texts, colors, lineNum) {
 
         template += "<div style='line-height:21px;height:21px;" + bgcolor + "'>";
 
-        template += "<em style='color:" + colors.lineNum + ";display:inline-block;font-style:normal;width:35px;text-align:right;margin-right:5px;'>" + (index + 1) + "</em>";
+        template += "<em style='color:" + colors.lineNum + ";user-select: none;display:inline-block;font-style:normal;width:35px;text-align:right;margin-right:5px;'>" + (index + 1) + "</em>";
 
         line.forEach(text => {
 

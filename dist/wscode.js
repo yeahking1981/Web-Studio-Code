@@ -4,14 +4,14 @@
 *
 * author 心叶
 *
-* version 1.0.1
+* version 1.0.2
 *
 * build Fri May 08 2020
 *
 * Copyright yelloxing
 * Released under the MIT license
 *
-* Date:Mon May 11 2020 00:23:00 GMT+0800 (GMT+08:00)
+* Date:Mon May 11 2020 00:35:44 GMT+0800 (GMT+08:00)
 */
 
 "use strict";
@@ -2178,7 +2178,7 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
       }
 
       template += "<div style='line-height:21px;height:21px;" + bgcolor + "'>";
-      template += "<em style='color:" + colors.lineNum + ";display:inline-block;font-style:normal;width:35px;text-align:right;margin-right:5px;'>" + (index + 1) + "</em>";
+      template += "<em style='color:" + colors.lineNum + ";user-select: none;display:inline-block;font-style:normal;width:35px;text-align:right;margin-right:5px;'>" + (index + 1) + "</em>";
       line.forEach(function (text) {
         template += "<span style='font-weight:600;white-space: pre;color:" + text.color + "'>" + text.content + "</span>";
       });
@@ -2313,6 +2313,7 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
         leftNum = textArray[textArray.length - 1].length;
     var handler = initView(el, colors, lineNum, textArray[textArray.length - 1]);
     handler.focus[0].focus();
+    var preFormatData = [];
 
     var update = function update() {
       var text = handler.focus[0].value;
@@ -2336,13 +2337,15 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
       } // 更新视图
 
 
-      updateView(handler.content, format(textArray.join('\n'), colors), colors, lineNum);
+      preFormatData = format(textArray.join('\n'), colors);
+      updateView(handler.content, preFormatData, colors, lineNum);
     };
 
     update();
     handler.focus.bind('format', function () {
       // 更新视图
-      updateView(handler.content, format(text, colors, true), colors, lineNum);
+      preFormatData = format(text, colors, true);
+      updateView(handler.content, preFormatData, colors, lineNum);
     });
     handler.focus.bind('compositionstart', function () {
       needUpdate = false;
@@ -2369,6 +2372,7 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
               left: 40 + xhtml.textWidth(handler.help, textArray[lineNum]) + "px",
               top: 10 + lineNum * 21 + "px"
             });
+            updateView(handler.content, preFormatData, colors, lineNum);
             break;
           }
 
@@ -2381,6 +2385,7 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
               left: 40 + xhtml.textWidth(handler.help, textArray[lineNum]) + "px",
               top: 10 + lineNum * 21 + "px"
             });
+            updateView(handler.content, preFormatData, colors, lineNum);
             break;
           }
 
@@ -2426,7 +2431,8 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
             } // 更新视图
 
 
-            updateView(handler.content, format(textArray.join('\n'), colors), colors, lineNum);
+            preFormatData = format(textArray.join('\n'), colors);
+            updateView(handler.content, preFormatData, colors, lineNum);
             break;
           }
       }
