@@ -9,11 +9,12 @@ export default function (el, colors, lineNum, lineText) {
             "z-index": "-1",
             "white-space": "pre",
             "top": 0,
-            "left": 0
+            "left": 0,
+            "font-weight": 600
         })
         .appendTo(el);
 
-    let width = xhtml.textWidth(help,lineText);
+    let width = xhtml.textWidth(help, lineText);
 
     // 添加输入光标
     let focus = $$('<textarea></textarea>')
@@ -25,7 +26,7 @@ export default function (el, colors, lineNum, lineText) {
         })
         .css({
             position: "absolute",
-            left: (10 + width) + "px",
+            left: (20 + width) + "px",
             top: (10 + lineNum * 21) + "px",
             width: "20px",
             height: "21px",
@@ -41,11 +42,12 @@ export default function (el, colors, lineNum, lineText) {
         .appendTo(el);
 
     $$(el).css({
-        "font-szie": "16px",
+        "font-size": "12px",
         position: "relative",
         cursor: "text",
         // 这里必须设置为等宽字体
-        "font-family": "新宋体"
+        "font-family": "新宋体",
+        "background": colors.background
     }).bind('click', () => {
         focus[0].focus();
     });
@@ -53,7 +55,7 @@ export default function (el, colors, lineNum, lineText) {
     // 添加格式化文本显示区域
     let content = $$("<div></div>")
         .css({
-            padding: "10px"
+            padding: "10px 0"
         })
         .appendTo(el);
 

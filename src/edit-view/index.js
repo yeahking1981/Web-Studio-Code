@@ -35,7 +35,7 @@ export default function (el, format, colors, textArray) {
         }
 
         // 更新视图
-        updateView(handler.content, format(textArray.join('\n'), colors));
+        updateView(handler.content, format(textArray.join('\n'), colors), colors, lineNum);
 
     };
 
@@ -44,7 +44,7 @@ export default function (el, format, colors, textArray) {
     handler.focus.bind('format', () => {
 
         // 更新视图
-        updateView(handler.content, format(text, colors, true));
+        updateView(handler.content, format(text, colors, true), colors, lineNum);
 
     });
 
@@ -73,7 +73,7 @@ export default function (el, format, colors, textArray) {
                 lineNum -= 1;
                 leftNum = textArray[lineNum].length;
                 handler.focus.css({
-                    left: (10 + xhtml.textWidth(handler.help, textArray[lineNum])) + "px",
+                    left: (40 + xhtml.textWidth(handler.help, textArray[lineNum])) + "px",
                     top: (10 + lineNum * 21) + "px",
                 });
                 break;
@@ -83,7 +83,7 @@ export default function (el, format, colors, textArray) {
                 lineNum += 1;
                 leftNum = textArray[lineNum].length;
                 handler.focus.css({
-                    left: (10 + xhtml.textWidth(handler.help, textArray[lineNum])) + "px",
+                    left: (40 + xhtml.textWidth(handler.help, textArray[lineNum])) + "px",
                     top: (10 + lineNum * 21) + "px",
                 });
                 break;
@@ -111,7 +111,7 @@ export default function (el, format, colors, textArray) {
                     lineNum -= 1;
                     leftNum = textArray[lineNum].length;
                     handler.focus.css({
-                        left: (10 + xhtml.textWidth(handler.help, textArray[lineNum])) + "px",
+                        left: (40 + xhtml.textWidth(handler.help, textArray[lineNum])) + "px",
                         top: (10 + lineNum * 21) + "px",
                     });
 
@@ -123,7 +123,7 @@ export default function (el, format, colors, textArray) {
                 }
 
                 // 更新视图
-                updateView(handler.content, format(textArray.join('\n'), colors));
+                updateView(handler.content, format(textArray.join('\n'), colors), colors, lineNum);
 
                 break;
             }

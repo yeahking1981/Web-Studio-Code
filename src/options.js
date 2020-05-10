@@ -30,10 +30,13 @@ export default function (options) {
 
         // 着色
         options.color = options.color || {};
+        options.color.background = options.color.background || "#d6d6e4"; /*编辑器背景*/
         options.color.normal = options.color.normal || "#000"; /*普通文本颜色*/
-        options.color.key = options.color.key || "red"; /*关键字颜色*/
+        options.color.key = options.color.key || "#ec0b0b"; /*关键字颜色*/
         options.color.note = options.color.note || "#8BC34A"; /*注释颜色*/
         options.color.variable = options.color.variable || "#0a6893"; /*变量颜色*/
+        options.color.lineNum = options.color.lineNum || "#888484"; /*行号颜色*/
+        options.color.editLine = options.color.editLine || "#eaeaf1"; /*编辑行颜色*/
 
         if (isString(options.content)) {
             options.textArray = (options.content + "").split("\n");

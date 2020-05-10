@@ -1,7 +1,7 @@
 {
   "name": "wscode",
-  "version": "0.1.1-alpha",
-  "description": "💪 An Editor Used on the Browser Side.",
+  "version": "1.0.1",
+  "description": "🎉 An Editor Used on the Browser Side.",
   "main": "dist/wscode.min.js",
   "scripts": {
     "start": "npm install && npm run build",

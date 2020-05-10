@@ -21,10 +21,13 @@ var wscode = new WSCode({
 
     // 设置颜色（可选）
     color: {
+        background:"#d6d6e4", /*编辑器背景*/
         normal : "#000", /*普通文本颜色*/
-        key : "red", /*关键字颜色*/
+        key : "#ec0b0b", /*关键字颜色*/
         note : "#8BC34A", /*注释颜色*/
-        variable: "#0a6893" /*变量颜色*/
+        variable: "#0a6893", /*变量颜色*/
+        lineNum:"#888484", /*行号颜色*/,
+        editLine:"#eaeaf1"/*编辑行背景色*/
     }
 });
 ```

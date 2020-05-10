@@ -1,17 +1,17 @@
 /*!
-* web Studio Code - 💪 An Editor Used on the Browser Side.
+* web Studio Code - 🎉 An Editor Used on the Browser Side.
 * git+https://github.com/yelloxing/Web-Studio-Code.git
 *
 * author 心叶
 *
-* version 0.1.1-alpha
+* version 1.0.1
 *
 * build Fri May 08 2020
 *
 * Copyright yelloxing
 * Released under the MIT license
 *
-* Date:Sun May 10 2020 23:08:37 GMT+0800 (GMT+08:00)
+* Date:Mon May 11 2020 00:23:00 GMT+0800 (GMT+08:00)
 */
 
 "use strict";
@@ -112,17 +112,17 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
 
 
   function htmlSplit(text, colors, isFormat) {
-    debugger;
+    alert("html语言编辑器开发中");
   } // css切割
 
 
   function cssSplit(text, colors, isFormat) {
-    debugger;
+    alert("css语言编辑器开发中");
   } // js切割
 
 
   function jsSplit(text, colors, isFormat) {
-    debugger;
+    alert("js语言编辑器开发中");
   }
   /**
    * 
@@ -146,10 +146,13 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
       }[options.lang] || normalSplit; // 着色
 
       options.color = options.color || {};
+      options.color.background = options.color.background || "#d6d6e4";
+      /*编辑器背景*/
+
       options.color.normal = options.color.normal || "#000";
       /*普通文本颜色*/
 
-      options.color.key = options.color.key || "red";
+      options.color.key = options.color.key || "#ec0b0b";
       /*关键字颜色*/
 
       options.color.note = options.color.note || "#8BC34A";
@@ -157,6 +160,12 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
 
       options.color.variable = options.color.variable || "#0a6893";
       /*变量颜色*/
+
+      options.color.lineNum = options.color.lineNum || "#888484";
+      /*行号颜色*/
+
+      options.color.editLine = options.color.editLine || "#eaeaf1";
+      /*编辑行颜色*/
 
       if (isString(options.content)) {
         options.textArray = (options.content + "").split("\n");
@@ -2101,7 +2110,8 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
       "z-index": "-1",
       "white-space": "pre",
       "top": 0,
-      "left": 0
+      "left": 0,
+      "font-weight": 600
     }).appendTo(el);
     var width = xhtml.textWidth(help, lineText); // 添加输入光标
 
@@ -2112,7 +2122,7 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
       spellcheck: "false"
     }).css({
       position: "absolute",
-      left: 10 + width + "px",
+      left: 20 + width + "px",
       top: 10 + lineNum * 21 + "px",
       width: "20px",
       height: "21px",
@@ -2126,17 +2136,18 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
       color: colors.normal
     }).appendTo(el);
     image2D_min(el).css({
-      "font-szie": "16px",
+      "font-size": "12px",
       position: "relative",
       cursor: "text",
       // 这里必须设置为等宽字体
-      "font-family": "新宋体"
+      "font-family": "新宋体",
+      "background": colors.background
     }).bind('click', function () {
       focus[0].focus();
     }); // 添加格式化文本显示区域
 
     var content = image2D_min("<div></div>").css({
-      padding: "10px"
+      padding: "10px 0"
     }).appendTo(el);
     return {
       focus: focus,
@@ -2149,7 +2160,7 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
     if (/^\n$/.test(text)) {
       var preTop = +focus.css('top').replace('px', '');
       focus.css('top', preTop + 21 + "px");
-      focus.css('left', "10px");
+      focus.css('left', "40px");
     } else {
       var preLeft = +focus.css('left').replace('px', '');
       var width = xhtml.textWidth(help, text);
@@ -2157,12 +2168,19 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
     }
   };
 
-  function updateView(viewNode, texts) {
+  function updateView(viewNode, texts, colors, lineNum) {
     var template = "";
-    texts.forEach(function (line) {
-      template += "<div style='line-height:21px;height:21px;'>";
+    texts.forEach(function (line, index) {
+      var bgcolor = "";
+
+      if (index == lineNum) {
+        bgcolor = "background-color:" + colors.editLine;
+      }
+
+      template += "<div style='line-height:21px;height:21px;" + bgcolor + "'>";
+      template += "<em style='color:" + colors.lineNum + ";display:inline-block;font-style:normal;width:35px;text-align:right;margin-right:5px;'>" + (index + 1) + "</em>";
       line.forEach(function (text) {
-        template += "<span style='white-space: pre;color:" + text.color + "'>" + text.content + "</span>";
+        template += "<span style='font-weight:600;white-space: pre;color:" + text.color + "'>" + text.content + "</span>";
       });
       template += "</div>";
     });
@@ -2318,13 +2336,13 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
       } // 更新视图
 
 
-      updateView(handler.content, format(textArray.join('\n'), colors));
+      updateView(handler.content, format(textArray.join('\n'), colors), colors, lineNum);
     };
 
     update();
     handler.focus.bind('format', function () {
       // 更新视图
-      updateView(handler.content, format(text, colors, true));
+      updateView(handler.content, format(text, colors, true), colors, lineNum);
     });
     handler.focus.bind('compositionstart', function () {
       needUpdate = false;
@@ -2348,7 +2366,7 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
             lineNum -= 1;
             leftNum = textArray[lineNum].length;
             handler.focus.css({
-              left: 10 + xhtml.textWidth(handler.help, textArray[lineNum]) + "px",
+              left: 40 + xhtml.textWidth(handler.help, textArray[lineNum]) + "px",
               top: 10 + lineNum * 21 + "px"
             });
             break;
@@ -2360,7 +2378,7 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
             lineNum += 1;
             leftNum = textArray[lineNum].length;
             handler.focus.css({
-              left: 10 + xhtml.textWidth(handler.help, textArray[lineNum]) + "px",
+              left: 40 + xhtml.textWidth(handler.help, textArray[lineNum]) + "px",
               top: 10 + lineNum * 21 + "px"
             });
             break;
@@ -2395,7 +2413,7 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
               lineNum -= 1;
               leftNum = textArray[lineNum].length;
               handler.focus.css({
-                left: 10 + xhtml.textWidth(handler.help, textArray[lineNum]) + "px",
+                left: 40 + xhtml.textWidth(handler.help, textArray[lineNum]) + "px",
                 top: 10 + lineNum * 21 + "px"
               });
             } else {
@@ -2408,7 +2426,7 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
             } // 更新视图
 
 
-            updateView(handler.content, format(textArray.join('\n'), colors));
+            updateView(handler.content, format(textArray.join('\n'), colors), colors, lineNum);
             break;
           }
       }

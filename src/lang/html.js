@@ -3,6 +3,6 @@
 
 export default function (text, colors, isFormat) {
 
-    debugger
+    alert("html语言编辑器开发中");
 
 };
