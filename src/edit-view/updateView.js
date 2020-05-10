@@ -11,9 +11,7 @@ export let updateCursorPosition = (focus, help, text) => {
     } else {
 
         let preLeft = +focus.css('left').replace('px', '');
-
-        help[0].innerText = text;
-        let width = +xhtml.size(help[0]).width;
+        let width = xhtml.textWidth(help, text);
 
         focus.css('left', (preLeft + width) + "px");
 

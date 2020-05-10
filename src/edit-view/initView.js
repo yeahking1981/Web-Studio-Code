@@ -13,8 +13,7 @@ export default function (el, colors, lineNum, lineText) {
         })
         .appendTo(el);
 
-    help[0].innerText = lineText;
-    let width = +xhtml.size(help[0]).width;
+    let width = xhtml.textWidth(help,lineText);
 
     // 添加输入光标
     let focus = $$('<textarea></textarea>')

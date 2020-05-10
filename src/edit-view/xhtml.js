@@ -58,6 +58,12 @@ export default {
             event.initEvent(eventType, true, false);
             dom.dispatchEvent(event);
         }
+    },
+
+    // 文字宽
+    "textWidth": function (help, text) {
+        help[0].innerText = text;
+        return +this.size(help[0]).width;
     }
 
 };

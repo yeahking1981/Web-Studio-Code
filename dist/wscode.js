@@ -11,7 +11,7 @@
 * Copyright yelloxing
 * Released under the MIT license
 *
-* Date:Sun May 10 2020 20:57:47 GMT+0800 (GMT+08:00)
+* Date:Sun May 10 2020 23:05:48 GMT+0800 (GMT+08:00)
 */
 
 "use strict";
@@ -2087,6 +2087,11 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
           event.initEvent(eventType, true, false);
           dom.dispatchEvent(event);
         }
+    },
+    // 文字宽
+    "textWidth": function textWidth(help, text) {
+      help[0].innerText = text;
+      return +this.size(help[0]).width;
     }
   };
 
@@ -2098,8 +2103,7 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
       "top": 0,
       "left": 0
     }).appendTo(el);
-    help[0].innerText = lineText;
-    var width = +xhtml.size(help[0]).width; // 添加输入光标
+    var width = xhtml.textWidth(help, lineText); // 添加输入光标
 
     var focus = image2D_min('<textarea></textarea>').attr({
       wrap: "off",
@@ -2148,8 +2152,7 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
       focus.css('left', "10px");
     } else {
       var preLeft = +focus.css('left').replace('px', '');
-      help[0].innerText = text;
-      var width = +xhtml.size(help[0]).width;
+      var width = xhtml.textWidth(help, text);
       focus.css('left', preLeft + width + "px");
     }
   };
@@ -2300,10 +2303,18 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
       updateCursorPosition(handler.focus, handler.help, text);
 
       if (/^\n$/.test(text)) {
+        if (leftNum >= textArray[lineNum].length) {
+          textArray.splice(lineNum + 1, 0, "");
+        } else {
+          textArray.splice(lineNum + 1, 0, textArray[lineNum].substring(leftNum));
+          textArray[lineNum] = textArray[lineNum].substring(0, leftNum);
+        }
+
         lineNum += 1;
-        textArray.splice(lineNum, 0, "");
+        leftNum = 0;
       } else {
-        textArray[lineNum] += text;
+        textArray[lineNum] = textArray[lineNum].substring(0, leftNum) + text + textArray[lineNum].substring(leftNum);
+        leftNum += text.length;
       } // 更新视图
 
 
@@ -2330,7 +2341,77 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
     image2D_min(el).bind('keydown', function (event) {
       console.log(keyString(event));
 
-      switch (keyString(event)) {}
+      switch (keyString(event)) {
+        case "up":
+          {
+            if (lineNum <= 0) return;
+            lineNum -= 1;
+            leftNum = textArray[lineNum].length;
+            handler.focus.css({
+              left: 10 + xhtml.textWidth(handler.help, textArray[lineNum]) + "px",
+              top: 10 + lineNum * 21 + "px"
+            });
+            break;
+          }
+
+        case "down":
+          {
+            if (lineNum >= textArray.length - 1) return;
+            lineNum += 1;
+            leftNum = textArray[lineNum].length;
+            handler.focus.css({
+              left: 10 + xhtml.textWidth(handler.help, textArray[lineNum]) + "px",
+              top: 10 + lineNum * 21 + "px"
+            });
+            break;
+          }
+
+        case "left":
+          {
+            if (leftNum <= 0) return;
+            leftNum -= 1;
+            var leftP = handler.focus.css('left').replace('px', '') - xhtml.textWidth(handler.help, textArray[lineNum][leftNum]);
+            handler.focus.css('left', leftP + "px");
+            break;
+          }
+
+        case "right":
+          {
+            if (leftNum >= textArray[lineNum].length) return;
+            leftNum += 1;
+
+            var _leftP = handler.focus.css('left').replace('px', '') - -xhtml.textWidth(handler.help, textArray[lineNum][leftNum - 1]);
+
+            handler.focus.css('left', _leftP + "px");
+            break;
+          }
+
+        case "backspace":
+          {
+            if (leftNum <= 0) {
+              if (lineNum <= 0) return; // 一行的结尾应该删除本行
+
+              textArray.splice(lineNum, 1);
+              lineNum -= 1;
+              leftNum = textArray[lineNum].length;
+              handler.focus.css({
+                left: 10 + xhtml.textWidth(handler.help, textArray[lineNum]) + "px",
+                top: 10 + lineNum * 21 + "px"
+              });
+            } else {
+              leftNum -= 1;
+
+              var _leftP2 = handler.focus.css('left').replace('px', '') - xhtml.textWidth(handler.help, textArray[lineNum][leftNum]);
+
+              handler.focus.css('left', _leftP2 + "px");
+              textArray[lineNum] = textArray[lineNum].substring(0, leftNum) + textArray[lineNum].substring(leftNum + 1);
+            } // 更新视图
+
+
+            updateView(handler.content, format(textArray.join('\n'), colors));
+            break;
+          }
+      }
     });
     return handler;
   }
