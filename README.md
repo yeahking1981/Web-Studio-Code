@@ -13,6 +13,9 @@ var wscode = new WSCode({
     // 编辑器挂载点
     el: document.getElementById('wscode'),
 
+    // 初始化文本（可选）
+    content:"字符串",
+
     // 文档解析模式（可选，默认普通文本）
     lang: 'css|html|js',
 

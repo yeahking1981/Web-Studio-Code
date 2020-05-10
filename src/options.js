@@ -1,4 +1,5 @@
 import isElement from '@yelloxing/core.js/isElement';
+import isString from '@yelloxing/core.js/isString';
 
 import normalSplit from './lang/normal';
 import htmlSplit from './lang/html';
@@ -33,6 +34,12 @@ export default function (options) {
         options.color.key = options.color.key || "red"; /*关键字颜色*/
         options.color.note = options.color.note || "#8BC34A"; /*注释颜色*/
         options.color.variable = options.color.variable || "#0a6893"; /*变量颜色*/
+
+        if (isString(options.content)) {
+            options.textArray = (options.content + "").split("\n");
+        } else {
+            options.textArray = [""];
+        }
 
     } else {
 

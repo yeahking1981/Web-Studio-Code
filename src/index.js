@@ -8,7 +8,7 @@ let wscode = function (options) {
     formatOptions(options);
 
     // 启动
-    let handler = renderView(options.el, options.format, options.color);
+    let handler = renderView(options.el, options.format, options.color,options.textArray);
 
     this.format = () => {
 
