@@ -5,13 +5,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <script src="../dist/wscode.js"></script>
-    <title>js模式 | 用例测试</title>
+    <script src="./dist/wscode.js"></script>
+    <title>Web Studio Code</title>
 
     <style>
         div#wscode {
             width: 800px;
             height: 600px;
+            background-color: rgb(202, 196, 196);
         }
     </style>
 
@@ -27,10 +28,11 @@
             // 编辑器挂载点
             el: document.getElementById('wscode'),
 
-            // 文档解析模式
-            lang: 'js',
-            content: "function doit(){\n  console.log('hello word');\n}"
+            // 初始化文本
+            content: ""
         });
+
+        console.log(wscode);
     </script>
 
 </body>

@@ -10,25 +10,36 @@
 import WSCode from 'wscode';
 
 var wscode = new WSCode({
-    // 编辑器挂载点
+
+    // 编辑器挂载点(必选)
     el: document.getElementById('wscode'),
 
     // 初始化文本（可选）
-    content:"字符串",
+    content:"初始化文本内容",
 
-    // 文档解析模式（可选，默认普通文本normal）
-    lang: 'normal|css|html|js',
+    // 着色方法（可选，默认不特殊着色）
+    shader:function(textString){
+        return [
+            [{
+                content:"内容",
+                color:"文字颜色"
+            },
+            ...],
+            ...
+        ];
+    },
+
+    // 格式化方法（可选）
+    format:function(textString){
+        return "格式化后的文本";
+    },
 
     // 设置颜色（可选）
     color: {
         background:"#d6d6e4", /*编辑器背景*/
-        normal : "#000", /*普通文本颜色*/
-        key : "#ec0b0b", /*关键字颜色*/
-        note : "#8BC34A", /*注释颜色*/
-        variable: "#0a6893", /*变量颜色*/
-        lineNum:"#888484", /*行号颜色*/
-        editLine:"#eaeaf1", /*编辑行背景色*/
-        string:"#e26606", /*字符串颜色*/
+        text : "#000", /*文本颜色*/
+        number:"#888484", /*行号颜色*/
+        edit:"#eaeaf1", /*编辑行背景色*/
     }
 });
 ```

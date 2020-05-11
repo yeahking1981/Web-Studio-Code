@@ -1,6 +1,6 @@
 {
   "name": "wscode",
-  "version": "1.0.6",
+  "version": "1.2.0",
   "description": "🎉 An Editor Used on the Browser Side.",
   "main": "dist/wscode.min.js",
   "scripts": {
@@ -36,7 +36,6 @@
     "@yelloxing/core.js": "^0.3.7",
     "babelify": "^10.0.0",
     "cuf": "^1.2.0",
-    "image2d": "^1.6.8",
     "rollup": "^1.17.0",
     "uglify-js": "^3.5.6"
   }
