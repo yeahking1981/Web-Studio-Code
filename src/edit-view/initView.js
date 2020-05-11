@@ -14,8 +14,6 @@ export default function (el, colors, lineNum, lineText) {
         })
         .appendTo(el);
 
-    let width = xhtml.textWidth(help, lineText);
-
     // 添加输入光标
     let focus = $$('<textarea></textarea>')
         .attr({
@@ -26,8 +24,6 @@ export default function (el, colors, lineNum, lineText) {
         })
         .css({
             position: "absolute",
-            left: (20 + width) + "px",
-            top: (10 + lineNum * 21) + "px",
             width: "20px",
             height: "21px",
             "line-height": "21px",

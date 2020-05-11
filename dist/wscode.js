@@ -11,7 +11,7 @@
 * Copyright yelloxing
 * Released under the MIT license
 *
-* Date:Mon May 11 2020 09:35:16 GMT+0800 (GMT+08:00)
+* Date:Mon May 11 2020 10:29:01 GMT+0800 (GMT+08:00)
 */
 
 "use strict";
@@ -2112,8 +2112,8 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
       "top": 0,
       "left": 0,
       "font-weight": 600
-    }).appendTo(el);
-    var width = xhtml.textWidth(help, lineText); // 添加输入光标
+    }).appendTo(el); // let width = xhtml.textWidth(help, lineText);
+    // 添加输入光标
 
     var focus = image2D_min('<textarea></textarea>').attr({
       wrap: "off",
@@ -2122,8 +2122,8 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
       spellcheck: "false"
     }).css({
       position: "absolute",
-      left: 20 + width + "px",
-      top: 10 + lineNum * 21 + "px",
+      // left: (40 + width) + "px",
+      // top: (10 + lineNum * 21) + "px",
       width: "20px",
       height: "21px",
       "line-height": "21px",
@@ -2312,6 +2312,10 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
         lineNum = textArray.length - 1,
         leftNum = textArray[textArray.length - 1].length;
     var handler = initView(el, colors, lineNum, textArray[textArray.length - 1]);
+    handler.focus.css({
+      left: 40 + xhtml.textWidth(handler.help, textArray[textArray.length - 1]) + "px",
+      top: 10 + lineNum * 21 + "px"
+    });
     handler.focus[0].focus();
     var preFormatData = [];
 

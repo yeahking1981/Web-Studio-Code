@@ -9,6 +9,12 @@ export default function (el, format, colors, textArray) {
     let needUpdate = true, lineNum = textArray.length - 1, leftNum = textArray[textArray.length - 1].length;
 
     let handler = initView(el, colors, lineNum, textArray[textArray.length - 1]);
+
+    handler.focus.css({
+        left: (40 + xhtml.textWidth(handler.help, textArray[textArray.length - 1])) + "px",
+        top: (10 + lineNum * 21) + "px",
+    });
+
     handler.focus[0].focus();
 
     let preFormatData = [];
