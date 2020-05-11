@@ -11,7 +11,7 @@
 * Copyright yelloxing
 * Released under the MIT license
 *
-* Date:Mon May 11 2020 15:32:09 GMT+0800 (GMT+08:00)
+* Date:Mon May 11 2020 17:18:30 GMT+0800 (GMT+08:00)
 */
 
 "use strict";
@@ -174,9 +174,11 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
       text = format$2(text);
       copyArray(textArray, text.split("\n"));
     } // 开始着色
+    // console.log(dictionary);
 
 
-    alert("js语言编辑器开发中");
+    var resultData = [[]];
+    return resultData;
   }
   /**
    * 
@@ -220,6 +222,9 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
 
       options.color.editLine = options.color.editLine || "#eaeaf1";
       /*编辑行颜色*/
+
+      options.color.string = options.color.string || "#e26606";
+      /*字符串颜色*/
 
       if (isString(options.content)) {
         options.textArray = (options.content + "").split("\n");

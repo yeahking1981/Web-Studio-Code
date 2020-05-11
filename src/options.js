@@ -37,6 +37,7 @@ export default function (options) {
         options.color.variable = options.color.variable || "#0a6893"; /*变量颜色*/
         options.color.lineNum = options.color.lineNum || "#888484"; /*行号颜色*/
         options.color.editLine = options.color.editLine || "#eaeaf1"; /*编辑行颜色*/
+        options.color.string = options.color.string || "#e26606"; /*字符串颜色*/
 
         if (isString(options.content)) {
             options.textArray = (options.content + "").split("\n");
