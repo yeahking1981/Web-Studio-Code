@@ -4,14 +4,14 @@
 *
 * author 心叶
 *
-* version 1.0.5
+* version 1.0.6
 *
 * build Fri May 08 2020
 *
 * Copyright yelloxing
 * Released under the MIT license
 *
-* Date:Mon May 11 2020 14:15:41 GMT+0800 (GMT+08:00)
+* Date:Mon May 11 2020 14:45:33 GMT+0800 (GMT+08:00)
 */
 
 "use strict";
@@ -2077,7 +2077,7 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
       padding: "0",
       outline: "none",
       border: "none",
-      background: colors.editLine,
+      background: "#0000",
       color: colors.normal
     }).appendTo(el);
     image2D_min(el).css({
@@ -2373,6 +2373,21 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
     };
 
     update();
+    image2D_min(el).bind('click', function (event) {
+      var position = image2D_min(el).position(event); // console.log(position);
+
+      var topIndex = Math.round((position.y - 20.5) / 21); // console.log(topIndex);
+      // 如果超过了内容区域
+
+      if (topIndex < 0 || topIndex >= textArray.length) return;
+      lineNum = topIndex;
+      leftNum = textArray[lineNum].length;
+      handler.focus.css({
+        left: 40 + xhtml.textWidth(handler.help, textArray[lineNum]) + "px",
+        top: 10 + lineNum * 21 + "px"
+      });
+      updateView(handler.content, preFormatData, colors, lineNum);
+    });
     handler.focus.bind('format', function () {
       // 更新视图
       preFormatData = format(textArray.join('\n'), colors, true);

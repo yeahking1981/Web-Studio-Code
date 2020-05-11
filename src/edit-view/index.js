@@ -55,6 +55,30 @@ export default function (el, format, colors, textArray) {
 
     update();
 
+    $$(el).bind('click', function (event) {
+
+        let position = $$(el).position(event);
+
+        // console.log(position);
+
+        let topIndex = Math.round((position.y - 20.5) / 21);
+
+        // console.log(topIndex);
+
+        // 如果超过了内容区域
+        if (topIndex < 0 || topIndex >= textArray.length) return;
+
+        lineNum = topIndex;
+
+        leftNum = textArray[lineNum].length;
+        handler.focus.css({
+            left: (40 + xhtml.textWidth(handler.help, textArray[lineNum])) + "px",
+            top: (10 + lineNum * 21) + "px",
+        });
+        updateView(handler.content, preFormatData, colors, lineNum);
+
+    });
+
     handler.focus.bind('format', () => {
 
         // 更新视图

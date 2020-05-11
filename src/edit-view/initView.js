@@ -31,7 +31,7 @@ export default function (el, colors) {
             padding: "0",
             outline: "none",
             border: "none",
-            background: colors.editLine,
+            background: "#0000",
             color: colors.normal
         })
         .appendTo(el);
