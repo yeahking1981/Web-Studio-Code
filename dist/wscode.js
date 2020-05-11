@@ -11,7 +11,7 @@
 * Copyright yelloxing
 * Released under the MIT license
 *
-* Date:Mon May 11 2020 22:40:49 GMT+0800 (GMT+08:00)
+* Date:Mon May 11 2020 23:13:07 GMT+0800 (GMT+08:00)
 */
 
 "use strict";
@@ -211,6 +211,18 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
       for (var key in attrs) {
         el.setAttribute(key, attrs[key]);
       }
+    },
+    // 获取鼠标相对特定元素左上角位置
+    "position": function position(el, event) {
+      event = event || window.event; // 返回元素的大小及其相对于视口的位置
+
+      var bounding = el.getBoundingClientRect();
+      if (!event || !event.clientX) throw new Error('Event is necessary!');
+      return {
+        // 鼠标相对元素位置 = 鼠标相对窗口坐标 - 元素相对窗口坐标
+        "x": event.clientX - bounding.left,
+        "y": event.clientY - bounding.top
+      };
     }
   }; // 初始化结点
 
@@ -446,7 +458,20 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
     var _this3 = this;
 
     // 点击编辑界面
-    xhtml.bind(this._el, 'click', function (event) {});
+    xhtml.bind(this._el, 'click', function (event) {
+      var position = xhtml.position(_this3._el, event);
+      var topIndex = Math.round((position.y - 20.5) / 21); // 如果超过了内容区域
+
+      if (topIndex < 0 || topIndex >= _this3._contentArray.length) return;
+      _this3.__lineNum = topIndex;
+      _this3.__leftNum = _this3._contentArray[_this3.__lineNum].length;
+      xhtml.css(_this3.__focusDOM, {
+        left: 40 + _this3.$$textWidth(_this3._contentArray[_this3.__lineNum]) + "px",
+        top: 10 + _this3.__lineNum * 21 + "px"
+      });
+
+      _this3.$$updateView();
+    });
 
     var update = function update(text) {
       // 获取输入内容
@@ -494,7 +519,104 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 
     xhtml.bind(this._el, 'keydown', function (event) {
       //  console.log(keyString(event));
-      switch (keyString(event)) {}
+      switch (keyString(event)) {
+        case "tab":
+          {
+            // tab用来控制输入多个空格，默认事件需要禁止
+            xhtml.stopPropagation(event);
+            xhtml.preventDefault(event); // 四个空格
+
+            update("    ");
+            break;
+          }
+
+        case "up":
+          {
+            // 如果是第一行不需要任何处理
+            if (_this3.__lineNum <= 0) return; // 向上一行回退
+
+            _this3.__lineNum -= 1;
+            _this3.__leftNum = _this3._contentArray[_this3.__lineNum].length; // 光标聚焦在改行结尾
+
+            xhtml.css(_this3.__focusDOM, {
+              left: 40 + _this3.$$textWidth(_this3._contentArray[_this3.__lineNum]) + "px",
+              top: 10 + _this3.__lineNum * 21 + "px"
+            }); // 更新编辑行背景
+
+            _this3.$$updateView();
+
+            _this3._el.scrollTop -= 21;
+            break;
+          }
+
+        case "down":
+          {
+            if (_this3.__lineNum >= _this3._contentArray.length - 1) return;
+            _this3.__lineNum += 1;
+            _this3.__leftNum = _this3._contentArray[_this3.__lineNum].length;
+            xhtml.css(_this3.__focusDOM, {
+              left: 40 + _this3.$$textWidth(_this3._contentArray[_this3.__lineNum]) + "px",
+              top: 10 + _this3.__lineNum * 21 + "px"
+            });
+
+            _this3.$$updateView();
+
+            _this3._el.scrollTop += 21;
+            break;
+          }
+
+        case "left":
+          {
+            if (_this3.__leftNum <= 0) return;
+            _this3.__leftNum -= 1;
+
+            var leftP = _this3.__focusDOM.style.left.replace('px', '') - _this3.$$textWidth(_this3._contentArray[_this3.__lineNum][_this3.__leftNum]);
+
+            _this3.__focusDOM.style.left = leftP + "px";
+            break;
+          }
+
+        case "right":
+          {
+            if (_this3.__leftNum >= _this3._contentArray[_this3.__lineNum].length) return;
+            _this3.__leftNum += 1;
+
+            var _leftP = _this3.__focusDOM.style.left.replace('px', '') - -_this3.$$textWidth(_this3._contentArray[_this3.__lineNum][_this3.__leftNum - 1]);
+
+            _this3.__focusDOM.style.left = _leftP + "px";
+            break;
+          }
+
+        case "backspace":
+          {
+            if (_this3.__leftNum <= 0) {
+              if (_this3.__lineNum <= 0) return; // 一行的结尾应该删除本行
+
+              _this3._contentArray.splice(_this3.__lineNum, 1);
+
+              _this3.__lineNum -= 1;
+              _this3.__leftNum = _this3._contentArray[_this3.__lineNum].length;
+              xhtml.css(_this3.__focusDOM, {
+                left: 40 + _this3.$$textWidth(_this3._contentArray[_this3.__lineNum]) + "px",
+                top: 10 + _this3.__lineNum * 21 + "px"
+              });
+            } else {
+              _this3.__leftNum -= 1;
+
+              var _leftP2 = _this3.__focusDOM.style.left.replace('px', '') - _this3.$$textWidth(_this3._contentArray[_this3.__lineNum][_this3.__leftNum]);
+
+              _this3.__focusDOM.style.left = _leftP2 + "px";
+              _this3._contentArray[_this3.__lineNum] = _this3._contentArray[_this3.__lineNum].substring(0, _this3.__leftNum) + _this3._contentArray[_this3.__lineNum].substring(_this3.__leftNum + 1);
+            } // 由于内容改变，需要重新调用着色
+
+
+            _this3.__formatData = _this3.$shader(_this3._contentArray.join('\n')); // 更新视图
+
+            _this3.$$updateView();
+
+            break;
+          }
+      }
     });
   }
 
