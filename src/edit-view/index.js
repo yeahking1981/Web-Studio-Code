@@ -10,7 +10,7 @@ export default function (el, format, colors, textArray) {
 
     // 初始化视图
     // 包括必备的光标，输入，显示等dom钩子
-    let handler = initView(el, colors, lineNum, textArray[textArray.length - 1]);
+    let handler = initView(el, colors);
 
     // 初始化定位光标位置
     handler.focus.css({
@@ -117,6 +117,9 @@ export default function (el, format, colors, textArray) {
 
                 // 更新编辑行背景
                 updateView(handler.content, preFormatData, colors, lineNum);
+
+                el.scrollTop -= 21;
+
                 break;
             }
             case "down": {
@@ -128,6 +131,8 @@ export default function (el, format, colors, textArray) {
                     top: (10 + lineNum * 21) + "px",
                 });
                 updateView(handler.content, preFormatData, colors, lineNum);
+
+                el.scrollTop += 21;
                 break;
             }
             case "left": {

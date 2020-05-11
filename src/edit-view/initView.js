@@ -1,6 +1,6 @@
 import $$ from 'image2d';
 
-export default function (el, colors, lineNum, lineText) {
+export default function (el, colors) {
 
     let help = $$("<span></span>")
         .css({
@@ -31,7 +31,7 @@ export default function (el, colors, lineNum, lineText) {
             padding: "0",
             outline: "none",
             border: "none",
-            background: "#ff000000",
+            background: colors.editLine,
             color: colors.normal
         })
         .appendTo(el);
@@ -42,7 +42,8 @@ export default function (el, colors, lineNum, lineText) {
         cursor: "text",
         // 这里必须设置为等宽字体
         "font-family": "新宋体",
-        "background": colors.background
+        "background": colors.background,
+        overflow: "auto"
     }).bind('click', () => {
         focus[0].focus();
     });

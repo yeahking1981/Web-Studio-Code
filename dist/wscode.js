@@ -11,7 +11,7 @@
 * Copyright yelloxing
 * Released under the MIT license
 *
-* Date:Mon May 11 2020 11:30:10 GMT+0800 (GMT+08:00)
+* Date:Mon May 11 2020 14:15:41 GMT+0800 (GMT+08:00)
 */
 
 "use strict";
@@ -2052,7 +2052,7 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
     })();
   });
 
-  function initView(el, colors, lineNum, lineText) {
+  function initView(el, colors) {
     var help = image2D_min("<span></span>").css({
       position: "absolute",
       "z-index": "-1",
@@ -2077,7 +2077,7 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
       padding: "0",
       outline: "none",
       border: "none",
-      background: "#ff000000",
+      background: colors.editLine,
       color: colors.normal
     }).appendTo(el);
     image2D_min(el).css({
@@ -2086,7 +2086,8 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
       cursor: "text",
       // 这里必须设置为等宽字体
       "font-family": "新宋体",
-      "background": colors.background
+      "background": colors.background,
+      overflow: "auto"
     }).bind('click', function () {
       focus[0].focus();
     }); // 添加格式化文本显示区域
@@ -2198,10 +2199,10 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
         bgcolor = "background-color:" + colors.editLine;
       }
 
-      template += "<div style='line-height:21px;height:21px;" + bgcolor + "'>";
+      template += "<div style='min-width: fit-content;white-space: nowrap;line-height:21px;height:21px;" + bgcolor + "'>";
       template += "<em style='color:" + colors.lineNum + ";user-select: none;display:inline-block;font-style:normal;width:35px;text-align:right;margin-right:5px;'>" + (index + 1) + "</em>";
       line.forEach(function (text) {
-        template += "<span style='font-weight:600;white-space: pre;color:" + text.color + "'>" + text.content + "</span>";
+        template += "<span style='padding-right:10px;font-weight:600;white-space: pre;color:" + text.color + "'>" + text.content + "</span>";
       });
       template += "</div>";
     });
@@ -2334,7 +2335,7 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
         leftNum = textArray[textArray.length - 1].length; // 初始化视图
     // 包括必备的光标，输入，显示等dom钩子
 
-    var handler = initView(el, colors, lineNum, textArray[textArray.length - 1]); // 初始化定位光标位置
+    var handler = initView(el, colors); // 初始化定位光标位置
 
     handler.focus.css({
       left: 40 + xhtml.textWidth(handler.help, textArray[textArray.length - 1]) + "px",
@@ -2420,6 +2421,7 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
             }); // 更新编辑行背景
 
             updateView(handler.content, preFormatData, colors, lineNum);
+            el.scrollTop -= 21;
             break;
           }
 
@@ -2433,6 +2435,7 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
               top: 10 + lineNum * 21 + "px"
             });
             updateView(handler.content, preFormatData, colors, lineNum);
+            el.scrollTop += 21;
             break;
           }
 
