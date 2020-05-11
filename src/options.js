@@ -2,9 +2,9 @@ import isElement from '@yelloxing/core.js/isElement';
 import isString from '@yelloxing/core.js/isString';
 
 import normalSplit from './lang/normal';
-import htmlSplit from './lang/html';
-import cssSplit from './lang/css';
-import jsSplit from './lang/js';
+import htmlSplit from './lang/html/index.js';
+import cssSplit from './lang/css/index.js';
+import jsSplit from './lang/js/index.js';
 
 /**
  * 

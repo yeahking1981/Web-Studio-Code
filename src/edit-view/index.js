@@ -48,7 +48,7 @@ export default function (el, format, colors, textArray) {
         }
 
         // 更新视图
-        preFormatData = format(textArray.join('\n'), colors);
+        preFormatData = format(textArray, colors);
         updateView(handler.content, preFormatData, colors, lineNum);
 
     };
@@ -82,7 +82,7 @@ export default function (el, format, colors, textArray) {
     handler.focus.bind('format', () => {
 
         // 更新视图
-        preFormatData = format(textArray.join('\n'), colors, true);
+        preFormatData = format(textArray, colors, true);
         updateView(handler.content, preFormatData, colors, lineNum);
 
     });
@@ -194,7 +194,7 @@ export default function (el, format, colors, textArray) {
                 }
 
                 // 由于内容改变，需要重新调用着色
-                preFormatData = format(textArray.join('\n'), colors);
+                preFormatData = format(textArray, colors);
 
                 // 更新视图
                 updateView(handler.content, preFormatData, colors, lineNum);

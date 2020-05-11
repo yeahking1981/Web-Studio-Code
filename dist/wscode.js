@@ -11,7 +11,7 @@
 * Copyright yelloxing
 * Released under the MIT license
 *
-* Date:Mon May 11 2020 14:45:33 GMT+0800 (GMT+08:00)
+* Date:Mon May 11 2020 15:32:09 GMT+0800 (GMT+08:00)
 */
 
 "use strict";
@@ -100,7 +100,7 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
 
   function normalSplit(content, colors) {
     var resultData = [];
-    (content || "").split(/\n/).forEach(function (text) {
+    content.forEach(function (text) {
       // 因为的普通文本，直接一行一个单元即可
       resultData.push([{
         // 全部都是normal普通文本标志
@@ -110,20 +110,72 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
       }]);
     });
     return resultData;
+  } // 格式化
+
+
+  function format(text) {
+    return text;
+  }
+
+  function copyArray(targetArray, sourceArray) {
+    var i = 0;
+
+    for (; i < sourceArray.length; i++) {
+      targetArray[i] = sourceArray[i];
+    }
+
+    for (var j = targetArray.length - 1; j >= i; j--) {
+      delete targetArray[j];
+    }
   } // html切割
 
 
-  function htmlSplit(text, colors, isFormat) {
+  function htmlSplit(textArray, colors, isFormat) {
+    var text = textArray.join('\n');
+
+    if (isFormat) {
+      text = format(text);
+      copyArray(textArray, text.split("\n"));
+    } // 开始着色
+
+
     alert("html语言编辑器开发中");
+  } // 格式化
+
+
+  function format$1(text) {
+    return text;
   } // css切割
 
 
-  function cssSplit(text, colors, isFormat) {
+  function cssSplit(textArray, colors, isFormat) {
+    var text = textArray.join('\n');
+
+    if (isFormat) {
+      text = format$1(text);
+      copyArray(textArray, text.split("\n"));
+    } // 开始着色
+
+
     alert("css语言编辑器开发中");
+  } // 格式化
+
+
+  function format$2(text) {
+    return text;
   } // js切割
 
 
-  function jsSplit(text, colors, isFormat) {
+  function jsSplit(textArray, colors, isFormat) {
+    // console.log(textArray);
+    var text = textArray.join('\n');
+
+    if (isFormat) {
+      text = format$2(text);
+      copyArray(textArray, text.split("\n"));
+    } // 开始着色
+
+
     alert("js语言编辑器开发中");
   }
   /**
@@ -2368,7 +2420,7 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
       } // 更新视图
 
 
-      preFormatData = format(textArray.join('\n'), colors);
+      preFormatData = format(textArray, colors);
       updateView(handler.content, preFormatData, colors, lineNum);
     };
 
@@ -2390,7 +2442,7 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
     });
     handler.focus.bind('format', function () {
       // 更新视图
-      preFormatData = format(textArray.join('\n'), colors, true);
+      preFormatData = format(textArray, colors, true);
       updateView(handler.content, preFormatData, colors, lineNum);
     }); // 中文输入开始
 
@@ -2496,7 +2548,7 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
             } // 由于内容改变，需要重新调用着色
 
 
-            preFormatData = format(textArray.join('\n'), colors); // 更新视图
+            preFormatData = format(textArray, colors); // 更新视图
 
             updateView(handler.content, preFormatData, colors, lineNum);
             break;
