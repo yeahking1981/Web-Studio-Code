@@ -11,15 +11,19 @@
 * Copyright yelloxing
 * Released under the MIT license
 *
-* Date:Mon May 11 2020 22:25:13 GMT+0800 (GMT+08:00)
+* Date:Mon May 11 2020 22:40:49 GMT+0800 (GMT+08:00)
 */
 
 "use strict";
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 (function () {
   'use strict';
+
+  var _dictionary;
 
   var toString = Object.prototype.toString;
   /**
@@ -315,6 +319,126 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
         left: preLeft + width + "px"
       });
     }
+  } // 字典表
+
+
+  var dictionary = (_dictionary = {
+    // 数字
+    48: [0, ')'],
+    49: [1, '!'],
+    50: [2, '@'],
+    51: [3, '#'],
+    52: [4, '$'],
+    53: [5, '%'],
+    54: [6, '^'],
+    55: [7, '&'],
+    56: [8, '*'],
+    57: [9, '('],
+    96: [0, 0],
+    97: 1,
+    98: 2,
+    99: 3,
+    100: 4,
+    101: 5,
+    102: 6,
+    103: 7,
+    104: 8,
+    105: 9,
+    106: "*",
+    107: "+",
+    109: "-",
+    110: ".",
+    111: "/",
+    // 字母
+    65: ["a", "A"],
+    66: ["b", "B"],
+    67: ["c", "C"],
+    68: ["d", "D"],
+    69: ["e", "E"],
+    70: ["f", "F"],
+    71: ["g", "G"],
+    72: ["h", "H"],
+    73: ["i", "I"],
+    74: ["j", "J"],
+    75: ["k", "K"],
+    76: ["l", "L"],
+    77: ["m", "M"],
+    78: ["n", "N"],
+    79: ["o", "O"],
+    80: ["p", "P"],
+    81: ["q", "Q"],
+    82: ["r", "R"],
+    83: ["s", "S"],
+    84: ["t", "T"],
+    85: ["u", "U"],
+    86: ["v", "V"],
+    87: ["w", "W"],
+    88: ["x", "X"],
+    89: ["y", "Y"],
+    90: ["z", "Z"],
+    // 方向
+    37: "left",
+    38: "up",
+    39: "right",
+    40: "down",
+    33: "page up",
+    34: "page down",
+    35: "end",
+    36: "home",
+    // 控制键
+    16: "shift",
+    17: "ctrl",
+    18: "alt",
+    91: "command",
+    92: "command",
+    93: "command",
+    9: "tab",
+    20: "caps lock",
+    32: "spacebar",
+    8: "backspace",
+    13: "enter",
+    27: "esc",
+    46: "delete",
+    45: "insert",
+    144: "number lock",
+    145: "scroll lock",
+    12: "clear"
+  }, _defineProperty(_dictionary, "45", "insert"), _defineProperty(_dictionary, 19, "pause"), _defineProperty(_dictionary, 112, "f1"), _defineProperty(_dictionary, 113, "f2"), _defineProperty(_dictionary, 114, "f3"), _defineProperty(_dictionary, 115, "f4"), _defineProperty(_dictionary, 116, "f5"), _defineProperty(_dictionary, 117, "f6"), _defineProperty(_dictionary, 118, "f7"), _defineProperty(_dictionary, 119, "f8"), _defineProperty(_dictionary, 120, "f9"), _defineProperty(_dictionary, 121, "f10"), _defineProperty(_dictionary, 122, "f11"), _defineProperty(_dictionary, 123, "f12"), _defineProperty(_dictionary, 189, ["-", "_"]), _defineProperty(_dictionary, 187, ["=", "+"]), _defineProperty(_dictionary, 219, ["[", "{"]), _defineProperty(_dictionary, 221, ["]", "}"]), _defineProperty(_dictionary, 220, ["\\", "|"]), _defineProperty(_dictionary, 186, [";", ":"]), _defineProperty(_dictionary, 222, ["'", '"']), _defineProperty(_dictionary, 188, [",", "<"]), _defineProperty(_dictionary, 190, [".", ">"]), _defineProperty(_dictionary, 191, ["/", "?"]), _defineProperty(_dictionary, 192, ["`", "~"]), _dictionary); // 非独立键字典
+
+  var help_key = ["shift", "ctrl", "alt"];
+  /**
+   * 键盘按键
+   * 返回键盘此时按下的键的组合结果
+   * @since V0.2.5
+   * @public
+   */
+
+  function keyString(event) {
+    event = event || window.event;
+    var keycode = event.keyCode || event.which;
+    var key = dictionary[keycode] || keycode;
+    if (!key) return;
+    if (key.constructor !== Array) key = [key, key];
+    var shift = event.shiftKey ? "shift+" : "",
+        alt = event.altKey ? "alt+" : "",
+        ctrl = event.ctrlKey ? "ctrl+" : "";
+    var resultKey = "",
+        preKey = ctrl + shift + alt;
+
+    if (help_key.indexOf(key[0]) >= 0) {
+      key[0] = key[1] = "";
+    } // 判断是否按下了caps lock
+
+
+    var lockPress = event.code == "Key" + event.key && !shift; // 只有字母（且没有按下功能Ctrl、shift或alt）区分大小写
+
+    resultKey = preKey + (preKey == '' && lockPress ? key[1] : key[0]);
+
+    if (key[0] == "") {
+      resultKey = resultKey.replace(/\+$/, '');
+    }
+
+    return resultKey;
   } // 绑定键盘和鼠标等交互事件处理
 
 
@@ -366,6 +490,11 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
     xhtml.bind(this.__focusDOM, 'input', function () {
       // 如果是中文输入开始，不应该更新
       if (_this3.__needUpdate) update();
+    }); // 处理键盘控制
+
+    xhtml.bind(this._el, 'keydown', function (event) {
+      //  console.log(keyString(event));
+      switch (keyString(event)) {}
     });
   }
 
@@ -435,6 +564,24 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
     this.$$updateView(); // 绑定操作
 
     this.$$bindEvent();
+
+    this.valueOf = function () {
+      return _this4._contentArray.join('\n');
+    };
+
+    this.format = function () {
+      // 格式化内容
+      _this4._contentArray = _this4.$format(_this4._contentArray.join('\n')).split('\n');
+      _this4.__lineNum = _this4._contentArray.length - 1;
+      _this4.__leftNum = _this4._contentArray[_this4.__lineNum].length; // 着色
+
+      _this4.__formatData = _this4.$shader(_this4._contentArray.join('\n')); // 更新视图
+
+      _this4.$$updateView(); // 更新光标位置
+
+
+      _this4.$$initView();
+    };
   }; // 挂载辅助方法
 
 

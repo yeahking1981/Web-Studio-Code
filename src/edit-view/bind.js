@@ -59,4 +59,17 @@ export default function () {
         if (this.__needUpdate) update();
     });
 
+     // 处理键盘控制
+     xhtml.bind(this._el, 'keydown', event => {
+
+        //  console.log(keyString(event));
+
+        switch (keyString(event)) {
+
+            
+
+        }
+
+    });
+
 };

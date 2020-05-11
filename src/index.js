@@ -69,6 +69,29 @@ let wscode = function (options) {
     // 绑定操作
     this.$$bindEvent();
 
+    this.valueOf = () => {
+        return this._contentArray.join('\n');
+    };
+
+    this.format = () => {
+
+        // 格式化内容
+        this._contentArray = this.$format(this._contentArray.join('\n')).split('\n');
+
+        this.__lineNum = this._contentArray.length - 1;
+        this.__leftNum = this._contentArray[this.__lineNum].length;
+
+        // 着色
+        this.__formatData = this.$shader(this._contentArray.join('\n'));
+
+        // 更新视图
+        this.$$updateView();
+
+        // 更新光标位置
+        this.$$initView();
+
+    };
+
 };
 
 // 挂载辅助方法
