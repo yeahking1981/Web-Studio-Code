@@ -4,6 +4,9 @@
 <a href="https://www.npmjs.com/package/wscode"><img src="https://img.shields.io/npm/v/wscode.svg" alt="Version"></a>
 <a href="https://github.com/yelloxing/Web-Studio-Code/blob/master/LICENSE"><img src="https://img.shields.io/npm/l/wscode.svg" alt="License"></a>
 
+<p align="center"><a href="https://yelloxing.github.io/Web-Studio-Code/Web-Studio-Code.html" target="_blank" rel="noopener noreferrer">
+<img width="400" src="./snipping.png" alt="Web Studio Code"></a></p>
+
 ## 如何使用
 
 ```js
