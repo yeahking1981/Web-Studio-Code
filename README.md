@@ -16,8 +16,8 @@ var wscode = new WSCode({
     // 初始化文本（可选）
     content:"字符串",
 
-    // 文档解析模式（可选，默认普通文本）
-    lang: 'css|html|js',
+    // 文档解析模式（可选，默认普通文本normal）
+    lang: 'normal|css|html|js',
 
     // 设置颜色（可选）
     color: {
@@ -34,9 +34,16 @@ var wscode = new WSCode({
 
 返回的wscode里面挂载着后续可控方法：
 
+- 格式化代码
+
 ```js
-// 格式化代码
 wscode.format();
+```
+
+- 获取当前编辑器代码
+
+```js
+wscode.valueOf();
 ```
 
 ## 开源协议

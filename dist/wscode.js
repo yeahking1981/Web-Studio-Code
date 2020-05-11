@@ -4,14 +4,14 @@
 *
 * author 心叶
 *
-* version 1.0.2
+* version 1.0.4
 *
 * build Fri May 08 2020
 *
 * Copyright yelloxing
 * Released under the MIT license
 *
-* Date:Mon May 11 2020 00:35:44 GMT+0800 (GMT+08:00)
+* Date:Mon May 11 2020 09:35:16 GMT+0800 (GMT+08:00)
 */
 
 "use strict";
@@ -2448,6 +2448,10 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
 
     this.format = function () {
       xhtml.trigger(handler.focus[0], 'format');
+    };
+
+    this.valueOf = function () {
+      return options.textArray.join('\n');
     };
   };
 

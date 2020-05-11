@@ -8,11 +8,17 @@ let wscode = function (options) {
     formatOptions(options);
 
     // 启动
-    let handler = renderView(options.el, options.format, options.color,options.textArray);
+    let handler = renderView(options.el, options.format, options.color, options.textArray);
 
     this.format = () => {
 
         xhtml.trigger(handler.focus[0], 'format');
+
+    };
+
+    this.valueOf = () => {
+
+        return options.textArray.join('\n');
 
     };
 
