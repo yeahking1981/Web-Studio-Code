@@ -2,6 +2,26 @@ import $$ from 'image2d';
 
 export default {
 
+    // 阻止冒泡
+    "stopPropagation": function (event) {
+        event = event || window.event;
+        if (event.stopPropagation) { //这是其他非IE浏览器
+            event.stopPropagation();
+        } else {
+            event.cancelBubble = true;
+        }
+    },
+
+    // 阻止默认事件
+    "preventDefault": function (event) {
+        event = event || window.event;
+        if (event.preventDefault) {
+            event.preventDefault();
+        } else {
+            event.returnValue = false;
+        }
+    },
+
     // 获取元素大小
     "size": function (dom, type) {
         var elemHeight, elemWidth;

@@ -8,20 +8,25 @@ export default function (el, format, colors, textArray) {
 
     let needUpdate = true, lineNum = textArray.length - 1, leftNum = textArray[textArray.length - 1].length;
 
+    // 初始化视图
+    // 包括必备的光标，输入，显示等dom钩子
     let handler = initView(el, colors, lineNum, textArray[textArray.length - 1]);
 
+    // 初始化定位光标位置
     handler.focus.css({
         left: (40 + xhtml.textWidth(handler.help, textArray[textArray.length - 1])) + "px",
         top: (10 + lineNum * 21) + "px",
     });
 
+    // 输入框聚焦
     handler.focus[0].focus();
 
+    // 记录着色结果
     let preFormatData = [];
 
-    let update = () => {
+    let update = (text) => {
 
-        let text = handler.focus[0].value;
+        text = text || handler.focus[0].value;
         handler.focus[0].value = "";
 
         // 更新光标位置
@@ -53,39 +58,64 @@ export default function (el, format, colors, textArray) {
     handler.focus.bind('format', () => {
 
         // 更新视图
-        preFormatData = format(text, colors, true);
+        preFormatData = format(textArray.join('\n'), colors, true);
         updateView(handler.content, preFormatData, colors, lineNum);
 
     });
 
+    // 中文输入开始
     handler.focus.bind('compositionstart', () => {
         needUpdate = false;
     });
 
+    // 中文输入结束
     handler.focus.bind('compositionend', () => {
         needUpdate = true;
         update();
     });
 
+    // 输入
     handler.focus.bind('input', () => {
+
+        // 如果是中文输入开始，不应该更新
         if (!needUpdate) return;
         update();
     });
 
     // 处理键盘控制
     $$(el).bind('keydown', event => {
-        console.log(keyString(event));
+        // console.log(keyString(event));
 
         switch (keyString(event)) {
 
+            case "tab": {
+
+                // tab用来控制输入多个空格，默认事件需要禁止
+                xhtml.stopPropagation(event);
+                xhtml.preventDefault(event);
+
+                // 四个空格
+                update("    ");
+
+                break;
+            }
+
             case "up": {
+
+                // 如果是第一行不需要任何处理
                 if (lineNum <= 0) return;
+
+                // 向上一行回退
                 lineNum -= 1;
                 leftNum = textArray[lineNum].length;
+
+                // 光标聚焦在改行结尾
                 handler.focus.css({
                     left: (40 + xhtml.textWidth(handler.help, textArray[lineNum])) + "px",
                     top: (10 + lineNum * 21) + "px",
                 });
+
+                // 更新编辑行背景
                 updateView(handler.content, preFormatData, colors, lineNum);
                 break;
             }
@@ -134,8 +164,10 @@ export default function (el, format, colors, textArray) {
                     textArray[lineNum] = textArray[lineNum].substring(0, leftNum) + textArray[lineNum].substring(leftNum + 1);
                 }
 
-                // 更新视图
+                // 由于内容改变，需要重新调用着色
                 preFormatData = format(textArray.join('\n'), colors);
+
+                // 更新视图
                 updateView(handler.content, preFormatData, colors, lineNum);
 
                 break;

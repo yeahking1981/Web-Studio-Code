@@ -1,5 +1,4 @@
 import $$ from 'image2d';
-import xhtml from './xhtml';
 
 export default function (el, colors, lineNum, lineText) {
 

@@ -4,14 +4,14 @@
 *
 * author 心叶
 *
-* version 1.0.4
+* version 1.0.5
 *
 * build Fri May 08 2020
 *
 * Copyright yelloxing
 * Released under the MIT license
 *
-* Date:Mon May 11 2020 10:29:01 GMT+0800 (GMT+08:00)
+* Date:Mon May 11 2020 11:30:10 GMT+0800 (GMT+08:00)
 */
 
 "use strict";
@@ -101,7 +101,9 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
   function normalSplit(content, colors) {
     var resultData = [];
     (content || "").split(/\n/).forEach(function (text) {
+      // 因为的普通文本，直接一行一个单元即可
       resultData.push([{
+        // 全部都是normal普通文本标志
         type: "normal",
         content: text,
         color: colors.normal
@@ -2049,7 +2051,78 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
       }
     })();
   });
+
+  function initView(el, colors, lineNum, lineText) {
+    var help = image2D_min("<span></span>").css({
+      position: "absolute",
+      "z-index": "-1",
+      "white-space": "pre",
+      "top": 0,
+      "left": 0,
+      "font-weight": 600
+    }).appendTo(el); // 添加输入光标
+
+    var focus = image2D_min('<textarea></textarea>').attr({
+      wrap: "off",
+      autocorrect: "off",
+      autocapitalize: "off",
+      spellcheck: "false"
+    }).css({
+      position: "absolute",
+      width: "20px",
+      height: "21px",
+      "line-height": "21px",
+      resize: "none",
+      overflow: "hidden",
+      padding: "0",
+      outline: "none",
+      border: "none",
+      background: "#ff000000",
+      color: colors.normal
+    }).appendTo(el);
+    image2D_min(el).css({
+      "font-size": "12px",
+      position: "relative",
+      cursor: "text",
+      // 这里必须设置为等宽字体
+      "font-family": "新宋体",
+      "background": colors.background
+    }).bind('click', function () {
+      focus[0].focus();
+    }); // 添加格式化文本显示区域
+
+    var content = image2D_min("<div></div>").css({
+      padding: "10px 0"
+    }).appendTo(el);
+    return {
+      focus: focus,
+      content: content,
+      help: help
+    };
+  }
+
   var xhtml = {
+    // 阻止冒泡
+    "stopPropagation": function stopPropagation(event) {
+      event = event || window.event;
+
+      if (event.stopPropagation) {
+        //这是其他非IE浏览器
+        event.stopPropagation();
+      } else {
+        event.cancelBubble = true;
+      }
+    },
+    // 阻止默认事件
+    "preventDefault": function preventDefault(event) {
+      event = event || window.event;
+
+      if (event.preventDefault) {
+        event.preventDefault();
+      } else {
+        event.returnValue = false;
+      }
+    },
     // 获取元素大小
     "size": function size(dom, type) {
       var elemHeight, elemWidth;
@@ -2102,59 +2175,7 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
       help[0].innerText = text;
       return +this.size(help[0]).width;
     }
-  };
-
-  function initView(el, colors, lineNum, lineText) {
-    var help = image2D_min("<span></span>").css({
-      position: "absolute",
-      "z-index": "-1",
-      "white-space": "pre",
-      "top": 0,
-      "left": 0,
-      "font-weight": 600
-    }).appendTo(el); // let width = xhtml.textWidth(help, lineText);
-    // 添加输入光标
-
-    var focus = image2D_min('<textarea></textarea>').attr({
-      wrap: "off",
-      autocorrect: "off",
-      autocapitalize: "off",
-      spellcheck: "false"
-    }).css({
-      position: "absolute",
-      // left: (40 + width) + "px",
-      // top: (10 + lineNum * 21) + "px",
-      width: "20px",
-      height: "21px",
-      "line-height": "21px",
-      resize: "none",
-      overflow: "hidden",
-      padding: "0",
-      outline: "none",
-      border: "none",
-      background: "#ff000000",
-      color: colors.normal
-    }).appendTo(el);
-    image2D_min(el).css({
-      "font-size": "12px",
-      position: "relative",
-      cursor: "text",
-      // 这里必须设置为等宽字体
-      "font-family": "新宋体",
-      "background": colors.background
-    }).bind('click', function () {
-      focus[0].focus();
-    }); // 添加格式化文本显示区域
-
-    var content = image2D_min("<div></div>").css({
-      padding: "10px 0"
-    }).appendTo(el);
-    return {
-      focus: focus,
-      content: content,
-      help: help
-    };
-  }
+  }; // 输入的时候更新光标位置
 
   var updateCursorPosition = function updateCursorPosition(focus, help, text) {
     if (/^\n$/.test(text)) {
@@ -2310,17 +2331,22 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
   function renderView(el, format, colors, textArray) {
     var needUpdate = true,
         lineNum = textArray.length - 1,
-        leftNum = textArray[textArray.length - 1].length;
-    var handler = initView(el, colors, lineNum, textArray[textArray.length - 1]);
+        leftNum = textArray[textArray.length - 1].length; // 初始化视图
+    // 包括必备的光标，输入，显示等dom钩子
+
+    var handler = initView(el, colors, lineNum, textArray[textArray.length - 1]); // 初始化定位光标位置
+
     handler.focus.css({
       left: 40 + xhtml.textWidth(handler.help, textArray[textArray.length - 1]) + "px",
       top: 10 + lineNum * 21 + "px"
-    });
-    handler.focus[0].focus();
+    }); // 输入框聚焦
+
+    handler.focus[0].focus(); // 记录着色结果
+
     var preFormatData = [];
 
-    var update = function update() {
-      var text = handler.focus[0].value;
+    var update = function update(text) {
+      text = text || handler.focus[0].value;
       handler.focus[0].value = ""; // 更新光标位置
 
       updateCursorPosition(handler.focus, handler.help, text);
@@ -2348,34 +2374,51 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
     update();
     handler.focus.bind('format', function () {
       // 更新视图
-      preFormatData = format(text, colors, true);
+      preFormatData = format(textArray.join('\n'), colors, true);
       updateView(handler.content, preFormatData, colors, lineNum);
-    });
+    }); // 中文输入开始
+
     handler.focus.bind('compositionstart', function () {
       needUpdate = false;
-    });
+    }); // 中文输入结束
+
     handler.focus.bind('compositionend', function () {
       needUpdate = true;
       update();
-    });
+    }); // 输入
+
     handler.focus.bind('input', function () {
+      // 如果是中文输入开始，不应该更新
       if (!needUpdate) return;
       update();
     }); // 处理键盘控制
 
     image2D_min(el).bind('keydown', function (event) {
-      console.log(keyString(event));
-
+      // console.log(keyString(event));
       switch (keyString(event)) {
+        case "tab":
+          {
+            // tab用来控制输入多个空格，默认事件需要禁止
+            xhtml.stopPropagation(event);
+            xhtml.preventDefault(event); // 四个空格
+
+            update("    ");
+            break;
+          }
+
         case "up":
           {
-            if (lineNum <= 0) return;
+            // 如果是第一行不需要任何处理
+            if (lineNum <= 0) return; // 向上一行回退
+
             lineNum -= 1;
-            leftNum = textArray[lineNum].length;
+            leftNum = textArray[lineNum].length; // 光标聚焦在改行结尾
+
             handler.focus.css({
               left: 40 + xhtml.textWidth(handler.help, textArray[lineNum]) + "px",
               top: 10 + lineNum * 21 + "px"
-            });
+            }); // 更新编辑行背景
+
             updateView(handler.content, preFormatData, colors, lineNum);
             break;
           }
@@ -2432,10 +2475,11 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
 
               handler.focus.css('left', _leftP2 + "px");
               textArray[lineNum] = textArray[lineNum].substring(0, leftNum) + textArray[lineNum].substring(leftNum + 1);
-            } // 更新视图
+            } // 由于内容改变，需要重新调用着色
 
 
-            preFormatData = format(textArray.join('\n'), colors);
+            preFormatData = format(textArray.join('\n'), colors); // 更新视图
+
             updateView(handler.content, preFormatData, colors, lineNum);
             break;
           }
@@ -2448,11 +2492,12 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
     // 格式化配置
     formatOptions(options); // 启动
 
-    var handler = renderView(options.el, options.format, options.color, options.textArray);
+    var handler = renderView(options.el, options.format, options.color, options.textArray); // 格式化方法
 
     this.format = function () {
       xhtml.trigger(handler.focus[0], 'format');
-    };
+    }; // 获取编辑代码
+
 
     this.valueOf = function () {
       return options.textArray.join('\n');

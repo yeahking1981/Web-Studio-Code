@@ -1,5 +1,6 @@
 import xhtml from './xhtml';
 
+// 输入的时候更新光标位置
 export let updateCursorPosition = (focus, help, text) => {
 
     if (/^\n$/.test(text)) {
