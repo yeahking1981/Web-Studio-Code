@@ -4,14 +4,14 @@
 *
 * author 心叶
 *
-* version 1.2.1
+* version 1.3.1
 *
 * build Fri May 08 2020
 *
 * Copyright yelloxing
 * Released under the MIT license
 *
-* Date:Tue May 12 2020 16:26:09 GMT+0800 (GMT+08:00)
+* Date:Tue May 12 2020 17:38:05 GMT+0800 (GMT+08:00)
 */
 
 "use strict";
@@ -605,12 +605,13 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
         case "backspace":
           {
             if (_this3.__leftNum <= 0) {
-              if (_this3.__lineNum <= 0) return; // 一行的结尾应该删除本行
-
-              _this3._contentArray.splice(_this3.__lineNum, 1);
-
+              if (_this3.__lineNum <= 0) return;
               _this3.__lineNum -= 1;
-              _this3.__leftNum = _this3._contentArray[_this3.__lineNum].length;
+              _this3.__leftNum = _this3._contentArray[_this3.__lineNum].length; // 一行的开头应该删除本行（合并到前一行）
+
+              _this3._contentArray[_this3.__lineNum] += _this3._contentArray[_this3.__lineNum + 1];
+
+              _this3._contentArray.splice(_this3.__lineNum + 1, 1);
             } else {
               _this3.__leftNum -= 1;
               _this3._contentArray[_this3.__lineNum] = _this3._contentArray[_this3.__lineNum].substring(0, _this3.__leftNum) + _this3._contentArray[_this3.__lineNum].substring(_this3.__leftNum + 1);
@@ -723,6 +724,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
   wscode.prototype.$$updateView = updateView;
   wscode.prototype.$$updateCursorPosition = updateCursorPosition;
   wscode.prototype.$$bindEvent = bindEvent;
+  wscode.author = '心叶（yelloxing@gmail.com）';
 
   if ((typeof module === "undefined" ? "undefined" : _typeof(module)) === "object" && _typeof(module.exports) === "object") {
     module.exports = wscode;

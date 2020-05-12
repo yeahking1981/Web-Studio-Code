@@ -173,12 +173,13 @@ export default function () {
 
                 if (this.__leftNum <= 0) {
                     if (this.__lineNum <= 0) return;
-                    // 一行的结尾应该删除本行
-                    this._contentArray.splice(this.__lineNum, 1);
 
                     this.__lineNum -= 1;
                     this.__leftNum = this._contentArray[this.__lineNum].length;
 
+                    // 一行的开头应该删除本行（合并到前一行）
+                    this._contentArray[this.__lineNum] += this._contentArray[this.__lineNum + 1];
+                    this._contentArray.splice(this.__lineNum + 1, 1);
 
                 } else {
                     this.__leftNum -= 1;

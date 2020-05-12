@@ -107,6 +107,8 @@ wscode.prototype.$$updateCursorPosition = updateCursorPosition;
 
 wscode.prototype.$$bindEvent = bindEvent;
 
+wscode.author = '心叶（yelloxing@gmail.com）';
+
 if (typeof module === "object" && typeof module.exports === "object") {
     module.exports = wscode;
 } else {
