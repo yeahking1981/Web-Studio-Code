@@ -11,7 +11,7 @@
 * Copyright yelloxing
 * Released under the MIT license
 *
-* Date:Tue May 12 2020 17:38:05 GMT+0800 (GMT+08:00)
+* Date:Tue May 12 2020 17:51:28 GMT+0800 (GMT+08:00)
 */
 
 "use strict";
@@ -247,7 +247,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
       cursor: "text",
       "font-family": "新宋体",
 
-      /*这里必须设置为等宽字体*/
+      /*默认使用等宽字体*/
       "background": this._colorBackground,
       overflow: "auto"
     });
