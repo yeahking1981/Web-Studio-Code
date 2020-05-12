@@ -19,7 +19,7 @@ export function updateView() {
 
         line.forEach(text => {
 
-            template += "<span style='padding-right:10px;font-weight:600;white-space: pre;color:" + text.color + "'>" + text.content + "</span>";
+            template += "<span style='font-weight:600;white-space: pre;color:" + text.color + "'>" + text.content + "</span>";
 
         });
 

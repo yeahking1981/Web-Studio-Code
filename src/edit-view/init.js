@@ -34,7 +34,7 @@ export function initDom() {
 
     xhtml.css(this.__focusDOM, {
         position: "absolute",
-        width: "20px",
+        width: "6px",
         height: "21px",
         "line-height": "21px",
         resize: "none",

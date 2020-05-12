@@ -4,14 +4,14 @@
 *
 * author 心叶
 *
-* version 1.2.0
+* version 1.2.1
 *
 * build Fri May 08 2020
 *
 * Copyright yelloxing
 * Released under the MIT license
 *
-* Date:Mon May 11 2020 23:22:19 GMT+0800 (GMT+08:00)
+* Date:Tue May 12 2020 09:14:11 GMT+0800 (GMT+08:00)
 */
 
 "use strict";
@@ -256,7 +256,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
     this.__focusDOM = xhtml.appendTo(this._el, "<textarea></textarea>");
     xhtml.css(this.__focusDOM, {
       position: "absolute",
-      width: "20px",
+      width: "6px",
       height: "21px",
       "line-height": "21px",
       resize: "none",
@@ -307,7 +307,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
       template += "<div style='min-width: fit-content;white-space: nowrap;line-height:21px;height:21px;" + bgcolor + "'>";
       template += "<em style='color:" + _this2._colorNumber + ";user-select: none;display:inline-block;font-style:normal;width:35px;text-align:right;margin-right:5px;'>" + (index + 1) + "</em>";
       line.forEach(function (text) {
-        template += "<span style='padding-right:10px;font-weight:600;white-space: pre;color:" + text.color + "'>" + text.content + "</span>";
+        template += "<span style='font-weight:600;white-space: pre;color:" + text.color + "'>" + text.content + "</span>";
       });
       template += "</div>";
     });
