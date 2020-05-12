@@ -11,10 +11,22 @@
 * Copyright yelloxing
 * Released under the MIT license
 *
-* Date:Tue May 12 2020 09:14:11 GMT+0800 (GMT+08:00)
+* Date:Tue May 12 2020 16:26:09 GMT+0800 (GMT+08:00)
 */
 
 "use strict";
+
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
+
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
@@ -317,20 +329,10 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 
 
   function updateCursorPosition(text) {
-    if (/^\n$/.test(text)) {
-      // 如果是回车
-      var preTop = +this.__focusDOM.style.top.replace('px', '');
-      xhtml.css(this.__focusDOM, {
-        top: preTop + 21 + "px",
-        left: "40px"
-      });
-    } else {
-      var preLeft = +this.__focusDOM.style.left.replace('px', '');
-      var width = this.$$textWidth(text);
-      xhtml.css(this.__focusDOM, {
-        left: preLeft + width + "px"
-      });
-    }
+    xhtml.css(this.__focusDOM, {
+      top: this.__lineNum * 21 + 10 + "px",
+      left: 40 + this.$$textWidth(this._contentArray[this.__lineNum].substring(0, this.__leftNum)) + "px"
+    });
   } // 字典表
 
 
@@ -465,10 +467,8 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
       if (topIndex < 0 || topIndex >= _this3._contentArray.length) return;
       _this3.__lineNum = topIndex;
       _this3.__leftNum = _this3._contentArray[_this3.__lineNum].length;
-      xhtml.css(_this3.__focusDOM, {
-        left: 40 + _this3.$$textWidth(_this3._contentArray[_this3.__lineNum]) + "px",
-        top: 10 + _this3.__lineNum * 21 + "px"
-      });
+
+      _this3.$$updateCursorPosition();
 
       _this3.$$updateView();
     });
@@ -476,9 +476,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
     var update = function update(text) {
       // 获取输入内容
       text = text || _this3.__focusDOM.value;
-      _this3.__focusDOM.value = ""; // 更新光标位置
-
-      _this3.$$updateCursorPosition(text);
+      _this3.__focusDOM.value = ""; // 如果输入的是回车，切割文本
 
       if (/^\n$/.test(text)) {
         if (_this3.__leftNum >= _this3._contentArray[_this3.__lineNum].length) {
@@ -491,13 +489,37 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 
         _this3.__lineNum += 1;
         _this3.__leftNum = 0;
-      } else {
-        _this3._contentArray[_this3.__lineNum] = _this3._contentArray[_this3.__lineNum].substring(0, _this3.__leftNum) + text + _this3._contentArray[_this3.__lineNum].substring(_this3.__leftNum);
-        _this3.__leftNum += text.length;
-      } // 着色并更新视图
+      } // 否则就是一堆文本（包括复制来的）
+      else {
+          var textArray = text.split(/\n/); // 如果只有一行文本(分开是为了加速)
+
+          if (textArray.length <= 1) {
+            _this3._contentArray[_this3.__lineNum] = _this3._contentArray[_this3.__lineNum].substring(0, _this3.__leftNum) + text + _this3._contentArray[_this3.__lineNum].substring(_this3.__leftNum);
+            _this3.__leftNum += text.length;
+          } // 如果是复制的多行文本
+          else {
+              var _this3$_contentArray;
+
+              // 需要切割的行两边文本
+              var leftText = _this3._contentArray[_this3.__lineNum].substring(0, _this3.__leftNum);
+
+              var rightText = _this3._contentArray[_this3.__lineNum].substring(_this3.__leftNum); // 旧行文本拼接进来
+
+
+              textArray[0] = leftText + textArray[0];
+              textArray[textArray.length - 1] += rightText; // 新内容记录下来
+
+              (_this3$_contentArray = _this3._contentArray).splice.apply(_this3$_contentArray, [_this3.__lineNum, 1].concat(_toConsumableArray(textArray)));
+
+              _this3.__lineNum += textArray.length - 1;
+              _this3.__leftNum = textArray[textArray.length - 1].length - rightText.length;
+            }
+        } // 着色并更新视图
 
 
       _this3.__formatData = _this3.$shader(_this3._contentArray.join('\n'));
+
+      _this3.$$updateCursorPosition();
 
       _this3.$$updateView();
     }; // 中文输入开始
@@ -536,12 +558,9 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
             if (_this3.__lineNum <= 0) return; // 向上一行回退
 
             _this3.__lineNum -= 1;
-            _this3.__leftNum = _this3._contentArray[_this3.__lineNum].length; // 光标聚焦在改行结尾
+            _this3.__leftNum = _this3._contentArray[_this3.__lineNum].length;
 
-            xhtml.css(_this3.__focusDOM, {
-              left: 40 + _this3.$$textWidth(_this3._contentArray[_this3.__lineNum]) + "px",
-              top: 10 + _this3.__lineNum * 21 + "px"
-            }); // 更新编辑行背景
+            _this3.$$updateCursorPosition();
 
             _this3.$$updateView();
 
@@ -554,10 +573,8 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
             if (_this3.__lineNum >= _this3._contentArray.length - 1) return;
             _this3.__lineNum += 1;
             _this3.__leftNum = _this3._contentArray[_this3.__lineNum].length;
-            xhtml.css(_this3.__focusDOM, {
-              left: 40 + _this3.$$textWidth(_this3._contentArray[_this3.__lineNum]) + "px",
-              top: 10 + _this3.__lineNum * 21 + "px"
-            });
+
+            _this3.$$updateCursorPosition();
 
             _this3.$$updateView();
 
@@ -570,9 +587,8 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
             if (_this3.__leftNum <= 0) return;
             _this3.__leftNum -= 1;
 
-            var leftP = _this3.__focusDOM.style.left.replace('px', '') - _this3.$$textWidth(_this3._contentArray[_this3.__lineNum][_this3.__leftNum]);
+            _this3.$$updateCursorPosition();
 
-            _this3.__focusDOM.style.left = leftP + "px";
             break;
           }
 
@@ -581,9 +597,8 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
             if (_this3.__leftNum >= _this3._contentArray[_this3.__lineNum].length) return;
             _this3.__leftNum += 1;
 
-            var _leftP = _this3.__focusDOM.style.left.replace('px', '') - -_this3.$$textWidth(_this3._contentArray[_this3.__lineNum][_this3.__leftNum - 1]);
+            _this3.$$updateCursorPosition();
 
-            _this3.__focusDOM.style.left = _leftP + "px";
             break;
           }
 
@@ -596,21 +611,15 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 
               _this3.__lineNum -= 1;
               _this3.__leftNum = _this3._contentArray[_this3.__lineNum].length;
-              xhtml.css(_this3.__focusDOM, {
-                left: 40 + _this3.$$textWidth(_this3._contentArray[_this3.__lineNum]) + "px",
-                top: 10 + _this3.__lineNum * 21 + "px"
-              });
             } else {
               _this3.__leftNum -= 1;
-
-              var _leftP2 = _this3.__focusDOM.style.left.replace('px', '') - _this3.$$textWidth(_this3._contentArray[_this3.__lineNum][_this3.__leftNum]);
-
-              _this3.__focusDOM.style.left = _leftP2 + "px";
               _this3._contentArray[_this3.__lineNum] = _this3._contentArray[_this3.__lineNum].substring(0, _this3.__leftNum) + _this3._contentArray[_this3.__lineNum].substring(_this3.__leftNum + 1);
             } // 由于内容改变，需要重新调用着色
 
 
             _this3.__formatData = _this3.$shader(_this3._contentArray.join('\n')); // 更新视图
+
+            _this3.$$updateCursorPosition();
 
             _this3.$$updateView();
 

@@ -35,24 +35,10 @@ export function updateView() {
 
 export function updateCursorPosition(text) {
 
-    if (/^\n$/.test(text)) {
-
-        // 如果是回车
-        let preTop = +this.__focusDOM.style.top.replace('px', '');
-        xhtml.css(this.__focusDOM, {
-            top: (preTop + 21) + "px",
-            left: "40px"
-        });
-
-    } else {
-
-        let preLeft = +this.__focusDOM.style.left.replace('px', '');
-        let width = this.$$textWidth(text);
-
-        xhtml.css(this.__focusDOM, {
-            left: (preLeft + width) + "px"
-        });
-
-    }
+    xhtml.css(this.__focusDOM, {
+        top: (this.__lineNum * 21 + 10) + "px",
+        left: (40 + this.$$textWidth(this._contentArray[this.__lineNum].substring(0, this.__leftNum))) + "px",
+    });
 
 };
+

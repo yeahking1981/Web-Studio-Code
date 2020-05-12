@@ -15,13 +15,9 @@ export default function () {
         if (topIndex < 0 || topIndex >= this._contentArray.length) return;
 
         this.__lineNum = topIndex;
-
         this.__leftNum = this._contentArray[this.__lineNum].length;
-        xhtml.css(this.__focusDOM, {
-            left: (40 + this.$$textWidth(this._contentArray[this.__lineNum])) + "px",
-            top: (10 + this.__lineNum * 21) + "px",
-        });
 
+        this.$$updateCursorPosition();
         this.$$updateView();
     });
 
@@ -29,11 +25,10 @@ export default function () {
 
         // 获取输入内容
         text = text || this.__focusDOM.value;
+
         this.__focusDOM.value = "";
 
-        // 更新光标位置
-        this.$$updateCursorPosition(text);
-
+        // 如果输入的是回车，切割文本
         if (/^\n$/.test(text)) {
 
             if (this.__leftNum >= this._contentArray[this.__lineNum].length) {
@@ -45,14 +40,44 @@ export default function () {
             this.__lineNum += 1;
             this.__leftNum = 0;
 
-        } else {
-            this._contentArray[this.__lineNum] = this._contentArray[this.__lineNum].substring(0, this.__leftNum) + text + this._contentArray[this.__lineNum].substring(this.__leftNum);
-            this.__leftNum += text.length;
+        }
+
+        // 否则就是一堆文本（包括复制来的）
+        else {
+
+            let textArray = text.split(/\n/);
+
+            // 如果只有一行文本(分开是为了加速)
+            if (textArray.length <= 1) {
+                this._contentArray[this.__lineNum] = this._contentArray[this.__lineNum].substring(0, this.__leftNum) + text + this._contentArray[this.__lineNum].substring(this.__leftNum);
+                this.__leftNum += text.length;
+            }
+
+            // 如果是复制的多行文本
+            else {
+
+                // 需要切割的行两边文本
+                let leftText = this._contentArray[this.__lineNum].substring(0, this.__leftNum);
+                let rightText = this._contentArray[this.__lineNum].substring(this.__leftNum);
+
+                // 旧行文本拼接进来
+                textArray[0] = leftText + textArray[0];
+                textArray[textArray.length - 1] += rightText;
+
+                // 新内容记录下来
+                this._contentArray.splice(this.__lineNum, 1, ...textArray);
+
+                this.__lineNum += (textArray.length - 1);
+                this.__leftNum = textArray[textArray.length - 1].length - rightText.length;
+
+            }
+
         }
 
         // 着色并更新视图
 
         this.__formatData = this.$shader(this._contentArray.join('\n'));
+        this.$$updateCursorPosition();
         this.$$updateView();
 
     };
@@ -102,13 +127,7 @@ export default function () {
                 this.__lineNum -= 1;
                 this.__leftNum = this._contentArray[this.__lineNum].length;
 
-                // 光标聚焦在改行结尾
-                xhtml.css(this.__focusDOM, {
-                    left: (40 + this.$$textWidth(this._contentArray[this.__lineNum])) + "px",
-                    top: (10 + this.__lineNum * 21) + "px",
-                });
-
-                // 更新编辑行背景
+                this.$$updateCursorPosition();
                 this.$$updateView();
 
                 this._el.scrollTop -= 21;
@@ -121,10 +140,8 @@ export default function () {
                 if (this.__lineNum >= this._contentArray.length - 1) return;
                 this.__lineNum += 1;
                 this.__leftNum = this._contentArray[this.__lineNum].length;
-                xhtml.css(this.__focusDOM, {
-                    left: (40 + this.$$textWidth(this._contentArray[this.__lineNum])) + "px",
-                    top: (10 + this.__lineNum * 21) + "px",
-                });
+
+                this.$$updateCursorPosition();
                 this.$$updateView();
 
                 this._el.scrollTop += 21;
@@ -136,8 +153,8 @@ export default function () {
 
                 if (this.__leftNum <= 0) return;
                 this.__leftNum -= 1;
-                let leftP = this.__focusDOM.style.left.replace('px', '') - this.$$textWidth(this._contentArray[this.__lineNum][this.__leftNum]);
-                this.__focusDOM.style.left = leftP + "px";
+
+                this.$$updateCursorPosition();
 
                 break;
             }
@@ -146,8 +163,8 @@ export default function () {
 
                 if (this.__leftNum >= this._contentArray[this.__lineNum].length) return;
                 this.__leftNum += 1;
-                let leftP = this.__focusDOM.style.left.replace('px', '') - -this.$$textWidth(this._contentArray[this.__lineNum][this.__leftNum - 1]);
-                this.__focusDOM.style.left = leftP + "px";
+
+                this.$$updateCursorPosition();
 
                 break;
             }
@@ -161,15 +178,10 @@ export default function () {
 
                     this.__lineNum -= 1;
                     this.__leftNum = this._contentArray[this.__lineNum].length;
-                    xhtml.css(this.__focusDOM, {
-                        left: (40 + this.$$textWidth(this._contentArray[this.__lineNum])) + "px",
-                        top: (10 + this.__lineNum * 21) + "px",
-                    });
+
 
                 } else {
                     this.__leftNum -= 1;
-                    let leftP = this.__focusDOM.style.left.replace('px', '') - this.$$textWidth(this._contentArray[this.__lineNum][this.__leftNum]);
-                    this.__focusDOM.style.left = leftP + "px";
                     this._contentArray[this.__lineNum] = this._contentArray[this.__lineNum].substring(0, this.__leftNum) + this._contentArray[this.__lineNum].substring(this.__leftNum + 1);
                 }
 
@@ -177,6 +189,7 @@ export default function () {
                 this.__formatData = this.$shader(this._contentArray.join('\n'));
 
                 // 更新视图
+                this.$$updateCursorPosition();
                 this.$$updateView();
 
                 break;
