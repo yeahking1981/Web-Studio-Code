@@ -8,7 +8,7 @@ export function initDom() {
         "font-size": "12px",
         position: "relative",
         cursor: "text",
-        "font-family": "新宋体",/*默认使用等宽字体*/
+        "font-family": this._fontFamily,
         "background": this._colorBackground,
         overflow: "auto"
     });

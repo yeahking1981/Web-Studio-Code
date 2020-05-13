@@ -4,14 +4,14 @@
 *
 * author 心叶
 *
-* version 1.3.2
+* version 1.3.3
 *
 * build Fri May 08 2020
 *
 * Copyright yelloxing
 * Released under the MIT license
 *
-* Date:Wed May 13 2020 09:52:13 GMT+0800 (GMT+08:00)
+* Date:Wed May 13 2020 16:58:48 GMT+0800 (GMT+08:00)
 */
 
 "use strict";
@@ -146,6 +146,23 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
   function textWidth(text) {
     this.__helpDOM.innerText = text;
     return this.__helpDOM.offsetWidth;
+  } // 计算最佳光标左边位置
+
+
+  function bestLeftNum(x) {
+    var text = this._contentArray[this.__lineNum];
+    if (x <= 40) return 0;
+    if (x - 40 >= this.$$textWidth(text)) return text.length;
+    var dist = x - 40,
+        i = 1;
+
+    for (; i < text.length; i++) {
+      var tempDist = Math.abs(x - 40 - this.$$textWidth(text.substr(0, i)));
+      if (tempDist > dist) break;
+      dist = tempDist;
+    }
+
+    return i - 1;
   }
 
   var xhtml = {
@@ -246,9 +263,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
       "font-size": "12px",
       position: "relative",
       cursor: "text",
-      "font-family": "新宋体",
-
-      /*默认使用等宽字体*/
+      "font-family": this._fontFamily,
       "background": this._colorBackground,
       overflow: "auto"
     });
@@ -476,7 +491,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 
       if (topIndex < 0 || topIndex >= _this3._contentArray.length) return;
       _this3.__lineNum = topIndex;
-      _this3.__leftNum = _this3._contentArray[_this3.__lineNum].length;
+      _this3.__leftNum = _this3.$$bestLeftNum(position.x);
 
       _this3.$$updateCursorPosition();
 
@@ -668,6 +683,9 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 
       this._colorEdit = options.color.edit || "#eaeaf1";
       /*编辑行颜色*/
+
+      this._fontFamily = options["font-family"] || "新宋体";
+      /*字体*/
       // 文本
 
       this._contentArray = isString(options.content) ? (options.content + "").split("\n") : [""]; // 着色方法
@@ -727,7 +745,8 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
   }; // 挂载辅助方法
 
 
-  wscode.prototype.$$textWidth = textWidth; // 挂载核心方法
+  wscode.prototype.$$textWidth = textWidth;
+  wscode.prototype.$$bestLeftNum = bestLeftNum; // 挂载核心方法
 
   wscode.prototype.$$initDom = initDom;
   wscode.prototype.$$initView = initView;

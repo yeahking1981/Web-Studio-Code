@@ -20,6 +20,9 @@ var wscode = new WSCode({
     // 初始化文本（可选）
     content:"初始化文本内容",
 
+    // 编辑器字体（可选）
+    "font-family": "默认新宋体",
+
     // 着色方法（可选，默认不特殊着色）
     shader:function(textString){
         return [

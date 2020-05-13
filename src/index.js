@@ -2,7 +2,7 @@ import isElement from '@yelloxing/core.js/isElement';
 import isString from '@yelloxing/core.js/isString';
 import isFunction from '@yelloxing/core.js/isFunction';
 
-import { textWidth } from './edit-view/tool';
+import { textWidth, bestLeftNum } from './edit-view/tool';
 
 import { initDom, initView } from './edit-view/init';
 import { updateView, updateCursorPosition } from './edit-view/update';
@@ -31,6 +31,7 @@ let wscode = function (options) {
         this._colorText = options.color.text || "#000"; /*普通文本颜色*/
         this._colorNumber = options.color.number || "#888484"; /*行号颜色*/
         this._colorEdit = options.color.edit || "#eaeaf1"; /*编辑行颜色*/
+        this._fontFamily = options["font-family"] || "新宋体"; /*字体*/
 
         // 文本
         this._contentArray = isString(options.content) ? (options.content + "").split("\n") : [""];
@@ -96,6 +97,7 @@ let wscode = function (options) {
 
 // 挂载辅助方法
 wscode.prototype.$$textWidth = textWidth;
+wscode.prototype.$$bestLeftNum = bestLeftNum;
 
 // 挂载核心方法
 

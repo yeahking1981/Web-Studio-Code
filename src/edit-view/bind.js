@@ -15,7 +15,7 @@ export default function () {
         if (topIndex < 0 || topIndex >= this._contentArray.length) return;
 
         this.__lineNum = topIndex;
-        this.__leftNum = this._contentArray[this.__lineNum].length;
+        this.__leftNum = this.$$bestLeftNum(position.x);
 
         this.$$updateCursorPosition();
         this.$$updateView();
