@@ -93,11 +93,13 @@ export default {
 
         if (!event || !event.clientX)
             throw new Error('Event is necessary!');
-        return {
+        let temp = {
 
             // 鼠标相对元素位置 = 鼠标相对窗口坐标 - 元素相对窗口坐标
-            "x": event.clientX - bounding.left,
-            "y": event.clientY - bounding.top
+            "x": event.clientX - bounding.left + el.scrollLeft,
+            "y": event.clientY - bounding.top + el.scrollTop
         };
+
+        return temp;
     }
 };

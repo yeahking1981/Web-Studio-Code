@@ -4,14 +4,14 @@
 *
 * author 心叶
 *
-* version 1.3.1
+* version 1.3.2
 *
 * build Fri May 08 2020
 *
 * Copyright yelloxing
 * Released under the MIT license
 *
-* Date:Tue May 12 2020 17:51:28 GMT+0800 (GMT+08:00)
+* Date:Wed May 13 2020 09:52:13 GMT+0800 (GMT+08:00)
 */
 
 "use strict";
@@ -230,11 +230,12 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 
       var bounding = el.getBoundingClientRect();
       if (!event || !event.clientX) throw new Error('Event is necessary!');
-      return {
+      var temp = {
         // 鼠标相对元素位置 = 鼠标相对窗口坐标 - 元素相对窗口坐标
-        "x": event.clientX - bounding.left,
-        "y": event.clientY - bounding.top
+        "x": event.clientX - bounding.left + el.scrollLeft,
+        "y": event.clientY - bounding.top + el.scrollTop
       };
+      return temp;
     }
   }; // 初始化结点
 
@@ -319,7 +320,16 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
       template += "<div style='min-width: fit-content;white-space: nowrap;line-height:21px;height:21px;" + bgcolor + "'>";
       template += "<em style='color:" + _this2._colorNumber + ";user-select: none;display:inline-block;font-style:normal;width:35px;text-align:right;margin-right:5px;'>" + (index + 1) + "</em>";
       line.forEach(function (text) {
-        template += "<span style='font-weight:600;white-space: pre;color:" + text.color + "'>" + text.content + "</span>";
+        var contentText = text.content; // 提前对特殊字符进行处理
+
+        contentText = contentText.replace(/\&/g, "&amp;");
+        /*[&]*/
+
+        contentText = contentText.replace(/</g, "&lt;");
+        contentText = contentText.replace(/>/g, "&gt;");
+        /*[<,>]*/
+
+        template += "<span style='font-weight:600;white-space: pre;color:" + text.color + "'>" + contentText + "</span>";
       });
       template += "</div>";
     });

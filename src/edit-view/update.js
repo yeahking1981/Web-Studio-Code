@@ -19,7 +19,13 @@ export function updateView() {
 
         line.forEach(text => {
 
-            template += "<span style='font-weight:600;white-space: pre;color:" + text.color + "'>" + text.content + "</span>";
+            let contentText = text.content;
+
+            // 提前对特殊字符进行处理
+            contentText = contentText.replace(/\&/g, "&amp;");/*[&]*/
+            contentText = contentText.replace(/</g, "&lt;"); contentText = contentText.replace(/>/g, "&gt;");/*[<,>]*/
+
+            template += "<span style='font-weight:600;white-space: pre;color:" + text.color + "'>" + contentText + "</span>";
 
         });
 
