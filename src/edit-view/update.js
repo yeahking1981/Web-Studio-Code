@@ -25,7 +25,7 @@ export function updateView() {
             contentText = contentText.replace(/\&/g, "&amp;");/*[&]*/
             contentText = contentText.replace(/</g, "&lt;"); contentText = contentText.replace(/>/g, "&gt;");/*[<,>]*/
 
-            template += "<span style='font-weight:600;white-space: pre;color:" + text.color + "'>" + contentText + "</span>";
+            template += "<span style='font-weight:" + this._fontWeight + ";white-space: pre;color:" + text.color + "'>" + contentText + "</span>";
 
         });
 

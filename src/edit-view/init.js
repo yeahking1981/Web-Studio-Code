@@ -26,7 +26,7 @@ export function initDom() {
         "white-space": "pre",
         "top": 0,
         "left": 0,
-        "font-weight": 600
+        "font-weight": this._fontWeight
     });
 
     // 光标
@@ -35,15 +35,16 @@ export function initDom() {
     xhtml.css(this.__focusDOM, {
         position: "absolute",
         width: "6px",
-        height: "21px",
-        "line-height": "21px",
+        "margin-top": "3px",
+        height: "15px",
+        "line-height": "15px",
         resize: "none",
         overflow: "hidden",
         padding: "0",
         outline: "none",
         border: "none",
-        background: "#0000",
-        color: this._colorText
+        background: "rgba(0,0,0,0)",
+        color: this._colorCursor
     });
 
     xhtml.attr(this.__focusDOM, {

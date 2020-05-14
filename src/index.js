@@ -28,10 +28,13 @@ let wscode = function (options) {
         // 着色
         options.color = options.color || {};
         this._colorBackground = options.color.background || "#d6d6e4"; /*编辑器背景*/
-        this._colorText = options.color.text || "#000"; /*普通文本颜色*/
+        this._colorText = options.color.text || "#000000"; /*普通文本颜色*/
         this._colorNumber = options.color.number || "#888484"; /*行号颜色*/
         this._colorEdit = options.color.edit || "#eaeaf1"; /*编辑行颜色*/
+        this._colorCursor = options.color.cursor || "#ff0000"; /*光标颜色*/
         this._fontFamily = options["font-family"] || "新宋体"; /*字体*/
+        this._fontWeight = options["font-weight"] || 600;/*字重*/
+        this._tabSpace = options.tabSpace || 4;/*设置一个tab表示多少个空格*/
 
         // 文本
         this._contentArray = isString(options.content) ? (options.content + "").split("\n") : [""];

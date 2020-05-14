@@ -85,11 +85,15 @@ export default function () {
     // 中文输入开始
     xhtml.bind(this.__focusDOM, 'compositionstart', () => {
         this.__needUpdate = false;
+        this.__focusDOM.style.color = "rgba(0,0,0,0)";
+        this.__focusDOM.style.borderLeft = '1px solid ' + this._colorCursor;
     });
 
     // 中文输入结束
     xhtml.bind(this.__focusDOM, 'compositionend', () => {
         this.__needUpdate = true;
+        this.__focusDOM.style.color = this._colorCursor;
+        this.__focusDOM.style.borderLeft = "none";
         update();
     });
 
@@ -112,8 +116,11 @@ export default function () {
                 xhtml.stopPropagation(event);
                 xhtml.preventDefault(event);
 
-                // 四个空格
-                update("    ");
+                // 计算空格
+                let blanks = "";
+                for (let i = 0; i < this._tabSpace; i++) blanks += " ";
+
+                update(blanks);
 
                 break;
             }
@@ -123,9 +130,10 @@ export default function () {
                 // 如果是第一行不需要任何处理
                 if (this.__lineNum <= 0) return;
 
-                // 向上一行回退
+                this.__leftNum = this.$$bestLeftNum(this.$$textWidth("", true) + 40);
+
+                // 向上一行
                 this.__lineNum -= 1;
-                this.__leftNum = this._contentArray[this.__lineNum].length;
 
                 this.$$updateCursorPosition();
                 this.$$updateView();
@@ -138,8 +146,11 @@ export default function () {
             case "down": {
 
                 if (this.__lineNum >= this._contentArray.length - 1) return;
+
+                this.__leftNum = this.$$bestLeftNum(this.$$textWidth("", true) + 40);
+
+                // 向下一行
                 this.__lineNum += 1;
-                this.__leftNum = this._contentArray[this.__lineNum].length;
 
                 this.$$updateCursorPosition();
                 this.$$updateView();
@@ -151,8 +162,13 @@ export default function () {
 
             case "left": {
 
-                if (this.__leftNum <= 0) return;
-                this.__leftNum -= 1;
+                if (this.__leftNum <= 0) {
+                    if (this.__lineNum <= 0) return;
+                    this.__lineNum -= 1;
+                    this.__leftNum = this._contentArray[this.__lineNum].length;
+                } else {
+                    this.__leftNum -= 1;
+                }
 
                 this.$$updateCursorPosition();
 
@@ -161,8 +177,13 @@ export default function () {
 
             case "right": {
 
-                if (this.__leftNum >= this._contentArray[this.__lineNum].length) return;
-                this.__leftNum += 1;
+                if (this.__leftNum >= this._contentArray[this.__lineNum].length) {
+                    if (this.__lineNum >= this._contentArray.length - 1) return;
+                    this.__lineNum += 1;
+                    this.__leftNum = 0;
+                } else {
+                    this.__leftNum += 1;
+                }
 
                 this.$$updateCursorPosition();
 

@@ -20,8 +20,11 @@ var wscode = new WSCode({
     // 初始化文本（可选）
     content:"初始化文本内容",
 
-    // 编辑器字体（可选）
-    "font-family": "默认新宋体",
+    // 编辑器字体（可选，默认"新宋体"）
+    "font-family": string,
+
+    // 编辑器字重（可选，默认600）
+    "font-weight": number,
 
     // 着色方法（可选，默认不特殊着色）
     shader:function(textString){
@@ -43,10 +46,15 @@ var wscode = new WSCode({
     // 设置颜色（可选）
     color: {
         background:"#d6d6e4", /*编辑器背景*/
-        text : "#000", /*文本颜色*/
+        text : "#000000", /*文本颜色*/
         number:"#888484", /*行号颜色*/
         edit:"#eaeaf1", /*编辑行背景色*/
-    }
+        cursor:"#ff0000", /*光标颜色*/
+    },
+
+    // 设置一个tab表示多少个空格（可选，默认4）
+    tabSpace:number
+
 });
 ```
 

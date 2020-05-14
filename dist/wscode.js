@@ -4,14 +4,14 @@
 *
 * author 心叶
 *
-* version 1.3.3
+* version 1.3.4
 *
 * build Fri May 08 2020
 *
 * Copyright yelloxing
 * Released under the MIT license
 *
-* Date:Wed May 13 2020 16:58:48 GMT+0800 (GMT+08:00)
+* Date:Thu May 14 2020 11:21:58 GMT+0800 (GMT+08:00)
 */
 
 "use strict";
@@ -143,8 +143,11 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
   } // 计算文字长度
 
 
-  function textWidth(text) {
-    this.__helpDOM.innerText = text;
+  function textWidth(text, flag) {
+    if (!flag) {
+      this.__helpDOM.innerText = text;
+    }
+
     return this.__helpDOM.offsetWidth;
   } // 计算最佳光标左边位置
 
@@ -278,22 +281,23 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
       "white-space": "pre",
       "top": 0,
       "left": 0,
-      "font-weight": 600
+      "font-weight": this._fontWeight
     }); // 光标
 
     this.__focusDOM = xhtml.appendTo(this._el, "<textarea></textarea>");
     xhtml.css(this.__focusDOM, {
       position: "absolute",
       width: "6px",
-      height: "21px",
-      "line-height": "21px",
+      "margin-top": "3px",
+      height: "15px",
+      "line-height": "15px",
       resize: "none",
       overflow: "hidden",
       padding: "0",
       outline: "none",
       border: "none",
-      background: "#0000",
-      color: this._colorText
+      background: "rgba(0,0,0,0)",
+      color: this._colorCursor
     });
     xhtml.attr(this.__focusDOM, {
       wrap: "off",
@@ -344,7 +348,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
         contentText = contentText.replace(/>/g, "&gt;");
         /*[<,>]*/
 
-        template += "<span style='font-weight:600;white-space: pre;color:" + text.color + "'>" + contentText + "</span>";
+        template += "<span style='font-weight:" + _this2._fontWeight + ";white-space: pre;color:" + text.color + "'>" + contentText + "</span>";
       });
       template += "</div>";
     });
@@ -552,10 +556,14 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 
     xhtml.bind(this.__focusDOM, 'compositionstart', function () {
       _this3.__needUpdate = false;
+      _this3.__focusDOM.style.color = "rgba(0,0,0,0)";
+      _this3.__focusDOM.style.borderLeft = '1px solid ' + _this3._colorCursor;
     }); // 中文输入结束
 
     xhtml.bind(this.__focusDOM, 'compositionend', function () {
       _this3.__needUpdate = true;
+      _this3.__focusDOM.style.color = _this3._colorCursor;
+      _this3.__focusDOM.style.borderLeft = "none";
       update();
     }); // 输入
 
@@ -571,19 +579,25 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
           {
             // tab用来控制输入多个空格，默认事件需要禁止
             xhtml.stopPropagation(event);
-            xhtml.preventDefault(event); // 四个空格
+            xhtml.preventDefault(event); // 计算空格
 
-            update("    ");
+            var blanks = "";
+
+            for (var i = 0; i < _this3._tabSpace; i++) {
+              blanks += " ";
+            }
+
+            update(blanks);
             break;
           }
 
         case "up":
           {
             // 如果是第一行不需要任何处理
-            if (_this3.__lineNum <= 0) return; // 向上一行回退
+            if (_this3.__lineNum <= 0) return;
+            _this3.__leftNum = _this3.$$bestLeftNum(_this3.$$textWidth("", true) + 40); // 向上一行
 
             _this3.__lineNum -= 1;
-            _this3.__leftNum = _this3._contentArray[_this3.__lineNum].length;
 
             _this3.$$updateCursorPosition();
 
@@ -596,8 +610,9 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
         case "down":
           {
             if (_this3.__lineNum >= _this3._contentArray.length - 1) return;
+            _this3.__leftNum = _this3.$$bestLeftNum(_this3.$$textWidth("", true) + 40); // 向下一行
+
             _this3.__lineNum += 1;
-            _this3.__leftNum = _this3._contentArray[_this3.__lineNum].length;
 
             _this3.$$updateCursorPosition();
 
@@ -609,8 +624,13 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 
         case "left":
           {
-            if (_this3.__leftNum <= 0) return;
-            _this3.__leftNum -= 1;
+            if (_this3.__leftNum <= 0) {
+              if (_this3.__lineNum <= 0) return;
+              _this3.__lineNum -= 1;
+              _this3.__leftNum = _this3._contentArray[_this3.__lineNum].length;
+            } else {
+              _this3.__leftNum -= 1;
+            }
 
             _this3.$$updateCursorPosition();
 
@@ -619,8 +639,13 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 
         case "right":
           {
-            if (_this3.__leftNum >= _this3._contentArray[_this3.__lineNum].length) return;
-            _this3.__leftNum += 1;
+            if (_this3.__leftNum >= _this3._contentArray[_this3.__lineNum].length) {
+              if (_this3.__lineNum >= _this3._contentArray.length - 1) return;
+              _this3.__lineNum += 1;
+              _this3.__leftNum = 0;
+            } else {
+              _this3.__leftNum += 1;
+            }
 
             _this3.$$updateCursorPosition();
 
@@ -675,7 +700,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
       this._colorBackground = options.color.background || "#d6d6e4";
       /*编辑器背景*/
 
-      this._colorText = options.color.text || "#000";
+      this._colorText = options.color.text || "#000000";
       /*普通文本颜色*/
 
       this._colorNumber = options.color.number || "#888484";
@@ -684,8 +709,17 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
       this._colorEdit = options.color.edit || "#eaeaf1";
       /*编辑行颜色*/
 
+      this._colorCursor = options.color.cursor || "#ff0000";
+      /*光标颜色*/
+
       this._fontFamily = options["font-family"] || "新宋体";
       /*字体*/
+
+      this._fontWeight = options["font-weight"] || 600;
+      /*字重*/
+
+      this._tabSpace = options.tabSpace || 4;
+      /*设置一个tab表示多少个空格*/
       // 文本
 
       this._contentArray = isString(options.content) ? (options.content + "").split("\n") : [""]; // 着色方法
