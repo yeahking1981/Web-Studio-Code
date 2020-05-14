@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="../dist/wscode.js"></script>
+    <title>javascript测试 | Web Studio Code</title>
+
+    <style>
+        div#wscode {
+            width: 800px;
+            height: 600px;
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <div id="wscode"></div>
+
+    <script>
+        window.wscode = new WSCode({
+
+            // 编辑器挂载点
+            el: document.getElementById('wscode'),
+
+            // 设置语言
+            lang: {
+                type: "javascript",
+                color: {
+                    key: "red"
+                }
+            }
+
+        });
+
+        console.log(wscode);
+    </script>
+
+</body>
+
+</html>

@@ -8,6 +8,17 @@ import { initDom, initView } from './edit-view/init';
 import { updateView, updateCursorPosition } from './edit-view/update';
 import bindEvent from './edit-view/bind';
 
+// 引入内置的语言支持
+
+import html_shader from './lang/html/shader';
+import html_format from './lang/html/format';
+
+import css_shader from './lang/css/shader';
+import css_format from './lang/css/format';
+
+import javascript_shader from './lang/javascript/shader';
+import javascript_format from './lang/javascript/format';
+
 let wscode = function (options) {
 
     /**
@@ -23,6 +34,26 @@ let wscode = function (options) {
     // 编辑器挂载点
     if (isElement(options.el)) {
 
+        // 着色器
+        let shader = {
+            html: html_shader,
+            css: css_shader,
+            javascript: javascript_shader,
+            normal: () => {
+                let resultData = [];
+                this._contentArray.forEach(text => { resultData.push([{ content: text, color: this._colorText }]); });
+                return resultData;
+            }
+        };
+
+        // 格式化
+        let format = {
+            html: html_format,
+            css: css_format,
+            javascript: javascript_format,
+            normal: textString => textString
+        };
+
         this._el = options.el;
 
         // 着色
@@ -36,18 +67,19 @@ let wscode = function (options) {
         this._fontWeight = options["font-weight"] || 600;/*字重*/
         this._tabSpace = options.tabSpace || 4;/*设置一个tab表示多少个空格*/
 
+        // 语言类型
+        let lang = options.lang || {};
+        this._langType = lang.type || "normal"; /*默认普通文本*/
+        this._langColors = lang.color || {}; this._langColors.text = this._colorText;
+
         // 文本
         this._contentArray = isString(options.content) ? (options.content + "").split("\n") : [""];
 
         // 着色方法
-        this.$shader = isFunction(options.shader) ? options.shader : () => {
-            let resultData = [];
-            this._contentArray.forEach(text => { resultData.push([{ content: text, color: this._colorText }]); });
-            return resultData;
-        };
+        this.$shader = isFunction(options.shader) ? options.shader : shader[this._langType];
 
         // 格式化方法
-        this.$format = isFunction(options.format) ? options.format : textString => textString;
+        this.$format = isFunction(options.format) ? options.format : format[this._langType];
 
     } else {
 
@@ -62,7 +94,7 @@ let wscode = function (options) {
     this.__needUpdate = true;
     this.__lineNum = this._contentArray.length - 1;
     this.__leftNum = this._contentArray[this.__lineNum].length;
-    this.__formatData = this.$shader(this._contentArray.join('\n'));
+    this.__formatData = this.$shader(this._contentArray.join('\n'), this._langColors);
 
     // 初始化视图
     this.$$initView();
@@ -86,7 +118,7 @@ let wscode = function (options) {
         this.__leftNum = this._contentArray[this.__lineNum].length;
 
         // 着色
-        this.__formatData = this.$shader(this._contentArray.join('\n'));
+        this.__formatData = this.$shader(this._contentArray.join('\n'), this._langColors);
 
         // 更新视图
         this.$$updateView();

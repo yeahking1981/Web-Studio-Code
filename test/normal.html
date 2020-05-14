@@ -5,17 +5,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <script src="./dist/wscode.js"></script>
-    <title>Web Studio Code</title>
+    <script src="../dist/wscode.js"></script>
+    <title>普通文本测试 | Web Studio Code</title>
 
     <style>
-        body {
-            margin: 0;
-        }
-
         div#wscode {
-            width: 100vw;
-            height: 100vh;
+            width: 800px;
+            height: 600px;
         }
     </style>
 
@@ -37,10 +33,14 @@
             // 设置字重
             "font-weight": 800,
 
-            tabSpace: 2,
+            tabSpace: 4,
+
+            // shader: function (textString, colors) {
+            //     debugger
+            // },
 
             // 初始化文本
-            content: "// git+https://github.com/yelloxing/Web-Studio-Code.git\n// Web Studio Code:🎉 An Editor Used on the Browser Side.\n\n/**\n * Developed by 心叶（yelloxing@gmail.com）\n*/\n\nfunction doit(){\n  console.log('你好，世界！');\n}"
+            content: "请随便输入内容"
         });
 
         console.log(wscode);

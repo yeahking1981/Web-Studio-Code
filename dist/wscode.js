@@ -11,7 +11,7 @@
 * Copyright yelloxing
 * Released under the MIT license
 *
-* Date:Thu May 14 2020 11:21:58 GMT+0800 (GMT+08:00)
+* Date:Thu May 14 2020 17:27:14 GMT+0800 (GMT+08:00)
 */
 
 "use strict";
@@ -546,7 +546,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
         } // 着色并更新视图
 
 
-      _this3.__formatData = _this3.$shader(_this3._contentArray.join('\n'));
+      _this3.__formatData = _this3.$shader(_this3._contentArray.join('\n'), _this3._langColors);
 
       _this3.$$updateCursorPosition();
 
@@ -668,7 +668,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
             } // 由于内容改变，需要重新调用着色
 
 
-            _this3.__formatData = _this3.$shader(_this3._contentArray.join('\n')); // 更新视图
+            _this3.__formatData = _this3.$shader(_this3._contentArray.join('\n'), _this3._langColors); // 更新视图
 
             _this3.$$updateCursorPosition();
 
@@ -678,6 +678,30 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
           }
       }
     });
+  }
+
+  function html_shader(textString, colors) {
+    return [];
+  }
+
+  function html_format(textString) {
+    return textString;
+  }
+
+  function css_shader(textString, colors) {
+    return [];
+  }
+
+  function css_format(textString) {
+    return textString;
+  }
+
+  function javascript_shader(textString, colors) {
+    return [];
+  }
+
+  function javascript_format(textString) {
+    return textString;
   }
 
   var wscode = function wscode(options) {
@@ -694,6 +718,33 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
      */
     // 编辑器挂载点
     if (isElement(options.el)) {
+      // 着色器
+      var shader = {
+        html: html_shader,
+        css: css_shader,
+        javascript: javascript_shader,
+        normal: function normal() {
+          var resultData = [];
+
+          _this4._contentArray.forEach(function (text) {
+            resultData.push([{
+              content: text,
+              color: _this4._colorText
+            }]);
+          });
+
+          return resultData;
+        }
+      }; // 格式化
+
+      var format = {
+        html: html_format,
+        css: css_format,
+        javascript: javascript_format,
+        normal: function normal(textString) {
+          return textString;
+        }
+      };
       this._el = options.el; // 着色
 
       options.color = options.color || {};
@@ -720,26 +771,20 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 
       this._tabSpace = options.tabSpace || 4;
       /*设置一个tab表示多少个空格*/
-      // 文本
+      // 语言类型
+
+      var lang = options.lang || {};
+      this._langType = lang.type || "normal";
+      /*默认普通文本*/
+
+      this._langColors = lang.color || {};
+      this._langColors.text = this._colorText; // 文本
 
       this._contentArray = isString(options.content) ? (options.content + "").split("\n") : [""]; // 着色方法
 
-      this.$shader = isFunction(options.shader) ? options.shader : function () {
-        var resultData = [];
+      this.$shader = isFunction(options.shader) ? options.shader : shader[this._langType]; // 格式化方法
 
-        _this4._contentArray.forEach(function (text) {
-          resultData.push([{
-            content: text,
-            color: _this4._colorText
-          }]);
-        });
-
-        return resultData;
-      }; // 格式化方法
-
-      this.$format = isFunction(options.format) ? options.format : function (textString) {
-        return textString;
-      };
+      this.$format = isFunction(options.format) ? options.format : format[this._langType];
     } else {
       // 挂载点是必须的，一定要有
       throw new Error('options.el is not a element!');
@@ -751,7 +796,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
     this.__needUpdate = true;
     this.__lineNum = this._contentArray.length - 1;
     this.__leftNum = this._contentArray[this.__lineNum].length;
-    this.__formatData = this.$shader(this._contentArray.join('\n')); // 初始化视图
+    this.__formatData = this.$shader(this._contentArray.join('\n'), this._langColors); // 初始化视图
 
     this.$$initView(); // 更新视图
 
@@ -769,7 +814,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
       _this4.__lineNum = _this4._contentArray.length - 1;
       _this4.__leftNum = _this4._contentArray[_this4.__lineNum].length; // 着色
 
-      _this4.__formatData = _this4.$shader(_this4._contentArray.join('\n')); // 更新视图
+      _this4.__formatData = _this4.$shader(_this4._contentArray.join('\n'), _this4._langColors); // 更新视图
 
       _this4.$$updateView(); // 更新光标位置
 

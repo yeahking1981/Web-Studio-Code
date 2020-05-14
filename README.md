@@ -27,7 +27,7 @@ var wscode = new WSCode({
     "font-weight": number,
 
     // 着色方法（可选，默认不特殊着色）
-    shader:function(textString){
+    shader:function(textString, colors){
         return [
             [{
                 content:"内容",
@@ -53,7 +53,19 @@ var wscode = new WSCode({
     },
 
     // 设置一个tab表示多少个空格（可选，默认4）
-    tabSpace:number
+    tabSpace:number,
+
+    // 除了通过传递shader和format的方式实现着色和格式化外
+    // 你还可以使用内置提供的语言来实现
+    // （特别提醒：shader和format的优先级均高于这里）
+    lang:{
+
+        // 目前支持的语言
+        type:'html'|'css'|'javascript',
+        color:{
+            
+        }
+    }
 
 });
 ```
