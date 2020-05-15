@@ -60,6 +60,18 @@ export function initDom() {
     xhtml.css(this.__showDOM, {
         padding: "10px 0"
     });
+
+    // 选中区域
+    this.__selectCanvas = xhtml.appendTo(this._el, "<canvas></canvas>");
+
+    xhtml.css(this.__selectCanvas, {
+        width: (this._el.scrollWidth - 40) + "px",
+        height: (this._el.scrollHeight - 10) + "px",
+        position: "absolute",
+        left: "40px",
+        top: "10px"
+    });
+
 };
 
 // 初始化视图

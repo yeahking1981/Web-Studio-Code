@@ -5,7 +5,7 @@ import isFunction from '@yelloxing/core.js/isFunction';
 import { textWidth, bestLeftNum } from './edit-view/tool';
 
 import { initDom, initView } from './edit-view/init';
-import { updateView, updateCursorPosition } from './edit-view/update';
+import { updateView, updateSelectView, updateCursorPosition } from './edit-view/update';
 import bindEvent from './edit-view/bind';
 
 // 引入内置的语言支持
@@ -140,6 +140,7 @@ wscode.prototype.$$initDom = initDom;
 wscode.prototype.$$initView = initView;
 
 wscode.prototype.$$updateView = updateView;
+wscode.prototype.$$updateSelectView = updateSelectView;
 wscode.prototype.$$updateCursorPosition = updateCursorPosition;
 
 wscode.prototype.$$bindEvent = bindEvent;

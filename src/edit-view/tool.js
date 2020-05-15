@@ -1,8 +1,8 @@
 
 // 计算文字长度
 
-export function textWidth(text, flag) {
-    if (!flag) { this.__helpDOM.innerText = text; }
+export function textWidth(text) {
+    this.__helpDOM.innerText = text;
     return this.__helpDOM.offsetWidth;
 };
 
@@ -29,3 +29,4 @@ export function bestLeftNum(x) {
 
     return i - 1;
 };
+

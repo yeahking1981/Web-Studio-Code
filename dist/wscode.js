@@ -11,7 +11,7 @@
 * Copyright yelloxing
 * Released under the MIT license
 *
-* Date:Thu May 14 2020 17:27:14 GMT+0800 (GMT+08:00)
+* Date:Fri May 15 2020 17:57:39 GMT+0800 (GMT+08:00)
 */
 
 "use strict";
@@ -143,11 +143,8 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
   } // 计算文字长度
 
 
-  function textWidth(text, flag) {
-    if (!flag) {
-      this.__helpDOM.innerText = text;
-    }
-
+  function textWidth(text) {
+    this.__helpDOM.innerText = text;
     return this.__helpDOM.offsetWidth;
   } // 计算最佳光标左边位置
 
@@ -309,6 +306,15 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
     this.__showDOM = xhtml.appendTo(this._el, "<div></div>");
     xhtml.css(this.__showDOM, {
       padding: "10px 0"
+    }); // 选中区域
+
+    this.__selectCanvas = xhtml.appendTo(this._el, "<canvas></canvas>");
+    xhtml.css(this.__selectCanvas, {
+      width: this._el.scrollWidth - 40 + "px",
+      height: this._el.scrollHeight - 10 + "px",
+      position: "absolute",
+      left: "40px",
+      top: "10px"
     });
   } // 初始化视图
 
@@ -348,12 +354,27 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
         contentText = contentText.replace(/>/g, "&gt;");
         /*[<,>]*/
 
-        template += "<span style='font-weight:" + _this2._fontWeight + ";white-space: pre;color:" + text.color + "'>" + contentText + "</span>";
+        template += "<span style='user-select: none;font-weight:" + _this2._fontWeight + ";white-space: pre;color:" + text.color + "'>" + contentText + "</span>";
       });
       template += "</div>";
     });
 
     this.__showDOM.innerHTML = template;
+  } // 更新编辑器选中视图
+
+
+  function updateSelectView() {
+    var ctx = this.__selectCanvas.getContext('2d');
+
+    ctx.clearRect(0, 0, this.__selectCanvas.scrollWidth, this.__selectCanvas.scrollHeight); // 如果选中区域为空，不用绘制
+
+    if (this.__cursor1.topIndex == this.__cursor2.topIndex && this.__cursor1.leftNum == this.__cursor2.leftNum) return;
+    ctx.beginPath(); // 如果在一行
+
+    if (this.__cursor1.topIndex == this.__cursor2.topIndex) ; // 如果选中的多于一行
+    else {
+        if (this.__cursor1.topIndex < this.__cursor2.topIndex) ;
+      }
   } // 输入的时候更新光标位置
 
 
@@ -488,7 +509,41 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
   function bindEvent() {
     var _this3 = this;
 
-    // 点击编辑界面
+    var mouseDown = false; // 辅助计算选择光标位置
+
+    var calcCursor = function calcCursor(event) {
+      var position = xhtml.position(_this3._el, event);
+      var topIndex = Math.round((position.y - 20.5) / 21);
+      if (topIndex < 0) topIndex = 0;
+      if (topIndex >= _this3._contentArray.length) topIndex = _this3._contentArray.length - 1;
+      return {
+        leftNum: _this3.$$bestLeftNum(position.x),
+        topIndex: topIndex
+      };
+    }; // 鼠标按下的时候，记录开始光标位置并标记鼠标按下动作
+
+
+    xhtml.bind(document, 'mousedown', function (event) {
+      mouseDown = true;
+      _this3.__cursor2 = _this3.__cursor1 = calcCursor(event); // 绘制选中效果
+
+      _this3.$$updateSelectView();
+    }); // 移动的时候不停的同步结束光标位置
+
+    xhtml.bind(document, 'mousemove', function (event) {
+      if (!mouseDown) return;
+      _this3.__cursor2 = calcCursor(event); // 绘制选中效果
+
+      _this3.$$updateSelectView();
+    }); // 鼠标分开或移出的时候，标记鼠标放开
+
+    xhtml.bind(document, 'mouseup', function () {
+      return mouseDown = false;
+    });
+    xhtml.bind(document, 'mouseout', function () {
+      return mouseDown = false;
+    }); // 点击编辑界面
+
     xhtml.bind(this._el, 'click', function (event) {
       var position = xhtml.position(_this3._el, event);
       var topIndex = Math.round((position.y - 20.5) / 21); // 如果超过了内容区域
@@ -573,7 +628,6 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
     }); // 处理键盘控制
 
     xhtml.bind(this._el, 'keydown', function (event) {
-      //  console.log(keyString(event));
       switch (keyString(event)) {
         case "tab":
           {
@@ -594,10 +648,10 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
         case "up":
           {
             // 如果是第一行不需要任何处理
-            if (_this3.__lineNum <= 0) return;
-            _this3.__leftNum = _this3.$$bestLeftNum(_this3.$$textWidth("", true) + 40); // 向上一行
+            if (_this3.__lineNum <= 0) return; // 向上一行
 
             _this3.__lineNum -= 1;
+            _this3.__leftNum = _this3.$$bestLeftNum(_this3.$$textWidth(_this3._contentArray[_this3.__lineNum + 1].substr(0, _this3.__leftNum)) + 40);
 
             _this3.$$updateCursorPosition();
 
@@ -609,10 +663,10 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 
         case "down":
           {
-            if (_this3.__lineNum >= _this3._contentArray.length - 1) return;
-            _this3.__leftNum = _this3.$$bestLeftNum(_this3.$$textWidth("", true) + 40); // 向下一行
+            if (_this3.__lineNum >= _this3._contentArray.length - 1) return; // 向下一行
 
             _this3.__lineNum += 1;
+            _this3.__leftNum = _this3.$$bestLeftNum(_this3.$$textWidth(_this3._contentArray[_this3.__lineNum - 1].substr(0, _this3.__leftNum)) + 40);
 
             _this3.$$updateCursorPosition();
 
@@ -830,6 +884,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
   wscode.prototype.$$initDom = initDom;
   wscode.prototype.$$initView = initView;
   wscode.prototype.$$updateView = updateView;
+  wscode.prototype.$$updateSelectView = updateSelectView;
   wscode.prototype.$$updateCursorPosition = updateCursorPosition;
   wscode.prototype.$$bindEvent = bindEvent;
   wscode.author = '心叶（yelloxing@gmail.com）';

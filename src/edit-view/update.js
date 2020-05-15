@@ -25,7 +25,7 @@ export function updateView() {
             contentText = contentText.replace(/\&/g, "&amp;");/*[&]*/
             contentText = contentText.replace(/</g, "&lt;"); contentText = contentText.replace(/>/g, "&gt;");/*[<,>]*/
 
-            template += "<span style='font-weight:" + this._fontWeight + ";white-space: pre;color:" + text.color + "'>" + contentText + "</span>";
+            template += "<span style='user-select: none;font-weight:" + this._fontWeight + ";white-space: pre;color:" + text.color + "'>" + contentText + "</span>";
 
         });
 
@@ -34,6 +34,38 @@ export function updateView() {
     });
 
     this.__showDOM.innerHTML = template;
+
+};
+
+// 更新编辑器选中视图
+
+export function updateSelectView() {
+
+    let ctx = this.__selectCanvas.getContext('2d');
+    ctx.clearRect(0, 0, this.__selectCanvas.scrollWidth, this.__selectCanvas.scrollHeight);
+
+    // 如果选中区域为空，不用绘制
+    if (this.__cursor1.topIndex == this.__cursor2.topIndex && this.__cursor1.leftNum == this.__cursor2.leftNum) return;
+
+    ctx.beginPath();
+
+    // 如果在一行
+    if (this.__cursor1.topIndex == this.__cursor2.topIndex) {
+
+        // ctx.fillRect();
+
+    }
+
+    // 如果选中的多于一行
+    else {
+
+        if (this.__cursor1.topIndex < this.__cursor2.topIndex) {
+
+        } else {
+
+        }
+
+    }
 
 };
 

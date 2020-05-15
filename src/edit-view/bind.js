@@ -5,6 +5,46 @@ import xhtml from '../xhtml';
 
 export default function () {
 
+    let mouseDown = false;
+
+    // 辅助计算选择光标位置
+    let calcCursor = event => {
+        let position = xhtml.position(this._el, event);
+        let topIndex = Math.round((position.y - 20.5) / 21);
+
+        if (topIndex < 0) topIndex = 0;
+        if (topIndex >= this._contentArray.length) topIndex = this._contentArray.length - 1;
+
+        return {
+            leftNum: this.$$bestLeftNum(position.x),
+            topIndex
+        };
+    };
+
+    // 鼠标按下的时候，记录开始光标位置并标记鼠标按下动作
+    xhtml.bind(document, 'mousedown', event => {
+        mouseDown = true;
+        this.__cursor2 = this.__cursor1 = calcCursor(event);
+
+        // 绘制选中效果
+        this.$$updateSelectView();
+
+    });
+
+    // 移动的时候不停的同步结束光标位置
+    xhtml.bind(document, 'mousemove', event => {
+        if (!mouseDown) return;
+        this.__cursor2 = calcCursor(event);
+
+        // 绘制选中效果
+        this.$$updateSelectView();
+
+    });
+
+    // 鼠标分开或移出的时候，标记鼠标放开
+    xhtml.bind(document, 'mouseup', () => mouseDown = false);
+    xhtml.bind(document, 'mouseout', () => mouseDown = false);
+
     // 点击编辑界面
     xhtml.bind(this._el, 'click', event => {
 
@@ -106,8 +146,6 @@ export default function () {
     // 处理键盘控制
     xhtml.bind(this._el, 'keydown', event => {
 
-        //  console.log(keyString(event));
-
         switch (keyString(event)) {
 
             case "tab": {
@@ -130,10 +168,10 @@ export default function () {
                 // 如果是第一行不需要任何处理
                 if (this.__lineNum <= 0) return;
 
-                this.__leftNum = this.$$bestLeftNum(this.$$textWidth("", true) + 40);
-
                 // 向上一行
                 this.__lineNum -= 1;
+
+                this.__leftNum = this.$$bestLeftNum(this.$$textWidth(this._contentArray[this.__lineNum + 1].substr(0, this.__leftNum)) + 40);
 
                 this.$$updateCursorPosition();
                 this.$$updateView();
@@ -147,10 +185,10 @@ export default function () {
 
                 if (this.__lineNum >= this._contentArray.length - 1) return;
 
-                this.__leftNum = this.$$bestLeftNum(this.$$textWidth("", true) + 40);
-
                 // 向下一行
                 this.__lineNum += 1;
+
+                this.__leftNum = this.$$bestLeftNum(this.$$textWidth(this._contentArray[this.__lineNum - 1].substr(0, this.__leftNum)) + 40);
 
                 this.$$updateCursorPosition();
                 this.$$updateView();
