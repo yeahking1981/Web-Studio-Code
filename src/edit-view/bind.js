@@ -17,7 +17,7 @@ export default function () {
 
         return {
             leftNum: this.$$bestLeftNum(position.x),
-            topIndex
+            lineNum: topIndex
         };
     };
 

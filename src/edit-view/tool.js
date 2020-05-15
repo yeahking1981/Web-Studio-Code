@@ -30,3 +30,13 @@ export function bestLeftNum(x) {
     return i - 1;
 };
 
+// 计算光标对应的x,y值
+
+export function calcCanvasXY(leftNum, lineNum) {
+
+    return {
+        x: this.$$textWidth(this._contentArray[lineNum].substr(0, leftNum)),
+        y: lineNum * 21
+    };
+
+};

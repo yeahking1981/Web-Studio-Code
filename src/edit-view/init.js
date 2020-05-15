@@ -72,6 +72,11 @@ export function initDom() {
         top: "10px"
     });
 
+    xhtml.attr(this.__selectCanvas, {
+        width: this._el.scrollWidth - 40,
+        height: this._el.scrollHeight - 10
+    });
+
 };
 
 // 初始化视图

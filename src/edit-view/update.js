@@ -42,27 +42,51 @@ export function updateView() {
 export function updateSelectView() {
 
     let ctx = this.__selectCanvas.getContext('2d');
+    ctx.fillStyle = this._colorSelect;
     ctx.clearRect(0, 0, this.__selectCanvas.scrollWidth, this.__selectCanvas.scrollHeight);
 
+    // 绘制二个区间
+    let drawerSelect = (beginLeftNum, endLeftNum, lineNum) => {
+
+        let xy1 = this.$$calcCanvasXY(beginLeftNum, lineNum);
+        let xy2 = this.$$calcCanvasXY(endLeftNum, lineNum);
+
+        ctx.fillRect(xy1.x, xy1.y, xy2.x - xy1.x, 21);
+
+    };
+
     // 如果选中区域为空，不用绘制
-    if (this.__cursor1.topIndex == this.__cursor2.topIndex && this.__cursor1.leftNum == this.__cursor2.leftNum) return;
+    if (this.__cursor1.lineNum == this.__cursor2.lineNum && this.__cursor1.leftNum == this.__cursor2.leftNum) return;
 
     ctx.beginPath();
 
     // 如果在一行
-    if (this.__cursor1.topIndex == this.__cursor2.topIndex) {
+    if (this.__cursor1.lineNum == this.__cursor2.lineNum) {
 
-        // ctx.fillRect();
+        drawerSelect(this.__cursor1.leftNum, this.__cursor2.leftNum, this.__cursor1.lineNum);
 
     }
 
     // 如果选中的多于一行
     else {
 
-        if (this.__cursor1.topIndex < this.__cursor2.topIndex) {
+        let beginCursor, endCursor;
 
+        if (this.__cursor1.lineNum < this.__cursor2.lineNum) {
+            beginCursor = this.__cursor1; endCursor = this.__cursor2;
         } else {
+            beginCursor = this.__cursor2; endCursor = this.__cursor1;
+        }
 
+        // 绘制开始的结尾
+        drawerSelect(beginCursor.leftNum, this._contentArray[beginCursor.lineNum].length, beginCursor.lineNum);
+
+        // 绘制结束的开头
+        drawerSelect(0, endCursor.leftNum, endCursor.lineNum);
+
+        // 绘制两行之间
+        for (let lineNum = beginCursor.lineNum + 1; lineNum < endCursor.lineNum; lineNum++) {
+            drawerSelect(0, this._contentArray[lineNum].length, lineNum);
         }
 
     }

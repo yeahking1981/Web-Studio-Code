@@ -2,7 +2,7 @@ import isElement from '@yelloxing/core.js/isElement';
 import isString from '@yelloxing/core.js/isString';
 import isFunction from '@yelloxing/core.js/isFunction';
 
-import { textWidth, bestLeftNum } from './edit-view/tool';
+import { textWidth, bestLeftNum, calcCanvasXY } from './edit-view/tool';
 
 import { initDom, initView } from './edit-view/init';
 import { updateView, updateSelectView, updateCursorPosition } from './edit-view/update';
@@ -63,6 +63,7 @@ let wscode = function (options) {
         this._colorNumber = options.color.number || "#888484"; /*行号颜色*/
         this._colorEdit = options.color.edit || "#eaeaf1"; /*编辑行颜色*/
         this._colorCursor = options.color.cursor || "#ff0000"; /*光标颜色*/
+        this._colorSelect = options.color.select || "#6c6cf155"; /*选择背景*/
         this._fontFamily = options["font-family"] || "新宋体"; /*字体*/
         this._fontWeight = options["font-weight"] || 600;/*字重*/
         this._tabSpace = options.tabSpace || 4;/*设置一个tab表示多少个空格*/
@@ -133,6 +134,7 @@ let wscode = function (options) {
 // 挂载辅助方法
 wscode.prototype.$$textWidth = textWidth;
 wscode.prototype.$$bestLeftNum = bestLeftNum;
+wscode.prototype.$$calcCanvasXY = calcCanvasXY;
 
 // 挂载核心方法
 

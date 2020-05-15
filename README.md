@@ -50,6 +50,7 @@ var wscode = new WSCode({
         number:"#888484", /*行号颜色*/
         edit:"#eaeaf1", /*编辑行背景色*/
         cursor:"#ff0000", /*光标颜色*/
+        select:"#6c6cf155", /*选择背景*/
     },
 
     // 设置一个tab表示多少个空格（可选，默认4）
