@@ -21,6 +21,37 @@ export default function () {
         };
     };
 
+    // 获取光标之间的内容
+    let calcTwoCursor = () => {
+
+        // 假定cursor2是结束光标
+        let beginCursor = this.__cursor2, endCursor = this.__cursor1;
+
+        // 根据行号来校对
+        if (this.__cursor1.lineNum < this.__cursor2.lineNum) {
+            beginCursor = this.__cursor1; endCursor = this.__cursor2;
+        } else if (this.__cursor1.lineNum == this.__cursor2.lineNum) {
+
+            // 根据列号来校对
+            if (this.__cursor1.leftNum < this.__cursor2.leftNum) {
+                beginCursor = this.__cursor1; endCursor = this.__cursor2;
+            }
+
+            return this._contentArray[beginCursor.lineNum].substring(beginCursor.leftNum, endCursor.leftNum);
+        }
+
+        // 余下的一定是多行
+        let resultData = "";
+        resultData += this._contentArray[beginCursor.lineNum].substr(beginCursor.leftNum) + "\n";
+        for (let lineNum = beginCursor.lineNum + 1; lineNum < endCursor.lineNum; lineNum++) {
+            resultData += this._contentArray[lineNum] + "\n";
+        }
+        resultData += this._contentArray[endCursor.lineNum].substr(0, endCursor.leftNum);
+
+        return resultData;
+
+    };
+
     // 鼠标按下的时候，记录开始光标位置并标记鼠标按下动作
     xhtml.bind(document, 'mousedown', event => {
         mouseDown = true;
@@ -152,6 +183,31 @@ export default function () {
     xhtml.bind(this._el, 'keydown', event => {
 
         switch (keyString(event)) {
+
+            case "ctrl+c": {
+                if (this.$$selectIsNotBlank()) {
+                    xhtml.copy(calcTwoCursor());
+                }
+                break;
+            }
+
+            case "ctrl+x": {
+                if (this.$$selectIsNotBlank()) {
+
+                    xhtml.copy(calcTwoCursor());
+                    this.$$deleteSelect();
+
+                    // 由于内容改变，需要重新调用着色
+                    this.__formatData = this.$shader(this._contentArray.join('\n'), this._langColors);
+
+                    // 更新视图
+                    this.$$updateCursorPosition();
+                    this.$$updateView();
+                    this.$$cancelSelect();
+
+                }
+                break;
+            }
 
             case "tab": {
 

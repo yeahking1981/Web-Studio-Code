@@ -101,5 +101,30 @@ export default {
         };
 
         return temp;
+    },
+
+    // 复制到剪切板
+    "copy": function (text) {
+
+        let el = this.appendTo(document.body, '<textarea>' + text + '</textarea>');
+
+        // 执行复制
+        el.select();
+        try {
+            let result = window.document.execCommand("copy", false, null);
+
+            if (result) {
+                console.log('已经复制到剪切板！');
+            } else {
+                console.log('复制到剪切板失败！');
+            }
+        } catch (e) {
+            console.error(e);
+            console.log('复制到剪切板失败！');
+        }
+
+        document.body.removeChild(el);
+
     }
+
 };

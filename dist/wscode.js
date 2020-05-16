@@ -4,14 +4,14 @@
 *
 * author 心叶
 *
-* version 1.4.0
+* version 1.4.1
 *
 * build Fri May 08 2020
 *
 * Copyright yelloxing
 * Released under the MIT license
 *
-* Date:Sat May 16 2020 23:49:53 GMT+0800 (GMT+08:00)
+* Date:Sun May 17 2020 01:13:35 GMT+0800 (GMT+08:00)
 */
 
 "use strict";
@@ -267,6 +267,27 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
         "y": event.clientY - bounding.top + el.scrollTop
       };
       return temp;
+    },
+    // 复制到剪切板
+    "copy": function copy(text) {
+      var el = this.appendTo(document.body, '<textarea>' + text + '</textarea>'); // 执行复制
+
+      el.select();
+
+      try {
+        var result = window.document.execCommand("copy", false, null);
+
+        if (result) {
+          console.log('已经复制到剪切板！');
+        } else {
+          console.log('复制到剪切板失败！');
+        }
+      } catch (e) {
+        console.error(e);
+        console.log('复制到剪切板失败！');
+      }
+
+      document.body.removeChild(el);
     }
   }; // 初始化结点
 
@@ -621,6 +642,37 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
         leftNum: _this4.$$bestLeftNum(position.x, topIndex),
         lineNum: topIndex
       };
+    }; // 获取光标之间的内容
+
+
+    var calcTwoCursor = function calcTwoCursor() {
+      // 假定cursor2是结束光标
+      var beginCursor = _this4.__cursor2,
+          endCursor = _this4.__cursor1; // 根据行号来校对
+
+      if (_this4.__cursor1.lineNum < _this4.__cursor2.lineNum) {
+        beginCursor = _this4.__cursor1;
+        endCursor = _this4.__cursor2;
+      } else if (_this4.__cursor1.lineNum == _this4.__cursor2.lineNum) {
+        // 根据列号来校对
+        if (_this4.__cursor1.leftNum < _this4.__cursor2.leftNum) {
+          beginCursor = _this4.__cursor1;
+          endCursor = _this4.__cursor2;
+        }
+
+        return _this4._contentArray[beginCursor.lineNum].substring(beginCursor.leftNum, endCursor.leftNum);
+      } // 余下的一定是多行
+
+
+      var resultData = "";
+      resultData += _this4._contentArray[beginCursor.lineNum].substr(beginCursor.leftNum) + "\n";
+
+      for (var lineNum = beginCursor.lineNum + 1; lineNum < endCursor.lineNum; lineNum++) {
+        resultData += _this4._contentArray[lineNum] + "\n";
+      }
+
+      resultData += _this4._contentArray[endCursor.lineNum].substr(0, endCursor.leftNum);
+      return resultData;
     }; // 鼠标按下的时候，记录开始光标位置并标记鼠标按下动作
 
 
@@ -735,6 +787,35 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 
     xhtml.bind(this._el, 'keydown', function (event) {
       switch (keyString(event)) {
+        case "ctrl+c":
+          {
+            if (_this4.$$selectIsNotBlank()) {
+              xhtml.copy(calcTwoCursor());
+            }
+
+            break;
+          }
+
+        case "ctrl+x":
+          {
+            if (_this4.$$selectIsNotBlank()) {
+              xhtml.copy(calcTwoCursor());
+
+              _this4.$$deleteSelect(); // 由于内容改变，需要重新调用着色
+
+
+              _this4.__formatData = _this4.$shader(_this4._contentArray.join('\n'), _this4._langColors); // 更新视图
+
+              _this4.$$updateCursorPosition();
+
+              _this4.$$updateView();
+
+              _this4.$$cancelSelect();
+            }
+
+            break;
+          }
+
         case "tab":
           {
             // tab用来控制输入多个空格，默认事件需要禁止
