@@ -26,6 +26,8 @@ export default function () {
         mouseDown = true;
         this.__cursor2 = this.__cursor1 = calcCursor(event);
 
+        this.$$updateCanvasSize();
+
         // 绘制选中效果
         this.$$updateSelectView();
 
@@ -230,19 +232,51 @@ export default function () {
 
             case "backspace": {
 
-                if (this.__leftNum <= 0) {
-                    if (this.__lineNum <= 0) return;
+                // 如果有选区
+                if (this.__cursor1.lineNum != this.__cursor2.lineNum || this.__cursor1.leftNum != this.__cursor2.leftNum) {
 
-                    this.__lineNum -= 1;
-                    this.__leftNum = this._contentArray[this.__lineNum].length;
+                    // 假定cursor2是结束光标
+                    let beginCursor = this.__cursor2, endCursor = this.__cursor1;
 
-                    // 一行的开头应该删除本行（合并到前一行）
-                    this._contentArray[this.__lineNum] += this._contentArray[this.__lineNum + 1];
-                    this._contentArray.splice(this.__lineNum + 1, 1);
+                    // 根据行号来校对
+                    if (this.__cursor1.lineNum < this.__cursor2.lineNum) {
+                        beginCursor = this.__cursor1; endCursor = this.__cursor2;
+                    } else if (this.__cursor1.lineNum == this.__cursor2.lineNum) {
 
-                } else {
-                    this.__leftNum -= 1;
-                    this._contentArray[this.__lineNum] = this._contentArray[this.__lineNum].substring(0, this.__leftNum) + this._contentArray[this.__lineNum].substring(this.__leftNum + 1);
+                        // 根据列号来校对
+                        if (this.__cursor1.leftNum < this.__cursor2.leftNum) {
+                            beginCursor = this.__cursor1; endCursor = this.__cursor2;
+                        }
+                    }
+
+                    let newLineText =
+                        this._contentArray[beginCursor.lineNum].substr(0, beginCursor.leftNum) +
+                        this._contentArray[endCursor.lineNum].substr(endCursor.leftNum)
+
+                    this._contentArray.splice(beginCursor.lineNum, endCursor.lineNum - beginCursor.lineNum + 1, newLineText);
+
+                    // 校对光标和选区
+                    this.__leftNum = this.__cursor1.leftNum = this.__cursor2.leftNum = beginCursor.leftNum;
+                    this.__lineNum = this.__cursor1.lineNum = this.__cursor2.lineNum = beginCursor.lineNum;
+
+                }
+
+                // 无选区的常规操作
+                else {
+                    if (this.__leftNum <= 0) {
+                        if (this.__lineNum <= 0) return;
+
+                        this.__lineNum -= 1;
+                        this.__leftNum = this._contentArray[this.__lineNum].length;
+
+                        // 一行的开头应该删除本行（合并到前一行）
+                        this._contentArray[this.__lineNum] += this._contentArray[this.__lineNum + 1];
+                        this._contentArray.splice(this.__lineNum + 1, 1);
+
+                    } else {
+                        this.__leftNum -= 1;
+                        this._contentArray[this.__lineNum] = this._contentArray[this.__lineNum].substring(0, this.__leftNum) + this._contentArray[this.__lineNum].substring(this.__leftNum + 1);
+                    }
                 }
 
                 // 由于内容改变，需要重新调用着色
@@ -255,6 +289,8 @@ export default function () {
                 break;
             }
         }
+
+        this.$$cancelSelect();
 
     });
 

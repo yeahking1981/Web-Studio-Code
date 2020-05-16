@@ -65,17 +65,12 @@ export function initDom() {
     this.__selectCanvas = xhtml.appendTo(this._el, "<canvas></canvas>");
 
     xhtml.css(this.__selectCanvas, {
-        width: (this._el.scrollWidth - 40) + "px",
-        height: (this._el.scrollHeight - 10) + "px",
         position: "absolute",
         left: "40px",
         top: "10px"
     });
 
-    xhtml.attr(this.__selectCanvas, {
-        width: this._el.scrollWidth - 40,
-        height: this._el.scrollHeight - 10
-    });
+    this.$$updateCanvasSize(1, 1);
 
 };
 

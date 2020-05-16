@@ -11,7 +11,7 @@
 * Copyright yelloxing
 * Released under the MIT license
 *
-* Date:Sat May 16 2020 00:34:57 GMT+0800 (GMT+08:00)
+* Date:Sat May 16 2020 15:11:50 GMT+0800 (GMT+08:00)
 */
 
 "use strict";
@@ -318,16 +318,11 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 
     this.__selectCanvas = xhtml.appendTo(this._el, "<canvas></canvas>");
     xhtml.css(this.__selectCanvas, {
-      width: this._el.scrollWidth - 40 + "px",
-      height: this._el.scrollHeight - 10 + "px",
       position: "absolute",
       left: "40px",
       top: "10px"
     });
-    xhtml.attr(this.__selectCanvas, {
-      width: this._el.scrollWidth - 40,
-      height: this._el.scrollHeight - 10
-    });
+    this.$$updateCanvasSize(1, 1);
   } // 初始化视图
 
 
@@ -426,6 +421,36 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
       top: this.__lineNum * 21 + 10 + "px",
       left: 40 + this.$$textWidth(this._contentArray[this.__lineNum].substring(0, this.__leftNum)) + "px"
     });
+  } // 更新画布尺寸
+
+
+  function updateCanvasSize(width, height) {
+    if (arguments.length < 2) {
+      width = this._el.scrollWidth - 40;
+      height = this._el.scrollHeight - 10;
+    }
+
+    xhtml.css(this.__selectCanvas, {
+      width: width + "px",
+      height: height + "px"
+    });
+    xhtml.attr(this.__selectCanvas, {
+      width: width,
+      height: height
+    });
+  } // 取消选区
+
+
+  function cancelSelect() {
+    this.$$updateCanvasSize(1, 1);
+    this.__cursor1 = {
+      leftNum: 0,
+      lineNum: 0
+    };
+    this.__cursor2 = {
+      leftNum: 0,
+      lineNum: 0
+    };
   } // 字典表
 
 
@@ -568,7 +593,10 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 
     xhtml.bind(document, 'mousedown', function (event) {
       mouseDown = true;
-      _this4.__cursor2 = _this4.__cursor1 = calcCursor(event); // 绘制选中效果
+      _this4.__cursor2 = _this4.__cursor1 = calcCursor(event);
+
+      _this4.$$updateCanvasSize(); // 绘制选中效果
+
 
       _this4.$$updateSelectView();
     }); // 移动的时候不停的同步结束光标位置
@@ -751,18 +779,45 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 
         case "backspace":
           {
-            if (_this4.__leftNum <= 0) {
-              if (_this4.__lineNum <= 0) return;
-              _this4.__lineNum -= 1;
-              _this4.__leftNum = _this4._contentArray[_this4.__lineNum].length; // 一行的开头应该删除本行（合并到前一行）
+            // 如果有选区
+            if (_this4.__cursor1.lineNum != _this4.__cursor2.lineNum || _this4.__cursor1.leftNum != _this4.__cursor2.leftNum) {
+              // 假定cursor2是结束光标
+              var beginCursor = _this4.__cursor2,
+                  endCursor = _this4.__cursor1; // 根据行号来校对
 
-              _this4._contentArray[_this4.__lineNum] += _this4._contentArray[_this4.__lineNum + 1];
+              if (_this4.__cursor1.lineNum < _this4.__cursor2.lineNum) {
+                beginCursor = _this4.__cursor1;
+                endCursor = _this4.__cursor2;
+              } else if (_this4.__cursor1.lineNum == _this4.__cursor2.lineNum) {
+                // 根据列号来校对
+                if (_this4.__cursor1.leftNum < _this4.__cursor2.leftNum) {
+                  beginCursor = _this4.__cursor1;
+                  endCursor = _this4.__cursor2;
+                }
+              }
 
-              _this4._contentArray.splice(_this4.__lineNum + 1, 1);
-            } else {
-              _this4.__leftNum -= 1;
-              _this4._contentArray[_this4.__lineNum] = _this4._contentArray[_this4.__lineNum].substring(0, _this4.__leftNum) + _this4._contentArray[_this4.__lineNum].substring(_this4.__leftNum + 1);
-            } // 由于内容改变，需要重新调用着色
+              var newLineText = _this4._contentArray[beginCursor.lineNum].substr(0, beginCursor.leftNum) + _this4._contentArray[endCursor.lineNum].substr(endCursor.leftNum);
+
+              _this4._contentArray.splice(beginCursor.lineNum, endCursor.lineNum - beginCursor.lineNum + 1, newLineText); // 校对光标和选区
+
+
+              _this4.__leftNum = _this4.__cursor1.leftNum = _this4.__cursor2.leftNum = beginCursor.leftNum;
+              _this4.__lineNum = _this4.__cursor1.lineNum = _this4.__cursor2.lineNum = beginCursor.lineNum;
+            } // 无选区的常规操作
+            else {
+                if (_this4.__leftNum <= 0) {
+                  if (_this4.__lineNum <= 0) return;
+                  _this4.__lineNum -= 1;
+                  _this4.__leftNum = _this4._contentArray[_this4.__lineNum].length; // 一行的开头应该删除本行（合并到前一行）
+
+                  _this4._contentArray[_this4.__lineNum] += _this4._contentArray[_this4.__lineNum + 1];
+
+                  _this4._contentArray.splice(_this4.__lineNum + 1, 1);
+                } else {
+                  _this4.__leftNum -= 1;
+                  _this4._contentArray[_this4.__lineNum] = _this4._contentArray[_this4.__lineNum].substring(0, _this4.__leftNum) + _this4._contentArray[_this4.__lineNum].substring(_this4.__leftNum + 1);
+                }
+              } // 由于内容改变，需要重新调用着色
 
 
             _this4.__formatData = _this4.$shader(_this4._contentArray.join('\n'), _this4._langColors); // 更新视图
@@ -774,6 +829,8 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
             break;
           }
       }
+
+      _this4.$$cancelSelect();
     });
   }
 
@@ -933,6 +990,8 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
   wscode.prototype.$$updateView = updateView;
   wscode.prototype.$$updateSelectView = updateSelectView;
   wscode.prototype.$$updateCursorPosition = updateCursorPosition;
+  wscode.prototype.$$updateCanvasSize = updateCanvasSize;
+  wscode.prototype.$$cancelSelect = cancelSelect;
   wscode.prototype.$$bindEvent = bindEvent;
   wscode.author = '心叶（yelloxing@gmail.com）';
 

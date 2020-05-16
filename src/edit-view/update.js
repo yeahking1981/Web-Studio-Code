@@ -104,3 +104,33 @@ export function updateCursorPosition(text) {
 
 };
 
+// 更新画布尺寸
+
+export function updateCanvasSize(width, height) {
+
+    if (arguments.length < 2) {
+        width = this._el.scrollWidth - 40;
+        height = this._el.scrollHeight - 10;
+    }
+
+    xhtml.css(this.__selectCanvas, {
+        width: width + "px",
+        height: height + "px",
+    });
+
+    xhtml.attr(this.__selectCanvas, {
+        width,
+        height
+    });
+
+};
+
+// 取消选区
+
+export function cancelSelect() {
+
+    this.$$updateCanvasSize(1, 1);
+    this.__cursor1 = { leftNum: 0, lineNum: 0 };
+    this.__cursor2 = { leftNum: 0, lineNum: 0 };
+
+};
