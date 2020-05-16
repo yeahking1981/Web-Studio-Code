@@ -73,6 +73,15 @@ let wscode = function (options) {
         this._langType = lang.type || "normal"; /*默认普通文本*/
         this._langColors = lang.color || {}; this._langColors.text = this._colorText;
 
+        // 语言类型校对
+        if (["normal", "html", "css", "javascript"].indexOf(this._langType) < 0) {
+            
+            console.error("[错误]配置的语言类型‘" + this._langType + "’不支持！");
+
+            // 重置默认类型
+            this._langType = "normal";
+        }
+
         // 文本
         this._contentArray = isString(options.content) ? (options.content + "").split("\n") : [""];
 
