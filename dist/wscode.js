@@ -4,14 +4,14 @@
 *
 * author 心叶
 *
-* version 1.4.2-beta
+* version 1.4.0
 *
 * build Fri May 08 2020
 *
 * Copyright yelloxing
 * Released under the MIT license
 *
-* Date:Sat May 16 2020 20:59:45 GMT+0800 (GMT+08:00)
+* Date:Sat May 16 2020 23:49:53 GMT+0800 (GMT+08:00)
 */
 
 "use strict";
@@ -149,8 +149,9 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
   } // 计算最佳光标左边位置
 
 
-  function bestLeftNum(x) {
-    var text = this._contentArray[this.__lineNum];
+  function bestLeftNum(x, lineNum) {
+    if (arguments.length < 2) lineNum = lineNum || this.__lineNum;
+    var text = this._contentArray[lineNum];
     if (x <= 40) return 0;
     if (x - 40 >= this.$$textWidth(text)) return text.length;
     var dist = x - 40,
@@ -617,7 +618,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
       if (topIndex < 0) topIndex = 0;
       if (topIndex >= _this4._contentArray.length) topIndex = _this4._contentArray.length - 1;
       return {
-        leftNum: _this4.$$bestLeftNum(position.x),
+        leftNum: _this4.$$bestLeftNum(position.x, topIndex),
         lineNum: topIndex
       };
     }; // 鼠标按下的时候，记录开始光标位置并标记鼠标按下动作

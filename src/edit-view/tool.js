@@ -8,9 +8,11 @@ export function textWidth(text) {
 
 // 计算最佳光标左边位置
 
-export function bestLeftNum(x) {
+export function bestLeftNum(x, lineNum) {
 
-    let text = this._contentArray[this.__lineNum];
+    if (arguments.length < 2) lineNum = lineNum || this.__lineNum;
+
+    let text = this._contentArray[lineNum];
 
     if (x <= 40) return 0;
     if (x - 40 >= this.$$textWidth(text)) return text.length;

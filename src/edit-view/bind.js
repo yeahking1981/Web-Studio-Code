@@ -8,7 +8,7 @@ export default function () {
     let mouseDown = false;
 
     // 辅助计算选择光标位置
-    let calcCursor = event => {
+    let calcCursor = (event) => {
         let position = xhtml.position(this._el, event);
         let topIndex = Math.round((position.y - 20.5) / 21);
 
@@ -16,7 +16,7 @@ export default function () {
         if (topIndex >= this._contentArray.length) topIndex = this._contentArray.length - 1;
 
         return {
-            leftNum: this.$$bestLeftNum(position.x),
+            leftNum: this.$$bestLeftNum(position.x, topIndex),
             lineNum: topIndex
         };
     };
