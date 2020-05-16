@@ -4,14 +4,14 @@
 *
 * author 心叶
 *
-* version 1.4.0-beta
+* version 1.4.2-beta
 *
 * build Fri May 08 2020
 *
 * Copyright yelloxing
 * Released under the MIT license
 *
-* Date:Sat May 16 2020 20:50:15 GMT+0800 (GMT+08:00)
+* Date:Sat May 16 2020 20:59:45 GMT+0800 (GMT+08:00)
 */
 
 "use strict";
@@ -1019,7 +1019,8 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
       this._langColors.text = this._colorText; // 语言类型校对
 
       if (["normal", "html", "css", "javascript"].indexOf(this._langType) < 0) {
-        console.error("[错误]配置的语言类型‘" + this._langType + "’不支持！");
+        console.error("[错误]配置的语言类型‘" + this._langType + "’不支持！"); // 重置默认类型
+
         this._langType = "normal";
       } // 文本
 
