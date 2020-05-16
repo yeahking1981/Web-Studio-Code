@@ -11,7 +11,7 @@
 * Copyright yelloxing
 * Released under the MIT license
 *
-* Date:Sat May 16 2020 17:03:24 GMT+0800 (GMT+08:00)
+* Date:Sat May 16 2020 20:32:07 GMT+0800 (GMT+08:00)
 */
 
 "use strict";
@@ -889,26 +889,53 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
   }
 
   function html_shader(textString, colors) {
-    return [];
+    console.warn("[提醒] HTML着色方法未提供！");
+    var resultData = [];
+    textString.split('\n').forEach(function (text) {
+      resultData.push([{
+        content: text,
+        color: colors.text
+      }]);
+    });
+    return resultData;
   }
 
   function html_format(textString) {
+    console.warn("[提醒] HTML格式化方法未提供！");
     return textString;
   }
 
   function css_shader(textString, colors) {
-    return [];
+    console.warn("[提醒] CSS着色方法未提供！");
+    var resultData = [];
+    textString.split('\n').forEach(function (text) {
+      resultData.push([{
+        content: text,
+        color: colors.text
+      }]);
+    });
+    return resultData;
   }
 
   function css_format(textString) {
+    console.warn("[提醒] CSS格式化方法未提供！");
     return textString;
   }
 
   function javascript_shader(textString, colors) {
-    return [];
+    console.warn("[提醒] JavaScript着色方法未提供！");
+    var resultData = [];
+    textString.split('\n').forEach(function (text) {
+      resultData.push([{
+        content: text,
+        color: colors.text
+      }]);
+    });
+    return resultData;
   }
 
   function javascript_format(textString) {
+    console.warn("[提醒] JavaScript格式化方法未提供！");
     return textString;
   }
 

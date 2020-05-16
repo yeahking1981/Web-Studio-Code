@@ -61,8 +61,8 @@ var wscode = new WSCode({
     // （特别提醒：shader和format的优先级均高于这里）
     lang:{
 
-        // 目前支持的语言
-        type:'html'|'css'|'javascript',
+        // 目前支持的语言(默认值"normal"，表示普通文本，无特殊处理)
+        type:'normal',
         color:{
             
         }
