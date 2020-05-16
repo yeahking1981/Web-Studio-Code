@@ -95,7 +95,7 @@ export function updateSelectView() {
 
 // 输入的时候更新光标位置
 
-export function updateCursorPosition(text) {
+export function updateCursorPosition() {
 
     xhtml.css(this.__focusDOM, {
         top: (this.__lineNum * 21 + 10) + "px",
@@ -133,4 +133,35 @@ export function cancelSelect() {
     this.__cursor1 = { leftNum: 0, lineNum: 0 };
     this.__cursor2 = { leftNum: 0, lineNum: 0 };
 
+};
+
+// 删除选区
+
+export function deleteSelect() {
+
+    // 假定cursor2是结束光标
+    let beginCursor = this.__cursor2, endCursor = this.__cursor1;
+
+    // 根据行号来校对
+    if (this.__cursor1.lineNum < this.__cursor2.lineNum) {
+        beginCursor = this.__cursor1; endCursor = this.__cursor2;
+    } else if (this.__cursor1.lineNum == this.__cursor2.lineNum) {
+
+        // 根据列号来校对
+        if (this.__cursor1.leftNum < this.__cursor2.leftNum) {
+            beginCursor = this.__cursor1; endCursor = this.__cursor2;
+        }
+    }
+
+    let newLineText =
+        this._contentArray[beginCursor.lineNum].substr(0, beginCursor.leftNum) +
+        this._contentArray[endCursor.lineNum].substr(endCursor.leftNum)
+
+    this._contentArray.splice(beginCursor.lineNum, endCursor.lineNum - beginCursor.lineNum + 1, newLineText);
+
+    // 校对光标和选区
+    this.__leftNum = this.__cursor1.leftNum = this.__cursor2.leftNum = beginCursor.leftNum;
+    this.__lineNum = this.__cursor1.lineNum = this.__cursor2.lineNum = beginCursor.lineNum;
+
+    this.$$cancelSelect();
 };

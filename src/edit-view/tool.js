@@ -40,3 +40,9 @@ export function calcCanvasXY(leftNum, lineNum) {
     };
 
 };
+
+// 判断选区是否为空
+
+export function selectIsNotBlank() {
+    return this.__cursor1.lineNum != this.__cursor2.lineNum || this.__cursor1.leftNum != this.__cursor2.leftNum;
+};

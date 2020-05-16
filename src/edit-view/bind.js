@@ -70,6 +70,9 @@ export default function () {
 
         this.__focusDOM.value = "";
 
+        // 如果有选区，先删除选区
+        if (this.$$selectIsNotBlank()) this.$$deleteSelect();
+
         // 如果输入的是回车，切割文本
         if (/^\n$/.test(text)) {
 
@@ -160,7 +163,36 @@ export default function () {
                 let blanks = "";
                 for (let i = 0; i < this._tabSpace; i++) blanks += " ";
 
-                update(blanks);
+                // 如果有选区，特殊处理
+                if (this.$$selectIsNotBlank()) {
+
+                    let beginLineNum = this.__cursor1.lineNum, endLineNum = this.__cursor2.lineNum;
+                    if (beginLineNum > endLineNum) {
+                        beginLineNum = this.__cursor2.lineNum;
+                        endLineNum = this.__cursor1.lineNum;
+                    }
+
+                    // 在开头追究tab
+                    for (let lineNum = beginLineNum; lineNum <= endLineNum; lineNum++) {
+                        this._contentArray[lineNum] = blanks + this._contentArray[lineNum];
+                    }
+
+                    // 校对选择区域
+                    this.__cursor1.leftNum += this._tabSpace;
+                    this.__cursor2.leftNum += this._tabSpace;
+
+                    // 校对光标
+                    this.__leftNum += this._tabSpace;
+
+                    this.__formatData = this.$shader(this._contentArray.join('\n'), this._langColors);
+                    this.$$updateCursorPosition();
+                    this.$$updateView();
+                    this.$$updateCanvasSize();
+                    this.$$updateSelectView();
+
+                } else {
+                    update(blanks);
+                }
 
                 break;
             }
@@ -177,6 +209,7 @@ export default function () {
 
                 this.$$updateCursorPosition();
                 this.$$updateView();
+                this.$$cancelSelect();
 
                 this._el.scrollTop -= 21;
 
@@ -194,6 +227,7 @@ export default function () {
 
                 this.$$updateCursorPosition();
                 this.$$updateView();
+                this.$$cancelSelect();
 
                 this._el.scrollTop += 21;
 
@@ -211,6 +245,7 @@ export default function () {
                 }
 
                 this.$$updateCursorPosition();
+                this.$$cancelSelect();
 
                 break;
             }
@@ -226,6 +261,7 @@ export default function () {
                 }
 
                 this.$$updateCursorPosition();
+                this.$$cancelSelect();
 
                 break;
             }
@@ -233,31 +269,10 @@ export default function () {
             case "backspace": {
 
                 // 如果有选区
-                if (this.__cursor1.lineNum != this.__cursor2.lineNum || this.__cursor1.leftNum != this.__cursor2.leftNum) {
+                if (this.$$selectIsNotBlank()) {
 
-                    // 假定cursor2是结束光标
-                    let beginCursor = this.__cursor2, endCursor = this.__cursor1;
-
-                    // 根据行号来校对
-                    if (this.__cursor1.lineNum < this.__cursor2.lineNum) {
-                        beginCursor = this.__cursor1; endCursor = this.__cursor2;
-                    } else if (this.__cursor1.lineNum == this.__cursor2.lineNum) {
-
-                        // 根据列号来校对
-                        if (this.__cursor1.leftNum < this.__cursor2.leftNum) {
-                            beginCursor = this.__cursor1; endCursor = this.__cursor2;
-                        }
-                    }
-
-                    let newLineText =
-                        this._contentArray[beginCursor.lineNum].substr(0, beginCursor.leftNum) +
-                        this._contentArray[endCursor.lineNum].substr(endCursor.leftNum)
-
-                    this._contentArray.splice(beginCursor.lineNum, endCursor.lineNum - beginCursor.lineNum + 1, newLineText);
-
-                    // 校对光标和选区
-                    this.__leftNum = this.__cursor1.leftNum = this.__cursor2.leftNum = beginCursor.leftNum;
-                    this.__lineNum = this.__cursor1.lineNum = this.__cursor2.lineNum = beginCursor.lineNum;
+                    // 删除选区
+                    this.$$deleteSelect();
 
                 }
 
@@ -285,12 +300,11 @@ export default function () {
                 // 更新视图
                 this.$$updateCursorPosition();
                 this.$$updateView();
+                this.$$cancelSelect();
 
                 break;
             }
         }
-
-        this.$$cancelSelect();
 
     });
 

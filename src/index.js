@@ -2,10 +2,10 @@ import isElement from '@yelloxing/core.js/isElement';
 import isString from '@yelloxing/core.js/isString';
 import isFunction from '@yelloxing/core.js/isFunction';
 
-import { textWidth, bestLeftNum, calcCanvasXY } from './edit-view/tool';
+import { textWidth, bestLeftNum, calcCanvasXY, selectIsNotBlank } from './edit-view/tool';
 
 import { initDom, initView } from './edit-view/init';
-import { updateView, updateSelectView, updateCursorPosition, updateCanvasSize, cancelSelect } from './edit-view/update';
+import { updateView, updateSelectView, updateCursorPosition, updateCanvasSize, cancelSelect, deleteSelect } from './edit-view/update';
 import bindEvent from './edit-view/bind';
 
 // 引入内置的语言支持
@@ -135,6 +135,7 @@ let wscode = function (options) {
 wscode.prototype.$$textWidth = textWidth;
 wscode.prototype.$$bestLeftNum = bestLeftNum;
 wscode.prototype.$$calcCanvasXY = calcCanvasXY;
+wscode.prototype.$$selectIsNotBlank = selectIsNotBlank;
 
 // 挂载核心方法
 
@@ -146,6 +147,7 @@ wscode.prototype.$$updateSelectView = updateSelectView;
 wscode.prototype.$$updateCursorPosition = updateCursorPosition;
 wscode.prototype.$$updateCanvasSize = updateCanvasSize;
 wscode.prototype.$$cancelSelect = cancelSelect;
+wscode.prototype.$$deleteSelect = deleteSelect;
 
 wscode.prototype.$$bindEvent = bindEvent;
 
