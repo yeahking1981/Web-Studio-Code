@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="shortcut icon" href="./logo.png">
     <script src="./dist/wscode.js"></script>
     <title>Web Studio Code</title>
 
@@ -17,11 +18,31 @@
             width: 100vw;
             height: 100vh;
         }
+
+        .github {
+            position: fixed;
+            transform: rotate(45deg);
+            top: 60px;
+            line-height: 1.6em;
+            right: -60px;
+            background-color: #9e9695;
+            outline: 4px solid #9e9695;
+            transform-origin: 150px 23px;
+            border: 2px dashed #faf6f5;
+            width: 300px;
+            text-align: center;
+            color: #f7f3f2;
+            z-index: 2;
+            font-family: sans-serif;
+            text-decoration: none;
+        }
     </style>
 
 </head>
 
 <body>
+
+    <a href="https://github.com/yelloxing/Web-Studio-Code" class='github' target="_blank">Fork me on Github</a>
 
     <div id="wscode"></div>
 
