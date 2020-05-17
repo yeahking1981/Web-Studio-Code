@@ -11,7 +11,7 @@
 * Copyright yelloxing
 * Released under the MIT license
 *
-* Date:Sun May 17 2020 01:13:35 GMT+0800 (GMT+08:00)
+* Date:Sun May 17 2020 19:47:03 GMT+0800 (GMT+08:00)
 */
 
 "use strict";
@@ -277,14 +277,11 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
       try {
         var result = window.document.execCommand("copy", false, null);
 
-        if (result) {
-          console.log('已经复制到剪切板！');
-        } else {
-          console.log('复制到剪切板失败！');
-        }
+        if (result) {// console.log('已经复制到剪切板！');
+        } else {// console.log('复制到剪切板失败！');
+          }
       } catch (e) {
-        console.error(e);
-        console.log('复制到剪切板失败！');
+        console.error(e); // console.log('复制到剪切板失败！');
       }
 
       document.body.removeChild(el);
@@ -294,6 +291,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
   function initDom() {
     var _this = this;
 
+    this._el.innerHTML = "";
     xhtml.css(this._el, {
       "font-size": "12px",
       position: "relative",

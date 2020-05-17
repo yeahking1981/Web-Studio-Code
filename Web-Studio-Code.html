@@ -58,14 +58,23 @@
             // 设置字重
             "font-weight": 800,
 
+            // 设置tab代表多少空格
             tabSpace: 2,
 
-            // 初始化文本
-            content: "// git+https://github.com/yelloxing/Web-Studio-Code.git\n// Web Studio Code:🎉 An Editor Used on the Browser Side.\n\n/**\n * Developed by 心叶（yelloxing@gmail.com）\n*/\n\nfunction doit(){\n  console.log('你好，世界！');\n}"
-        });
+            // 设置语言
+            lang: {
+                type: "html",
+                color: {
 
-        console.log(wscode);
-    </script>
+                }
+            },
+
+            // 初始化文本
+            content: "<!DOCTYPE html>\n<html lang=\"zh-cn\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>Example | Web Studio Code</title>\n    <style>\n        body {\n            margin: 0px;\n        }\n    </style>\n</head>\n<body>\n    <script>\n\n        function doit() {\n            console.log('你好，世界！');\n        }\n\n    \</script\>\n</body>\n</html>\n\n<!-- Developed by 心叶（yelloxing@gmail.com） -->"
+});
+
+console.log(wscode);
+</script>
 
 </body>
 

@@ -4,6 +4,8 @@ import xhtml from '../xhtml';
 
 export function initDom() {
 
+    this._el.innerHTML = "";
+
     xhtml.css(this._el, {
         "font-size": "12px",
         position: "relative",

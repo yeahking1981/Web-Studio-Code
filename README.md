@@ -1,5 +1,5 @@
 <p align="center"><a href="https://github.com/yelloxing/Web-Studio-Code" target="_blank" rel="noopener noreferrer">
-<img width="400" src="./logo.png" alt="Web Studio Code"></a></p>
+<img width="400" src="https://yelloxing.github.io/Web-Studio-Code/logo.png" alt="Web Studio Code"></a></p>
 
 # 🎉 Web Studio Code - An Editor Used on the Browser Side.
 
@@ -10,7 +10,7 @@
 </p>
 
 <p align="center"><a href="https://yelloxing.github.io/Web-Studio-Code/Web-Studio-Code.html" target="_blank" rel="noopener noreferrer">
-<img width="700" src="./snipping.png" alt="Web Studio Code"></a></p>
+<img width="700" src="https://yelloxing.github.io/Web-Studio-Code/snipping.png" alt="Web Studio Code"></a></p>
 
 > 温馨提示：使用过程中，你可以查看 [版本历史](./CHANGELOG) 来了解是否需要升级！
 
