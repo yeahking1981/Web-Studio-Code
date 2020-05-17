@@ -11,7 +11,7 @@
 * Copyright yelloxing
 * Released under the MIT license
 *
-* Date:Sun May 17 2020 19:47:03 GMT+0800 (GMT+08:00)
+* Date:Sun May 17 2020 21:06:46 GMT+0800 (GMT+08:00)
 */
 
 "use strict";
@@ -789,6 +789,8 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
           {
             if (_this4.$$selectIsNotBlank()) {
               xhtml.copy(calcTwoCursor());
+
+              _this4.__focusDOM.focus();
             }
 
             break;
@@ -798,6 +800,8 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
           {
             if (_this4.$$selectIsNotBlank()) {
               xhtml.copy(calcTwoCursor());
+
+              _this4.__focusDOM.focus();
 
               _this4.$$deleteSelect(); // 由于内容改变，需要重新调用着色
 

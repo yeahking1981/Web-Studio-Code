@@ -187,6 +187,7 @@ export default function () {
             case "ctrl+c": {
                 if (this.$$selectIsNotBlank()) {
                     xhtml.copy(calcTwoCursor());
+                    this.__focusDOM.focus();
                 }
                 break;
             }
@@ -195,6 +196,7 @@ export default function () {
                 if (this.$$selectIsNotBlank()) {
 
                     xhtml.copy(calcTwoCursor());
+                    this.__focusDOM.focus();
                     this.$$deleteSelect();
 
                     // 由于内容改变，需要重新调用着色
