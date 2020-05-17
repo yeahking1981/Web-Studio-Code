@@ -5,6 +5,8 @@
 
 <p align="center">
 <a href="https://yelloxing.github.io/npm-downloads/?interval=7&packages=wscode"><img src="https://img.shields.io/npm/dm/wscode.svg" alt="Downloads"></a>
+<a href="https://packagephobia.now.sh/result?p=wscode"><img src="https://packagephobia.now.sh/badge?p=wscode" alt="install size"></a>
+<a href="https://www.jsdelivr.com/package/npm/wscode"><img src="https://data.jsdelivr.com/v1/package/npm/wscode/badge" alt="CDN"></a>
 <a href="https://www.npmjs.com/package/wscode"><img src="https://img.shields.io/npm/v/wscode.svg" alt="Version"></a>
 <a href="https://github.com/yelloxing/Web-Studio-Code/blob/master/LICENSE"><img src="https://img.shields.io/npm/l/wscode.svg" alt="License"></a>
 </p>
