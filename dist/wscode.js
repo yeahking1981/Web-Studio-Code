@@ -4,14 +4,14 @@
 *
 * author 心叶
 *
-* version 1.4.2
+* version 1.5.0
 *
 * build Fri May 08 2020
 *
 * Copyright yelloxing
 * Released under the MIT license
 *
-* Date:Mon May 18 2020 17:11:49 GMT+0800 (GMT+08:00)
+* Date:Mon May 18 2020 23:06:38 GMT+0800 (GMT+08:00)
 */
 
 "use strict";
@@ -1085,15 +1085,31 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
         i += 2;
         template = "";
       }
-      /* 追加字符 */
-      else {
-          if (i >= textString.length) {
-            initTemplate();
-            break;
-          } else {
+      /* 2.字符串 */
+      else if (["'", '"', '`'].indexOf(nextNValue(1)) > -1) {
+          var strBorder = nextNValue(1);
+          initTemplate();
+
+          do {
             template += textString[i++];
-          }
+          } while (nextNValue(1) != strBorder && i < textString.length);
+
+          shaderArray.push({
+            color: colors.string,
+            content: template + strBorder
+          });
+          i += 1;
+          template = "";
         }
+        /* 追加字符 */
+        else {
+            if (i >= textString.length) {
+              initTemplate();
+              break;
+            } else {
+              template += textString[i++];
+            }
+          }
     }
 
     return notToResult ? shaderArray : toShaderReult(shaderArray);
@@ -1118,6 +1134,30 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
         });
       }
 
+      template = "";
+    }; // 匹配属性值模板
+
+
+    var getAttrValueTemplate = function getAttrValueTemplate() {
+      var endStr = " "; // 寻找属性值边界
+
+      if (nextNValue(1) == '"') endStr = '"';
+      if (nextNValue(1) == "'") endStr = "'"; // 到达边界前一直寻找下一个
+
+      do {
+        template += textString[i++];
+      } while (nextNValue(1) != endStr && i < textString.length); // 如果是匹配成功而不是匹配到末尾
+
+
+      if (endStr != " " && i < textString.length) {
+        template += endStr;
+        i += 1;
+      }
+
+      shaderArray.push({
+        color: colors.string,
+        content: template
+      });
       template = "";
     };
 
@@ -1196,6 +1236,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
                 // 寻找标签属性
                 while (i < textString.length) {
                   // 遇到这个表示标签结束了
+                  // 也就意味着标签匹配结束
                   if (nextNValue(1) == ">") {
                     initTemplate();
                     shaderArray.push({
@@ -1204,54 +1245,52 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
                     });
                     i += 1;
                     break;
-                  } else if (nextNValue(1) != ' ') {
-                    initTemplate(); // 匹配属性名称
+                  } // 如果是空格，表示是属性之间，接着查看下一个即可
+                  else if (nextNValue(1) != ' ') {
+                      initTemplate(); // 匹配属性名称
 
-                    if (nextNValue(1) != '"' && nextNValue(1) != "'") {
-                      while (nextNValue(1) != "=" && nextNValue(1) != '>' && i < textString.length) {
-                        template += textString[i++];
-                      }
+                      if (nextNValue(1) != '"' && nextNValue(1) != "'") {
+                        // 如果不是=或>和空格就继续
+                        while (nextNValue(1) != "=" && nextNValue(1) != '>' && i < textString.length && nextNValue(1) != " ") {
+                          template += textString[i++];
+                        }
 
-                      if (template != "") {
-                        shaderArray.push({
-                          color: colors.attr,
-                          content: template
-                        });
-                        template = "";
-
-                        if (nextNValue(1) == '=') {
+                        if (template != "") {
                           shaderArray.push({
-                            color: colors.text,
-                            content: "="
+                            color: colors.attr,
+                            content: template
                           });
-                          i += 1;
+                          template = ""; // 如果下一个是=，就接着找属性值
 
-                          if (i < textString.length && nextNValue(1) != " " && nextNValue(1) != '>') {
-                            var endStr = " ";
-                            if (nextNValue(1) == '"') endStr = '"';
-                            if (nextNValue(1) == "'") endStr = "'";
-
-                            do {
-                              template += textString[i++];
-                            } while (nextNValue(1) != endStr && i < textString.length);
-
-                            if (endStr != " " && i < textString.length) {
-                              template += endStr;
-                              i += 1;
-                            }
-
+                          if (nextNValue(1) == '=') {
                             shaderArray.push({
-                              color: colors.string,
-                              content: template
+                              color: colors.text,
+                              content: "="
                             });
-                            template = "";
+                            i += 1;
+
+                            if (i < textString.length && nextNValue(1) != " " && nextNValue(1) != '>') {
+                              // 寻找属性值
+                              getAttrValueTemplate();
+                            }
                           }
+                        } else {
+                          template += textString[i++];
+                        }
+                      } else if (nextNValue(1) == '=') {
+                        shaderArray.push({
+                          color: colors.text,
+                          content: "="
+                        });
+                        i += 1;
+                      } else {
+                        if (i < textString.length && nextNValue(1) != " " && nextNValue(1) != '>') {
+                          getAttrValueTemplate();
                         }
                       }
+                    } else {
+                      template += textString[i++];
                     }
-                  } else {
-                    template += textString[i++];
-                  }
                 }
               }
             }

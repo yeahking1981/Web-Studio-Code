@@ -89,6 +89,7 @@ var wscode = new WSCode({
              * 2.css着色配置
             */
             "annotation": "#6a9955",/*注释颜色*/
+            "string": "#ac4c1e",/*字符串颜色*/
 
             /**
              * 3.javascript着色配置

@@ -30,6 +30,31 @@ export default function (textString, colors) {
         template = "";
     };
 
+    // 匹配属性值模板
+    let getAttrValueTemplate = function () {
+        let endStr = " ";
+        // 寻找属性值边界
+        if (nextNValue(1) == '"') endStr = '"';
+        if (nextNValue(1) == "'") endStr = "'";
+
+        // 到达边界前一直寻找下一个
+        do {
+            template += textString[i++];
+        } while (nextNValue(1) != endStr && i < textString.length);
+
+        // 如果是匹配成功而不是匹配到末尾
+        if (endStr != " " && i < textString.length) {
+            template += endStr;
+            i += 1;
+        }
+
+        shaderArray.push({
+            color: colors.string,
+            content: template
+        });
+        template = "";
+    };
+
     while (true) {
 
         /* 1.注释 */
@@ -119,6 +144,7 @@ export default function (textString, colors) {
                     while (i < textString.length) {
 
                         // 遇到这个表示标签结束了
+                        // 也就意味着标签匹配结束
                         if (nextNValue(1) == ">") {
 
                             initTemplate();
@@ -130,13 +156,16 @@ export default function (textString, colors) {
                             break;
                         }
 
+                        // 如果是空格，表示是属性之间，接着查看下一个即可
                         else if (nextNValue(1) != ' ') {
 
                             initTemplate();
 
                             // 匹配属性名称
                             if (nextNValue(1) != '"' && nextNValue(1) != "'") {
-                                while (nextNValue(1) != "=" && nextNValue(1) != '>' && i < textString.length) {
+
+                                // 如果不是=或>和空格就继续
+                                while (nextNValue(1) != "=" && nextNValue(1) != '>' && i < textString.length && nextNValue(1) != " ") {
                                     template += textString[i++];
                                 }
                                 if (template != "") {
@@ -146,6 +175,7 @@ export default function (textString, colors) {
                                     });
                                     template = "";
 
+                                    // 如果下一个是=，就接着找属性值
                                     if (nextNValue(1) == '=') {
                                         shaderArray.push({
                                             color: colors.text,
@@ -153,29 +183,27 @@ export default function (textString, colors) {
                                         });
                                         i += 1;
 
+
                                         if (i < textString.length && nextNValue(1) != " " && nextNValue(1) != '>') {
-
-                                            let endStr = " ";
-                                            if (nextNValue(1) == '"') endStr = '"';
-                                            if (nextNValue(1) == "'") endStr = "'";
-
-                                            do {
-                                                template += textString[i++];
-                                            } while (nextNValue(1) != endStr && i < textString.length);
-
-                                            if (endStr != " " && i < textString.length) {
-                                                template += endStr;
-                                                i += 1;
-                                            }
-
-                                            shaderArray.push({
-                                                color: colors.string,
-                                                content: template
-                                            });
-                                            template = "";
+                                            // 寻找属性值
+                                            getAttrValueTemplate();
 
                                         }
                                     }
+                                } else {
+                                    template += textString[i++];
+                                }
+                            } else if (nextNValue(1) == '=') {
+                                shaderArray.push({
+                                    color: colors.text,
+                                    content: "="
+                                });
+                                i += 1;
+                            } else {
+                                if (i < textString.length && nextNValue(1) != " " && nextNValue(1) != '>') {
+
+                                    getAttrValueTemplate();
+
                                 }
                             }
 

@@ -47,6 +47,25 @@ export default function (textString, colors, notToResult) {
 
         }
 
+        /* 2.字符串 */
+
+        else if (["'", '"', '`'].indexOf(nextNValue(1)) > -1) {
+
+            let strBorder = nextNValue(1);
+            initTemplate();
+            do {
+                template += textString[i++];
+            } while (nextNValue(1) != strBorder && i < textString.length)
+
+            shaderArray.push({
+                color: colors.string,
+                content: template + strBorder
+            });
+            i += 1;
+            template = "";
+
+        }
+
         /* 追加字符 */
 
         else {
