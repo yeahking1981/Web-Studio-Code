@@ -101,7 +101,7 @@ let wscode = function (options) {
                 this._langColors = initOptions({
 
                     "annotation": "#6a9955",/*注释颜色*/
-
+                    
                 }, this._langColors);
                 break;
             }
@@ -109,6 +109,7 @@ let wscode = function (options) {
                 this._langColors = initOptions({
 
                     "annotation": "#6a9955",/*注释颜色*/
+                    "string": "#ac4c1e",/*字符串颜色*/
 
                 }, this._langColors);
                 break;

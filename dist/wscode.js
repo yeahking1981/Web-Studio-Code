@@ -4,14 +4,14 @@
 *
 * author 心叶
 *
-* version 1.5.0
+* version 1.5.1
 *
 * build Fri May 08 2020
 *
 * Copyright yelloxing
 * Released under the MIT license
 *
-* Date:Mon May 18 2020 23:06:38 GMT+0800 (GMT+08:00)
+* Date:Mon May 18 2020 23:25:17 GMT+0800 (GMT+08:00)
 */
 
 "use strict";
@@ -1473,8 +1473,11 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
         case "javascript":
           {
             this._langColors = initOptions({
-              "annotation": "#6a9955"
+              "annotation": "#6a9955",
+
               /*注释颜色*/
+              "string": "#ac4c1e"
+              /*字符串颜色*/
 
             }, this._langColors);
             break;
