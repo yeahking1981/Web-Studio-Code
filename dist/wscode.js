@@ -11,7 +11,7 @@
 * Copyright yelloxing
 * Released under the MIT license
 *
-* Date:Mon May 18 2020 16:23:53 GMT+0800 (GMT+08:00)
+* Date:Mon May 18 2020 17:11:49 GMT+0800 (GMT+08:00)
 */
 
 "use strict";
@@ -1148,8 +1148,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 
           while (nextNValue(1) !== '>' && i < textString.length) {
             template += textString[i++];
-          } // 由于这里的template其实是闭合标签名称，如果有对应的开始标签，就需要对css和js这二类特殊内容进行处理
-
+          }
 
           if (template != "") {
             shaderArray.push({
@@ -1169,6 +1168,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
         }
         /* 3.< */
         else if (nextNValue(1) == '<' && nextNValue(2) != '< ') {
+            var specialTag = "";
             initTemplate();
             shaderArray.push({
               color: colors.border,
@@ -1181,6 +1181,11 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
             }
 
             if (template != '') {
+              // 针对style和script这样特殊的标签，内部需要调用对应的着色器着色
+              if (template == "style" || template == 'script') {
+                specialTag = "</" + template + ">";
+              }
+
               shaderArray.push({
                 color: colors.tag,
                 content: template
@@ -1248,6 +1253,29 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
                     template += textString[i++];
                   }
                 }
+              }
+            }
+
+            if (specialTag != "") {
+              var oldI = i,
+                  oldTemplate = template;
+
+              while (nextNValue(specialTag.length) != specialTag && i < textString.length) {
+                template += textString[i++];
+              }
+
+              if (i < textString.length) {
+                var innerShaderArray = {
+                  "</style>": css_shader,
+                  "</script>": javascript_shader
+                }[specialTag](template, colors, true);
+                innerShaderArray.forEach(function (innerShader) {
+                  shaderArray.push(innerShader);
+                });
+                template = "";
+              } else {
+                template = oldTemplate;
+                i = oldI;
               }
             }
           }

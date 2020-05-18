@@ -65,8 +65,6 @@ export default function (textString, colors) {
                 template += textString[i++];
             }
 
-            // 由于这里的template其实是闭合标签名称，如果有对应的开始标签，就需要对css和js这二类特殊内容进行处理
-
             if (template != "") {
                 shaderArray.push({
                     color: colors.tag,
@@ -89,6 +87,8 @@ export default function (textString, colors) {
 
         else if (nextNValue(1) == '<' && nextNValue(2) != '< ') {
 
+            let specialTag = "";
+
             initTemplate();
             shaderArray.push({
                 color: colors.border,
@@ -101,6 +101,12 @@ export default function (textString, colors) {
                 template += textString[i++];
             }
             if (template != '') {
+
+                // 针对style和script这样特殊的标签，内部需要调用对应的着色器着色
+                if (template == "style" || template == 'script') {
+                    specialTag = "</" + template + ">";
+                }
+
                 shaderArray.push({
                     color: colors.tag,
                     content: template
@@ -179,6 +185,32 @@ export default function (textString, colors) {
 
                     }
 
+                }
+
+            }
+
+            if (specialTag != "") {
+
+                let oldI = i, oldTemplate = template;
+                while (nextNValue(specialTag.length) != specialTag && i < textString.length) {
+                    template += textString[i++];
+                }
+
+                if (i < textString.length) {
+
+                    let innerShaderArray = {
+                        "</style>": css_shader,
+                        "</script>": javascript_shader
+                    }[specialTag](template, colors, true);
+
+                    innerShaderArray.forEach(innerShader => {
+                        shaderArray.push(innerShader);
+                    });
+
+                    template = "";
+                } else {
+                    template = oldTemplate;
+                    i = oldI;
                 }
 
             }
