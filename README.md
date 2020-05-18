@@ -67,13 +67,30 @@ var wscode = new WSCode({
 
     // 除了通过传递shader和format的方式实现着色和格式化外
     // 你还可以使用内置提供的语言来实现
-    // （特别提醒：shader和format的优先级均高于这里）
+    // 【特别提醒：shader和format的优先级均高于这里】
+    // (可选)
     lang:{
 
-        // 目前支持的语言(默认值"normal"，表示普通文本，无特殊处理)
-        type:'normal',
+        // 设置语言类型(默认值"normal"，表示普通文本，无特殊处理)
+        type:'normal|html|css|javascript',
+        // 配置更细节的着色（可选）
         color:{
-            
+
+            /**
+             * 1.html着色配置
+            */
+            "annotation": "#6a9955",/*注释颜色*/
+
+            /**
+             * 2.css着色配置
+            */
+            "annotation": "#6a9955",/*注释颜色*/
+
+            /**
+             * 3.javascript着色配置
+            */
+            "annotation": "#6a9955",/*注释颜色*/
+
         }
     }
 

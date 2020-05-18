@@ -4,14 +4,14 @@
 *
 * author 心叶
 *
-* version 1.4.1
+* version 1.4.2
 *
 * build Fri May 08 2020
 *
 * Copyright yelloxing
 * Released under the MIT license
 *
-* Date:Sun May 17 2020 21:06:46 GMT+0800 (GMT+08:00)
+* Date:Mon May 18 2020 11:40:05 GMT+0800 (GMT+08:00)
 */
 
 "use strict";
@@ -970,18 +970,81 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
           }
       }
     });
+  } // 合并内容
+
+
+  function toShaderReult(words) {
+    var resultData = [[]],
+        lineNum = 0;
+    words.forEach(function (word) {
+      var codeArray = word.content.split(/\n/);
+      resultData[lineNum].push({
+        color: word.color,
+        content: codeArray[0]
+      });
+
+      for (var index = 1; index < codeArray.length; index++) {
+        lineNum += 1;
+        resultData.push([]);
+        resultData[lineNum].push({
+          color: word.color,
+          content: codeArray[index]
+        });
+      }
+    });
+    return resultData;
   }
 
   function html_shader(textString, colors) {
-    console.warn("[提醒] HTML着色方法未提供！");
-    var resultData = [];
-    textString.split('\n').forEach(function (text) {
-      resultData.push([{
-        content: text,
-        color: colors.text
-      }]);
-    });
-    return resultData;
+    var shaderArray = []; // 当前面对的
+
+    var i = 0; // 获取往后n个值
+
+    var nextNValue = function nextNValue(n) {
+      return textString.substring(i, n + i > textString.length ? textString.length : n + i);
+    };
+
+    var template = ""; // 初始化模板，开始文本捕获
+
+    var initTemplate = function initTemplate() {
+      if (template != "") {
+        shaderArray.push({
+          color: colors.text,
+          content: template
+        });
+      }
+
+      template = "";
+    };
+
+    while (true) {
+      /* 1.注释 */
+      if (nextNValue(4) == '<!--') {
+        initTemplate();
+
+        while (nextNValue(3) !== '-->' && i < textString.length) {
+          template += textString[i++];
+        }
+
+        shaderArray.push({
+          color: colors.annotation,
+          content: template + nextNValue(3)
+        });
+        i += 3;
+        template = "";
+      }
+      /* 追加字符 */
+      else {
+          if (i >= textString.length) {
+            initTemplate();
+            break;
+          } else {
+            template += textString[i++];
+          }
+        }
+    }
+
+    return toShaderReult(shaderArray);
   }
 
   function html_format(textString) {
@@ -1021,6 +1084,16 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
   function javascript_format(textString) {
     console.warn("[提醒] JavaScript格式化方法未提供！");
     return textString;
+  }
+
+  function initOptions(defaultOptinos, configOptions) {
+    configOptions = configOptions || {};
+
+    for (var key in configOptions) {
+      defaultOptinos[key] = configOptions[key];
+    }
+
+    return defaultOptinos;
   }
 
   var wscode = function wscode(options) {
@@ -1064,7 +1137,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
           return textString;
         }
       };
-      this._el = options.el; // 着色
+      this._el = options.el; // 公共配置
 
       options.color = options.color || {};
       this._colorBackground = options.color.background || "#d6d6e4";
@@ -1100,7 +1173,40 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
       /*默认普通文本*/
 
       this._langColors = lang.color || {};
-      this._langColors.text = this._colorText; // 语言类型校对
+      this._langColors.text = this._colorText; // 着色色彩配置
+
+      switch (this._langType) {
+        case "html":
+          {
+            this._langColors = initOptions({
+              "annotation": "#6a9955"
+              /*注释颜色*/
+
+            }, this._langColors);
+            break;
+          }
+
+        case "css":
+          {
+            this._langColors = initOptions({
+              "annotation": "#6a9955"
+              /*注释颜色*/
+
+            }, this._langColors);
+            break;
+          }
+
+        case "javascript":
+          {
+            this._langColors = initOptions({
+              "annotation": "#6a9955"
+              /*注释颜色*/
+
+            }, this._langColors);
+            break;
+          }
+      } // 语言类型校对
+
 
       if (["normal", "html", "css", "javascript"].indexOf(this._langType) < 0) {
         console.error("[错误]配置的语言类型‘" + this._langType + "’不支持！"); // 重置默认类型

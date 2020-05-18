@@ -19,6 +19,10 @@ import css_format from './lang/css/format';
 import javascript_shader from './lang/javascript/shader';
 import javascript_format from './lang/javascript/format';
 
+// 辅助工具
+
+import { initOptions } from './tool';
+
 let wscode = function (options) {
 
     /**
@@ -56,7 +60,7 @@ let wscode = function (options) {
 
         this._el = options.el;
 
-        // 着色
+        // 公共配置
         options.color = options.color || {};
         this._colorBackground = options.color.background || "#d6d6e4"; /*编辑器背景*/
         this._colorText = options.color.text || "#000000"; /*普通文本颜色*/
@@ -73,9 +77,38 @@ let wscode = function (options) {
         this._langType = lang.type || "normal"; /*默认普通文本*/
         this._langColors = lang.color || {}; this._langColors.text = this._colorText;
 
+
+        // 着色色彩配置
+        switch (this._langType) {
+            case "html": {
+                this._langColors = initOptions({
+
+                    "annotation": "#6a9955",/*注释颜色*/
+
+                }, this._langColors);
+                break;
+            }
+            case "css": {
+                this._langColors = initOptions({
+
+                    "annotation": "#6a9955",/*注释颜色*/
+
+                }, this._langColors);
+                break;
+            }
+            case "javascript": {
+                this._langColors = initOptions({
+
+                    "annotation": "#6a9955",/*注释颜色*/
+
+                }, this._langColors);
+                break;
+            }
+        }
+
         // 语言类型校对
         if (["normal", "html", "css", "javascript"].indexOf(this._langType) < 0) {
-            
+
             console.error("[错误]配置的语言类型‘" + this._langType + "’不支持！");
 
             // 重置默认类型
