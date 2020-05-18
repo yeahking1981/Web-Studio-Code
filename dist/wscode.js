@@ -11,7 +11,7 @@
 * Copyright yelloxing
 * Released under the MIT license
 *
-* Date:Mon May 18 2020 11:40:05 GMT+0800 (GMT+08:00)
+* Date:Mon May 18 2020 16:23:53 GMT+0800 (GMT+08:00)
 */
 
 "use strict";
@@ -995,6 +995,110 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
     return resultData;
   }
 
+  function css_shader(textString, colors, notToResult) {
+    var shaderArray = []; // 当前面对的
+
+    var i = 0; // 获取往后n个值
+
+    var nextNValue = function nextNValue(n) {
+      return textString.substring(i, n + i > textString.length ? textString.length : n + i);
+    };
+
+    var template = ""; // 初始化模板，开始文本捕获
+
+    var initTemplate = function initTemplate() {
+      if (template != "") {
+        shaderArray.push({
+          color: colors.text,
+          content: template
+        });
+      }
+
+      template = "";
+    };
+
+    while (true) {
+      /* 1.注释 */
+      if (nextNValue(2) == '/*') {
+        initTemplate();
+
+        while (nextNValue(2) !== '*/' && i < textString.length) {
+          template += textString[i++];
+        }
+
+        shaderArray.push({
+          color: colors.annotation,
+          content: template + nextNValue(2)
+        });
+        i += 2;
+        template = "";
+      }
+      /* 追加字符 */
+      else {
+          if (i >= textString.length) {
+            initTemplate();
+            break;
+          } else {
+            template += textString[i++];
+          }
+        }
+    }
+
+    return notToResult ? shaderArray : toShaderReult(shaderArray);
+  }
+
+  function javascript_shader(textString, colors, notToResult) {
+    var shaderArray = []; // 当前面对的
+
+    var i = 0; // 获取往后n个值
+
+    var nextNValue = function nextNValue(n) {
+      return textString.substring(i, n + i > textString.length ? textString.length : n + i);
+    };
+
+    var template = ""; // 初始化模板，开始文本捕获
+
+    var initTemplate = function initTemplate() {
+      if (template != "") {
+        shaderArray.push({
+          color: colors.text,
+          content: template
+        });
+      }
+
+      template = "";
+    };
+
+    while (true) {
+      /* 1.注释 */
+      if (nextNValue(2) == '/*') {
+        initTemplate();
+
+        while (nextNValue(2) !== '*/' && i < textString.length) {
+          template += textString[i++];
+        }
+
+        shaderArray.push({
+          color: colors.annotation,
+          content: template + nextNValue(2)
+        });
+        i += 2;
+        template = "";
+      }
+      /* 追加字符 */
+      else {
+          if (i >= textString.length) {
+            initTemplate();
+            break;
+          } else {
+            template += textString[i++];
+          }
+        }
+    }
+
+    return notToResult ? shaderArray : toShaderReult(shaderArray);
+  }
+
   function html_shader(textString, colors) {
     var shaderArray = []; // 当前面对的
 
@@ -1033,15 +1137,129 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
         i += 3;
         template = "";
       }
-      /* 追加字符 */
-      else {
-          if (i >= textString.length) {
-            initTemplate();
-            break;
-          } else {
+      /* 2.</ */
+      else if (nextNValue(2) == '</') {
+          initTemplate();
+          shaderArray.push({
+            color: colors.border,
+            content: "</"
+          });
+          i += 2;
+
+          while (nextNValue(1) !== '>' && i < textString.length) {
             template += textString[i++];
+          } // 由于这里的template其实是闭合标签名称，如果有对应的开始标签，就需要对css和js这二类特殊内容进行处理
+
+
+          if (template != "") {
+            shaderArray.push({
+              color: colors.tag,
+              content: template
+            });
+            template = "";
+
+            if (i < textString.length) {
+              shaderArray.push({
+                color: colors.border,
+                content: ">"
+              });
+              i += 1;
+            }
           }
         }
+        /* 3.< */
+        else if (nextNValue(1) == '<' && nextNValue(2) != '< ') {
+            initTemplate();
+            shaderArray.push({
+              color: colors.border,
+              content: "<"
+            });
+            i += 1; // 寻找标签名称
+
+            while (nextNValue(1) != '>' && nextNValue(1) != ' ' && i < textString.length) {
+              template += textString[i++];
+            }
+
+            if (template != '') {
+              shaderArray.push({
+                color: colors.tag,
+                content: template
+              });
+              template = '';
+
+              if (i < textString.length) {
+                // 寻找标签属性
+                while (i < textString.length) {
+                  // 遇到这个表示标签结束了
+                  if (nextNValue(1) == ">") {
+                    initTemplate();
+                    shaderArray.push({
+                      color: colors.border,
+                      content: ">"
+                    });
+                    i += 1;
+                    break;
+                  } else if (nextNValue(1) != ' ') {
+                    initTemplate(); // 匹配属性名称
+
+                    if (nextNValue(1) != '"' && nextNValue(1) != "'") {
+                      while (nextNValue(1) != "=" && nextNValue(1) != '>' && i < textString.length) {
+                        template += textString[i++];
+                      }
+
+                      if (template != "") {
+                        shaderArray.push({
+                          color: colors.attr,
+                          content: template
+                        });
+                        template = "";
+
+                        if (nextNValue(1) == '=') {
+                          shaderArray.push({
+                            color: colors.text,
+                            content: "="
+                          });
+                          i += 1;
+
+                          if (i < textString.length && nextNValue(1) != " " && nextNValue(1) != '>') {
+                            var endStr = " ";
+                            if (nextNValue(1) == '"') endStr = '"';
+                            if (nextNValue(1) == "'") endStr = "'";
+
+                            do {
+                              template += textString[i++];
+                            } while (nextNValue(1) != endStr && i < textString.length);
+
+                            if (endStr != " " && i < textString.length) {
+                              template += endStr;
+                              i += 1;
+                            }
+
+                            shaderArray.push({
+                              color: colors.string,
+                              content: template
+                            });
+                            template = "";
+                          }
+                        }
+                      }
+                    }
+                  } else {
+                    template += textString[i++];
+                  }
+                }
+              }
+            }
+          }
+          /* 追加字符 */
+          else {
+              if (i >= textString.length) {
+                initTemplate();
+                break;
+              } else {
+                template += textString[i++];
+              }
+            }
     }
 
     return toShaderReult(shaderArray);
@@ -1052,48 +1270,14 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
     return textString;
   }
 
-  function css_shader(textString, colors) {
-    console.warn("[提醒] CSS着色方法未提供！");
-    var resultData = [];
-    textString.split('\n').forEach(function (text) {
-      resultData.push([{
-        content: text,
-        color: colors.text
-      }]);
-    });
-    return resultData;
-  }
-
   function css_format(textString) {
     console.warn("[提醒] CSS格式化方法未提供！");
     return textString;
   }
 
-  function javascript_shader(textString, colors) {
-    console.warn("[提醒] JavaScript着色方法未提供！");
-    var resultData = [];
-    textString.split('\n').forEach(function (text) {
-      resultData.push([{
-        content: text,
-        color: colors.text
-      }]);
-    });
-    return resultData;
-  }
-
   function javascript_format(textString) {
     console.warn("[提醒] JavaScript格式化方法未提供！");
     return textString;
-  }
-
-  function initOptions(defaultOptinos, configOptions) {
-    configOptions = configOptions || {};
-
-    for (var key in configOptions) {
-      defaultOptinos[key] = configOptions[key];
-    }
-
-    return defaultOptinos;
   }
 
   var wscode = function wscode(options) {
@@ -1173,14 +1357,37 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
       /*默认普通文本*/
 
       this._langColors = lang.color || {};
-      this._langColors.text = this._colorText; // 着色色彩配置
+      this._langColors.text = this._colorText;
+
+      var initOptions = function initOptions(defaultOptinos, configOptions) {
+        configOptions = configOptions || {};
+
+        for (var key in configOptions) {
+          defaultOptinos[key] = configOptions[key];
+        }
+
+        return defaultOptinos;
+      }; // 着色色彩配置
+
 
       switch (this._langType) {
         case "html":
           {
             this._langColors = initOptions({
-              "annotation": "#6a9955"
+              "annotation": "#6a9955",
+
               /*注释颜色*/
+              "border": "#ffffff",
+
+              /*边界颜色*/
+              "tag": "#1e50b3",
+
+              /*结点颜色*/
+              "attr": "#1e83b1",
+
+              /*属性颜色*/
+              "string": "#ac4c1e"
+              /*字符串颜色*/
 
             }, this._langColors);
             break;

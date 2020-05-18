@@ -19,10 +19,6 @@ import css_format from './lang/css/format';
 import javascript_shader from './lang/javascript/shader';
 import javascript_format from './lang/javascript/format';
 
-// 辅助工具
-
-import { initOptions } from './tool';
-
 let wscode = function (options) {
 
     /**
@@ -77,13 +73,26 @@ let wscode = function (options) {
         this._langType = lang.type || "normal"; /*默认普通文本*/
         this._langColors = lang.color || {}; this._langColors.text = this._colorText;
 
+        let initOptions = function (defaultOptinos, configOptions) {
 
+            configOptions = configOptions || {};
+            for (let key in configOptions) {
+                defaultOptinos[key] = configOptions[key];
+            }
+
+            return defaultOptinos;
+
+        };
         // 着色色彩配置
         switch (this._langType) {
             case "html": {
                 this._langColors = initOptions({
 
                     "annotation": "#6a9955",/*注释颜色*/
+                    "border": "#ffffff",/*边界颜色*/
+                    "tag": "#1e50b3",/*结点颜色*/
+                    "attr": "#1e83b1",/*属性颜色*/
+                    "string": "#ac4c1e",/*字符串颜色*/
 
                 }, this._langColors);
                 break;

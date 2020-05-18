@@ -80,6 +80,10 @@ var wscode = new WSCode({
              * 1.html着色配置
             */
             "annotation": "#6a9955",/*注释颜色*/
+            "border": "#ffffff",/*边界颜色*/
+            "tag": "#1e50b3",/*结点颜色*/
+            "attr": "#1e83b1",/*属性颜色*/
+            "string": "#ac4c1e",/*字符串颜色*/
 
             /**
              * 2.css着色配置
