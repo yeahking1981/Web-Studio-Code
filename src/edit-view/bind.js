@@ -184,6 +184,18 @@ export default function () {
 
         switch (keyString(event)) {
 
+            // 全选
+            case "ctrl+a": {
+
+                // 修改选区范围
+                this.__cursor1 = { leftNum: 0, lineNum: 0 };
+                this.__cursor2 = { lineNum: this._contentArray.length - 1, leftNum: this._contentArray[this._contentArray.length - 1].length };
+
+                // 绘制选中效果
+                this.$$updateSelectView();
+            }
+
+            // 复制
             case "ctrl+c": {
                 if (this.$$selectIsNotBlank()) {
                     xhtml.copy(calcTwoCursor());
@@ -192,6 +204,7 @@ export default function () {
                 break;
             }
 
+            // 剪切
             case "ctrl+x": {
                 if (this.$$selectIsNotBlank()) {
 
@@ -211,6 +224,7 @@ export default function () {
                 break;
             }
 
+            // 多空格输入或多行移位
             case "tab": {
 
                 // tab用来控制输入多个空格，默认事件需要禁止
@@ -255,6 +269,7 @@ export default function () {
                 break;
             }
 
+            // 光标向上
             case "up": {
 
                 // 如果是第一行不需要任何处理
@@ -274,6 +289,7 @@ export default function () {
                 break;
             }
 
+            // 光标向下
             case "down": {
 
                 if (this.__lineNum >= this._contentArray.length - 1) return;
@@ -292,6 +308,7 @@ export default function () {
                 break;
             }
 
+            // 光标向左
             case "left": {
 
                 if (this.__leftNum <= 0) {
@@ -308,6 +325,7 @@ export default function () {
                 break;
             }
 
+            // 光标向右
             case "right": {
 
                 if (this.__leftNum >= this._contentArray[this.__lineNum].length) {
@@ -324,6 +342,7 @@ export default function () {
                 break;
             }
 
+            // 删除
             case "backspace": {
 
                 // 如果有选区

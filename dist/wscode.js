@@ -4,14 +4,14 @@
 *
 * author 心叶
 *
-* version 1.5.1
+* version 1.5.2
 *
 * build Fri May 08 2020
 *
 * Copyright yelloxing
 * Released under the MIT license
 *
-* Date:Mon May 18 2020 23:25:17 GMT+0800 (GMT+08:00)
+* Date:Tue May 19 2020 09:54:43 GMT+0800 (GMT+08:00)
 */
 
 "use strict";
@@ -785,6 +785,23 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 
     xhtml.bind(this._el, 'keydown', function (event) {
       switch (keyString(event)) {
+        // 全选
+        case "ctrl+a":
+          {
+            // 修改选区范围
+            _this4.__cursor1 = {
+              leftNum: 0,
+              lineNum: 0
+            };
+            _this4.__cursor2 = {
+              lineNum: _this4._contentArray.length - 1,
+              leftNum: _this4._contentArray[_this4._contentArray.length - 1].length
+            }; // 绘制选中效果
+
+            _this4.$$updateSelectView();
+          }
+        // 复制
+
         case "ctrl+c":
           {
             if (_this4.$$selectIsNotBlank()) {
@@ -795,6 +812,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 
             break;
           }
+        // 剪切
 
         case "ctrl+x":
           {
@@ -817,6 +835,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 
             break;
           }
+        // 多空格输入或多行移位
 
         case "tab":
           {
@@ -865,6 +884,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 
             break;
           }
+        // 光标向上
 
         case "up":
           {
@@ -883,6 +903,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
             _this4._el.scrollTop -= 21;
             break;
           }
+        // 光标向下
 
         case "down":
           {
@@ -900,6 +921,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
             _this4._el.scrollTop += 21;
             break;
           }
+        // 光标向左
 
         case "left":
           {
@@ -917,6 +939,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 
             break;
           }
+        // 光标向右
 
         case "right":
           {
@@ -934,6 +957,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 
             break;
           }
+        // 删除
 
         case "backspace":
           {
@@ -1508,6 +1532,10 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
     this.__needUpdate = true;
     this.__lineNum = this._contentArray.length - 1;
     this.__leftNum = this._contentArray[this.__lineNum].length;
+    this.__cursor1 = this.__cursor2 = {
+      leftNum: 0,
+      lineNum: 0
+    };
     this.__formatData = this.$shader(this._contentArray.join('\n'), this._langColors); // 初始化视图
 
     this.$$initView(); // 更新视图

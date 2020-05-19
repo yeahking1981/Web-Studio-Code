@@ -35,3 +35,8 @@ v1.5.1:
     date:2020-05-18
     changes:
       -  添加内置着色（支持html+css+javascript）
+v1.5.2:
+    date:2020-05-19
+    changes:
+      -  修复初始化选择区域为空导致的错误
+      -  添加全选（ctrl + A）功能

@@ -101,7 +101,7 @@ let wscode = function (options) {
                 this._langColors = initOptions({
 
                     "annotation": "#6a9955",/*注释颜色*/
-                    
+
                 }, this._langColors);
                 break;
             }
@@ -147,6 +147,7 @@ let wscode = function (options) {
     this.__needUpdate = true;
     this.__lineNum = this._contentArray.length - 1;
     this.__leftNum = this._contentArray[this.__lineNum].length;
+    this.__cursor1 = this.__cursor2 = { leftNum: 0, lineNum: 0 };
     this.__formatData = this.$shader(this._contentArray.join('\n'), this._langColors);
 
     // 初始化视图
