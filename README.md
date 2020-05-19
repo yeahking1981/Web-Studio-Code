@@ -73,29 +73,14 @@ var wscode = new WSCode({
 
         // 设置语言类型(默认值"normal"，表示普通文本，无特殊处理)
         type:'normal|html|css|javascript',
+
         // 配置更细节的着色（可选）
         color:{
-
-            /**
-             * 1.html着色配置
-            */
             "annotation": "#6a9955",/*注释颜色*/
             "border": "#ffffff",/*边界颜色*/
             "tag": "#1e50b3",/*结点颜色*/
             "attr": "#1e83b1",/*属性颜色*/
             "string": "#ac4c1e",/*字符串颜色*/
-
-            /**
-             * 2.css着色配置
-            */
-            "annotation": "#6a9955",/*注释颜色*/
-            "string": "#ac4c1e",/*字符串颜色*/
-
-            /**
-             * 3.javascript着色配置
-            */
-            "annotation": "#6a9955",/*注释颜色*/
-
         }
     }
 
