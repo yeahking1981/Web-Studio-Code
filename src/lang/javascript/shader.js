@@ -29,7 +29,7 @@ export default function (textString, colors, notToResult) {
 
     while (true) {
 
-        /* 1.注释 */
+        /* 1.注释1 */
 
         if (nextNValue(2) == '/*') {
 
@@ -47,7 +47,19 @@ export default function (textString, colors, notToResult) {
 
         }
 
-        /* 2.字符串 */
+        /* 2.字符串2 */
+
+        else if (nextNValue(2) == '//') {
+            initTemplate();
+            while (nextNValue(1) !== '\n' && i < textString.length) {
+                template += textString[i++];
+            }
+            shaderArray.push({
+                color: colors.annotation,
+                content: template
+            });
+            template = "";
+        }
 
         else if (["'", '"', '`'].indexOf(nextNValue(1)) > -1) {
 

@@ -11,7 +11,7 @@
 * Copyright yelloxing
 * Released under the MIT license
 *
-* Date:Sat May 23 2020 00:11:57 GMT+0800 (GMT+08:00)
+* Date:Sat May 23 2020 00:24:00 GMT+0800 (GMT+08:00)
 */
 
 "use strict";
@@ -1139,7 +1139,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
     };
 
     while (true) {
-      /* 1.注释 */
+      /* 1.注释1 */
       if (nextNValue(2) == '/*') {
         initTemplate();
 
@@ -1154,8 +1154,20 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
         i += 2;
         template = "";
       }
-      /* 2.字符串 */
-      else if (["'", '"', '`'].indexOf(nextNValue(1)) > -1) {
+      /* 2.字符串2 */
+      else if (nextNValue(2) == '//') {
+          initTemplate();
+
+          while (nextNValue(1) !== '\n' && i < textString.length) {
+            template += textString[i++];
+          }
+
+          shaderArray.push({
+            color: colors.annotation,
+            content: template
+          });
+          template = "";
+        } else if (["'", '"', '`'].indexOf(nextNValue(1)) > -1) {
           var strBorder = nextNValue(1);
           initTemplate();
 
