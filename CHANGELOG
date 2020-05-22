@@ -40,3 +40,8 @@ v1.5.2:
     changes:
       -  修复初始化选择区域为空导致的错误
       -  添加全选（ctrl + A）功能
+v1.5.3:
+    date:2020-05-22
+    changes:
+      -  修复javascript字符串着色错误
+      -  添加对css和javascript中边界的着色功能

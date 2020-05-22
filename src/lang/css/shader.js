@@ -47,6 +47,45 @@ export default function (textString, colors, notToResult) {
 
         }
 
+        /* 2.字符串 */
+
+        else if (["'", '"'].indexOf(nextNValue(1)) > -1) {
+
+            let strBorder = nextNValue(1);
+            initTemplate();
+
+            do {
+                template += textString[i++];
+            } while (nextNValue(1) != strBorder && i < textString.length)
+
+            // 因为可能是没有字符导致的结束
+            if (nextNValue(1) != strBorder) {
+                strBorder = "";
+            } else {
+                i += 1;
+            }
+
+            shaderArray.push({
+                color: colors.string,
+                content: template + strBorder
+            });
+            template = "";
+
+        }
+
+        /* 3.边界 */
+
+        else if ([":", '{', '}',";"].indexOf(nextNValue(1)) > -1) {
+
+            initTemplate();
+            shaderArray.push({
+                color: colors.border,
+                content: nextNValue(1)
+            });
+            template = "";
+            i += 1;
+        }
+
         /* 追加字符 */
 
         else {
