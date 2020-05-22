@@ -11,7 +11,7 @@
 * Copyright yelloxing
 * Released under the MIT license
 *
-* Date:Fri May 22 2020 14:12:06 GMT+0800 (GMT+08:00)
+* Date:Sat May 23 2020 00:11:57 GMT+0800 (GMT+08:00)
 */
 
 "use strict";
@@ -1028,12 +1028,16 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
       return textString.substring(i, n + i > textString.length ? textString.length : n + i);
     };
 
-    var template = ""; // 初始化模板，开始文本捕获
+    var template = ""; // 1:选择器 tag
+    // 2:属性名 attr
+    // 3:属性值 string
+
+    var state = "tag"; // 初始化模板，开始文本捕获
 
     var initTemplate = function initTemplate() {
       if (template != "") {
         shaderArray.push({
-          color: colors.text,
+          color: colors[state],
           content: template
         });
       }
@@ -1087,6 +1091,15 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
               content: nextNValue(1)
             });
             template = "";
+
+            if (nextNValue(1) == '{' || nextNValue(1) == ';') {
+              state = 'attr';
+            } else if (nextNValue(1) == '}') {
+              state = 'tag';
+            } else {
+              state = 'string';
+            }
+
             i += 1;
           }
           /* 追加字符 */

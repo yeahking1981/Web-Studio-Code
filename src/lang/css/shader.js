@@ -15,11 +15,16 @@ export default function (textString, colors, notToResult) {
 
     let template = "";
 
+    // 1:选择器 tag
+    // 2:属性名 attr
+    // 3:属性值 string
+    let state = "tag";
+
     // 初始化模板，开始文本捕获
     let initTemplate = function () {
         if (template != "") {
             shaderArray.push({
-                color: colors.text,
+                color: colors[state],
                 content: template
             });
         }
@@ -75,7 +80,7 @@ export default function (textString, colors, notToResult) {
 
         /* 3.边界 */
 
-        else if ([":", '{', '}',";"].indexOf(nextNValue(1)) > -1) {
+        else if ([":", '{', '}', ";"].indexOf(nextNValue(1)) > -1) {
 
             initTemplate();
             shaderArray.push({
@@ -83,6 +88,15 @@ export default function (textString, colors, notToResult) {
                 content: nextNValue(1)
             });
             template = "";
+
+            if (nextNValue(1) == '{' || nextNValue(1) == ';') {
+                state = 'attr';
+            } else if (nextNValue(1) == '}') {
+                state = 'tag';
+            } else {
+                state = 'string';
+            }
+
             i += 1;
         }
 
