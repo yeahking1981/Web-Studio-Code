@@ -1,6 +1,6 @@
 {
   "name": "wscode",
-  "version": "1.5.3",
+  "version": "1.5.4",
   "description": "🎉 An Editor Used on the Browser Side.",
   "main": "dist/wscode.min.js",
   "scripts": {

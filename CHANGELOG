@@ -45,3 +45,7 @@ v1.5.3:
     changes:
       -  修复javascript字符串着色错误
       -  添加对css和javascript中边界的着色功能
+v1.5.4:
+    date:2020-05-25
+    changes:
+      -  针对css补充着色（完毕）

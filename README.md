@@ -12,9 +12,23 @@
 </p>
 
 <p align="center"><a href="https://yelloxing.github.io/Web-Studio-Code/Web-Studio-Code.html" target="_blank" rel="noopener noreferrer">
-<img width="700" src="https://yelloxing.github.io/Web-Studio-Code/snipping.png" alt="Web Studio Code"></a></p>
+<img width="500" src="https://yelloxing.github.io/Web-Studio-Code/snipping.png" alt="Web Studio Code"></a></p>
 
 > 温馨提示：使用过程中，你可以查看 [版本历史](./CHANGELOG) 来了解是否需要升级！
+
+## 如何引入
+
+我们推荐你使用npm的方式安装和使用：
+
+```bash
+npm install --save wscode
+```
+
+当然，你也可以通过CDN的方式引入：
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/wscode@1.5.4/dist/wscode.min.js"></script>
+```
 
 ## 如何使用
 
