@@ -40,8 +40,6 @@ export default function (textString, colors, notToResult) {
 
     while (true) {
 
-        console.log(template);
-
         /* 1.注释1 */
 
         if (nextNValue(2) == '/*') {
@@ -129,7 +127,7 @@ export default function (textString, colors, notToResult) {
 
         /* 6.边界 */
 
-        else if ([";", '{', '}', '(', ')', '.', '\n'].indexOf(nextNValue(1)) > -1) {
+        else if ([";", '{', '}', '(', ')', '.', '\n', '=', '+', '>', '<', '[', ']', '-', '*', '/', '^', '*', '!'].indexOf(nextNValue(1)) > -1) {
 
             initTemplate();
             shaderArray.push({
