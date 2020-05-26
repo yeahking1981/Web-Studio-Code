@@ -8,6 +8,8 @@ import { initDom, initView } from './edit-view/init';
 import { updateView, updateSelectView, updateCursorPosition, updateCanvasSize, cancelSelect, deleteSelect } from './edit-view/update';
 import bindEvent from './edit-view/bind';
 
+import filterText from './edit-view/filter';
+
 // 引入内置的语言支持
 
 import html_shader from './lang/html/shader';
@@ -106,7 +108,7 @@ let wscode = function (options) {
         }
 
         // 文本
-        this._contentArray = isString(options.content) ? (options.content + "").split("\n") : [""];
+        this._contentArray = isString(options.content) ? (this.$$filterText(options.content) + "").split("\n") : [""];
 
         // 着色方法
         this.$shader = isFunction(options.shader) ? options.shader : shader[this._langType];
@@ -169,6 +171,7 @@ wscode.prototype.$$textWidth = textWidth;
 wscode.prototype.$$bestLeftNum = bestLeftNum;
 wscode.prototype.$$calcCanvasXY = calcCanvasXY;
 wscode.prototype.$$selectIsNotBlank = selectIsNotBlank;
+wscode.prototype.$$filterText = filterText;
 
 // 挂载核心方法
 

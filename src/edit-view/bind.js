@@ -99,6 +99,8 @@ export default function () {
         // 获取输入内容
         text = text || this.__focusDOM.value;
 
+        text = this.$$filterText(text);
+
         this.__focusDOM.value = "";
 
         // 如果有选区，先删除选区
@@ -193,6 +195,8 @@ export default function () {
 
                 // 绘制选中效果
                 this.$$updateSelectView();
+
+                break;
             }
 
             // 复制

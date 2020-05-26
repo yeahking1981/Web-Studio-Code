@@ -4,14 +4,14 @@
 *
 * author 心叶
 *
-* version 1.5.5
+* version 1.5.6
 *
 * build Fri May 08 2020
 *
 * Copyright yelloxing
 * Released under the MIT license
 *
-* Date:Tue May 26 2020 11:54:35 GMT+0800 (GMT+08:00)
+* Date:Tue May 26 2020 15:23:41 GMT+0800 (GMT+08:00)
 */
 
 "use strict";
@@ -714,6 +714,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
     var update = function update(text) {
       // 获取输入内容
       text = text || _this4.__focusDOM.value;
+      text = _this4.$$filterText(text);
       _this4.__focusDOM.value = ""; // 如果有选区，先删除选区
 
       if (_this4.$$selectIsNotBlank()) _this4.$$deleteSelect(); // 如果输入的是回车，切割文本
@@ -799,6 +800,8 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
             }; // 绘制选中效果
 
             _this4.$$updateSelectView();
+
+            break;
           }
         // 复制
 
@@ -994,6 +997,18 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
           }
       }
     });
+  } // 外来文本统一过滤处理
+
+
+  function filterText(oralStr) {
+    // 把tab统一变成空格
+    var tab = "";
+
+    for (var i = 0; i < this._tabSpace; i++) {
+      tab += " ";
+    }
+
+    return oralStr.replace(/\t/g, tab);
   } // 合并内容
 
 
@@ -1151,9 +1166,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
     };
 
     while (true) {
-      console.log(template);
       /* 1.注释1 */
-
       if (nextNValue(2) == '/*') {
         initTemplate();
 
@@ -1223,7 +1236,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
                 template = "(";
               }
               /* 6.边界 */
-              else if ([";", '{', '}', '(', ')', '.', '\n'].indexOf(nextNValue(1)) > -1) {
+              else if ([";", '{', '}', '(', ')', '.', '\n', '=', '+', '>', '<', '[', ']', '-', '*', '/', '^', '*', '!'].indexOf(nextNValue(1)) > -1) {
                   initTemplate();
                   shaderArray.push({
                     color: colors.border,
@@ -1605,7 +1618,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
       } // 文本
 
 
-      this._contentArray = isString(options.content) ? (options.content + "").split("\n") : [""]; // 着色方法
+      this._contentArray = isString(options.content) ? (this.$$filterText(options.content) + "").split("\n") : [""]; // 着色方法
 
       this.$shader = isFunction(options.shader) ? options.shader : shader[this._langType]; // 格式化方法
 
@@ -1656,7 +1669,8 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
   wscode.prototype.$$textWidth = textWidth;
   wscode.prototype.$$bestLeftNum = bestLeftNum;
   wscode.prototype.$$calcCanvasXY = calcCanvasXY;
-  wscode.prototype.$$selectIsNotBlank = selectIsNotBlank; // 挂载核心方法
+  wscode.prototype.$$selectIsNotBlank = selectIsNotBlank;
+  wscode.prototype.$$filterText = filterText; // 挂载核心方法
 
   wscode.prototype.$$initDom = initDom;
   wscode.prototype.$$initView = initView;
