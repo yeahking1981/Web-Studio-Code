@@ -1,5 +1,6 @@
 
 import { toShaderReult } from '../tool';
+import keyWords from './assets/key';
 
 export default function (textString, colors, notToResult) {
 
@@ -18,6 +19,16 @@ export default function (textString, colors, notToResult) {
     // 初始化模板，开始文本捕获
     let initTemplate = function () {
         if (template != "") {
+
+            // 考虑开始的(s
+            if (template[0] == '(') {
+                shaderArray.push({
+                    color: colors.border,
+                    content: "("
+                });
+                template = template.substr(1);
+            }
+
             shaderArray.push({
                 color: colors.text,
                 content: template
@@ -28,6 +39,8 @@ export default function (textString, colors, notToResult) {
     };
 
     while (true) {
+
+        console.log(template);
 
         /* 1.注释1 */
 
@@ -47,7 +60,7 @@ export default function (textString, colors, notToResult) {
 
         }
 
-        /* 2.字符串2 */
+        /* 2.注释2 */
 
         else if (nextNValue(2) == '//') {
             initTemplate();
@@ -60,6 +73,8 @@ export default function (textString, colors, notToResult) {
             });
             template = "";
         }
+
+        /* 3.字符串 */
 
         else if (["'", '"', '`'].indexOf(nextNValue(1)) > -1) {
 
@@ -87,9 +102,34 @@ export default function (textString, colors, notToResult) {
 
         }
 
-        /* 3.边界 */
 
-        else if ([";", '{', '}', '(', ')', '.'].indexOf(nextNValue(1)) > -1) {
+        /* 4.函数定义 */
+
+        else if (nextNValue(1) == '(' && (template[0] == ' ' || (i - template.length - 1 >= 0 && textString[i - template.length - 1] == " "))) {
+            shaderArray.push({
+                color: colors.tag,
+                content: template
+            });
+            i += 1;
+            template = "(";
+
+        }
+
+        /* 5.方法调用 */
+
+        else if (nextNValue(1) == '(') {
+
+            shaderArray.push({
+                color: colors.attr,
+                content: template
+            });
+            i += 1;
+            template = "(";
+        }
+
+        /* 6.边界 */
+
+        else if ([";", '{', '}', '(', ')', '.', '\n'].indexOf(nextNValue(1)) > -1) {
 
             initTemplate();
             shaderArray.push({
@@ -98,6 +138,19 @@ export default function (textString, colors, notToResult) {
             });
             template = "";
             i += 1;
+        }
+
+        /* 7.关键字 */
+
+        else if (nextNValue(1) == ' ' && keyWords.indexOf(template.trim()) > -1) {
+
+            shaderArray.push({
+                color: colors.key,
+                content: template + " "
+            });
+            template = "";
+            i += 1;
+
         }
 
         /* 追加字符 */

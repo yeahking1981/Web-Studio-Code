@@ -49,3 +49,7 @@ v1.5.4:
     date:2020-05-25
     changes:
       -  针对css补充着色（完毕）
+v1.5.5:
+    date:2020-05-26
+    changes:
+      -  针对javascript补充着色（完毕）

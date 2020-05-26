@@ -4,14 +4,14 @@
 *
 * author 心叶
 *
-* version 1.5.4
+* version 1.5.5
 *
 * build Fri May 08 2020
 *
 * Copyright yelloxing
 * Released under the MIT license
 *
-* Date:Mon May 25 2020 16:07:21 GMT+0800 (GMT+08:00)
+* Date:Tue May 26 2020 11:54:35 GMT+0800 (GMT+08:00)
 */
 
 "use strict";
@@ -1114,7 +1114,10 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
     }
 
     return notToResult ? shaderArray : toShaderReult(shaderArray);
-  }
+  } // 关键字
+
+
+  var keyWords = ["abstract", "arguments", "boolean", "break", "byte", "case", "catch", "char", "class", "const", "continue", "debugger", "default", "delete", "do", "double", "else", "enum", "eval", "export", "extends", "false", "final", "finally", "float", "for", "function", "goto", "if", "implements", "import", "in", "instanceof", "int", "interface", "let", "long", "native", "new", "null", "package", "private", "protected", "public", "return", "short", "static", "super", "switch", "synchronized", "this", "throw", "throws", "transient", "true", "try", "typeof", "var", "void", "volatile", "while", "with", "yield"];
 
   function javascript_shader(textString, colors, notToResult) {
     var shaderArray = []; // 当前面对的
@@ -1129,6 +1132,15 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 
     var initTemplate = function initTemplate() {
       if (template != "") {
+        // 考虑开始的(s
+        if (template[0] == '(') {
+          shaderArray.push({
+            color: colors.border,
+            content: "("
+          });
+          template = template.substr(1);
+        }
+
         shaderArray.push({
           color: colors.text,
           content: template
@@ -1139,7 +1151,9 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
     };
 
     while (true) {
+      console.log(template);
       /* 1.注释1 */
+
       if (nextNValue(2) == '/*') {
         initTemplate();
 
@@ -1154,7 +1168,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
         i += 2;
         template = "";
       }
-      /* 2.字符串2 */
+      /* 2.注释2 */
       else if (nextNValue(2) == '//') {
           initTemplate();
 
@@ -1167,46 +1181,75 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
             content: template
           });
           template = "";
-        } else if (["'", '"', '`'].indexOf(nextNValue(1)) > -1) {
-          var strBorder = nextNValue(1);
-          initTemplate();
-
-          do {
-            template += textString[i++];
-          } while (nextNValue(1) != strBorder && i < textString.length); // 因为可能是没有字符导致的结束
-
-
-          if (nextNValue(1) != strBorder) {
-            strBorder = "";
-          } else {
-            i += 1;
-          }
-
-          shaderArray.push({
-            color: colors.string,
-            content: template + strBorder
-          });
-          template = "";
         }
-        /* 3.边界 */
-        else if ([";", '{', '}', '(', ')', '.'].indexOf(nextNValue(1)) > -1) {
+        /* 3.字符串 */
+        else if (["'", '"', '`'].indexOf(nextNValue(1)) > -1) {
+            var strBorder = nextNValue(1);
             initTemplate();
+
+            do {
+              template += textString[i++];
+            } while (nextNValue(1) != strBorder && i < textString.length); // 因为可能是没有字符导致的结束
+
+
+            if (nextNValue(1) != strBorder) {
+              strBorder = "";
+            } else {
+              i += 1;
+            }
+
             shaderArray.push({
-              color: colors.border,
-              content: nextNValue(1)
+              color: colors.string,
+              content: template + strBorder
             });
             template = "";
-            i += 1;
           }
-          /* 追加字符 */
-          else {
-              if (i >= textString.length) {
-                initTemplate();
-                break;
-              } else {
-                template += textString[i++];
-              }
+          /* 4.函数定义 */
+          else if (nextNValue(1) == '(' && (template[0] == ' ' || i - template.length - 1 >= 0 && textString[i - template.length - 1] == " ")) {
+              shaderArray.push({
+                color: colors.tag,
+                content: template
+              });
+              i += 1;
+              template = "(";
             }
+            /* 5.方法调用 */
+            else if (nextNValue(1) == '(') {
+                shaderArray.push({
+                  color: colors.attr,
+                  content: template
+                });
+                i += 1;
+                template = "(";
+              }
+              /* 6.边界 */
+              else if ([";", '{', '}', '(', ')', '.', '\n'].indexOf(nextNValue(1)) > -1) {
+                  initTemplate();
+                  shaderArray.push({
+                    color: colors.border,
+                    content: nextNValue(1)
+                  });
+                  template = "";
+                  i += 1;
+                }
+                /* 7.关键字 */
+                else if (nextNValue(1) == ' ' && keyWords.indexOf(template.trim()) > -1) {
+                    shaderArray.push({
+                      color: colors.key,
+                      content: template + " "
+                    });
+                    template = "";
+                    i += 1;
+                  }
+                  /* 追加字符 */
+                  else {
+                      if (i >= textString.length) {
+                        initTemplate();
+                        break;
+                      } else {
+                        template += textString[i++];
+                      }
+                    }
     }
 
     return notToResult ? shaderArray : toShaderReult(shaderArray);
@@ -1547,8 +1590,11 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
         "attr": "#1e83b1",
 
         /*属性颜色*/
-        "string": "#ac4c1e"
+        "string": "#ac4c1e",
+
         /*字符串颜色*/
+        "key": "#ff0000"
+        /*关键字颜色*/
 
       }, this._langColors); // 语言类型校对
 
