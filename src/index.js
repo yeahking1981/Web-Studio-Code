@@ -92,6 +92,7 @@ let wscode = function (options) {
             "tag": "#1e50b3",/*结点颜色*/
             "attr": "#1e83b1",/*属性颜色*/
             "string": "#ac4c1e",/*字符串颜色*/
+            "key": "#ff0000",/*关键字颜色*/
 
         }, this._langColors);
 
