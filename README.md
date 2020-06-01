@@ -62,7 +62,7 @@ var wscode = new WSCode({
     },
 
     // 格式化方法（可选）
-    format:function(textString){
+    format:function(textString, tabNumber){
         return "格式化后的文本";
     },
 
@@ -86,7 +86,7 @@ var wscode = new WSCode({
     lang:{
 
         // 设置语言类型(默认值"normal"，表示普通文本，无特殊处理)
-        type:'normal|html|css|javascript',
+        type:'normal|html|css|javascript|json',
 
         // 配置更细节的着色（可选）
         color:{
