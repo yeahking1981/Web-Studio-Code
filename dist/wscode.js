@@ -4,14 +4,14 @@
 *
 * author 心叶
 *
-* version 1.5.6
+* version 1.6.0
 *
 * build Fri May 08 2020
 *
 * Copyright yelloxing
 * Released under the MIT license
 *
-* Date:Tue May 26 2020 15:23:41 GMT+0800 (GMT+08:00)
+* Date:Wed Jun 03 2020 15:24:10 GMT+0800 (GMT+08:00)
 */
 
 "use strict";
@@ -1485,19 +1485,121 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
     return toShaderReult(shaderArray);
   }
 
-  function html_format(textString) {
+  function html_format(textString, tabNumber) {
     console.warn("[提醒] HTML格式化方法未提供！");
     return textString;
   }
 
-  function css_format(textString) {
+  function css_format(textString, tabNumber) {
     console.warn("[提醒] CSS格式化方法未提供！");
     return textString;
   }
 
-  function javascript_format(textString) {
+  function javascript_format(textString, tabNumber) {
     console.warn("[提醒] JavaScript格式化方法未提供！");
     return textString;
+  }
+
+  function json_shader(textString, colors, notToResult) {
+    var shaderArray = []; // 当前面对的
+
+    var i = 0; // 获取往后n个值
+
+    var nextNValue = function nextNValue(n) {
+      return textString.substring(i, n + i > textString.length ? textString.length : n + i);
+    };
+
+    var template = ""; // 1:选择器 tag
+    // 2:属性名 attr
+    // 3:属性值 string
+
+    var state = "tag"; // 初始化模板，开始文本捕获
+
+    var initTemplate = function initTemplate() {
+      if (template != "") {
+        shaderArray.push({
+          color: colors[state],
+          content: template
+        });
+      }
+
+      template = "";
+    };
+
+    while (true) {
+      /* 1.注释 */
+      if (nextNValue(2) == '/*') {
+        initTemplate();
+
+        while (nextNValue(2) !== '*/' && i < textString.length) {
+          template += textString[i++];
+        }
+
+        shaderArray.push({
+          color: colors.annotation,
+          content: template + nextNValue(2)
+        });
+        i += 2;
+        template = "";
+      }
+      /* 2.字符串 */
+      else if (["'", '"'].indexOf(nextNValue(1)) > -1) {
+          var strBorder = nextNValue(1);
+          initTemplate();
+
+          do {
+            template += textString[i++];
+          } while (nextNValue(1) != strBorder && i < textString.length); // 因为可能是没有字符导致的结束
+
+
+          if (nextNValue(1) != strBorder) {
+            strBorder = "";
+          } else {
+            i += 1;
+          }
+
+          shaderArray.push({
+            color: colors.string,
+            content: template + strBorder
+          });
+          template = "";
+        }
+        /* 3.边界 */
+        else if ([":", '{', '}', ",", "[", "]"].indexOf(nextNValue(1)) > -1) {
+            initTemplate();
+            shaderArray.push({
+              color: colors.border,
+              content: nextNValue(1)
+            });
+            template = "";
+
+            if (nextNValue(1) == '{' || nextNValue(1) == ',') {
+              state = 'attr';
+            } else if (nextNValue(1) == '}') {
+              state = 'tag';
+            } else {
+              state = 'string';
+            }
+
+            i += 1;
+          }
+          /* 追加字符 */
+          else {
+              if (i >= textString.length) {
+                initTemplate();
+                break;
+              } else {
+                template += textString[i++];
+              }
+            }
+    }
+
+    return notToResult ? shaderArray : toShaderReult(shaderArray);
+  } // 温馨提示：只支持标准的JSON格式化
+
+
+  function json_format(textString, tabNumber) {
+    return JSON.stringify(JSON.parse(textString), null, tabNumber);
   }
 
   var wscode = function wscode(options) {
@@ -1519,6 +1621,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
         html: html_shader,
         css: css_shader,
         javascript: javascript_shader,
+        json: json_shader,
         normal: function normal() {
           var resultData = [];
 
@@ -1537,6 +1640,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
         html: html_format,
         css: css_format,
         javascript: javascript_format,
+        json: json_format,
         normal: function normal(textString) {
           return textString;
         }
@@ -1611,7 +1715,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 
       }, this._langColors); // 语言类型校对
 
-      if (["normal", "html", "css", "javascript"].indexOf(this._langType) < 0) {
+      if (["normal", "html", "css", "javascript", "json"].indexOf(this._langType) < 0) {
         console.error("[错误]配置的语言类型‘" + this._langType + "’不支持！"); // 重置默认类型
 
         this._langType = "normal";
@@ -1652,7 +1756,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 
     this.format = function () {
       // 格式化内容
-      _this5._contentArray = _this5.$format(_this5._contentArray.join('\n')).split('\n');
+      _this5._contentArray = _this5.$format(_this5._contentArray.join('\n'), _this5._tabSpace).split('\n');
       _this5.__lineNum = _this5._contentArray.length - 1;
       _this5.__leftNum = _this5._contentArray[_this5.__lineNum].length; // 着色
 

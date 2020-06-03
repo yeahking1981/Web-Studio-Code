@@ -21,6 +21,9 @@ import css_format from './lang/css/format';
 import javascript_shader from './lang/javascript/shader';
 import javascript_format from './lang/javascript/format';
 
+import json_shader from './lang/json/shader';
+import json_format from './lang/json/format';
+
 let wscode = function (options) {
 
     /**
@@ -41,6 +44,7 @@ let wscode = function (options) {
             html: html_shader,
             css: css_shader,
             javascript: javascript_shader,
+            json: json_shader,
             normal: () => {
                 let resultData = [];
                 this._contentArray.forEach(text => { resultData.push([{ content: text, color: this._colorText }]); });
@@ -53,6 +57,7 @@ let wscode = function (options) {
             html: html_format,
             css: css_format,
             javascript: javascript_format,
+            json: json_format,
             normal: textString => textString
         };
 
@@ -99,7 +104,7 @@ let wscode = function (options) {
         }, this._langColors);
 
         // 语言类型校对
-        if (["normal", "html", "css", "javascript"].indexOf(this._langType) < 0) {
+        if (["normal", "html", "css", "javascript", "json"].indexOf(this._langType) < 0) {
 
             console.error("[错误]配置的语言类型‘" + this._langType + "’不支持！");
 
@@ -148,7 +153,7 @@ let wscode = function (options) {
     this.format = () => {
 
         // 格式化内容
-        this._contentArray = this.$format(this._contentArray.join('\n')).split('\n');
+        this._contentArray = this.$format(this._contentArray.join('\n'), this._tabSpace).split('\n');
 
         this.__lineNum = this._contentArray.length - 1;
         this.__leftNum = this._contentArray[this.__lineNum].length;
