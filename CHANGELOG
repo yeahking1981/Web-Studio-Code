@@ -59,3 +59,7 @@ v1.5.6:
       -  补充javascript着色细节
       -  修复ctrl+A功能BUG
       -  修复issue2(https://github.com/yelloxing/Web-Studio-Code/issues/2)
+v1.6.0:
+    date:2020-06-03
+    changes:
+      -  添加对标准JSON的支持（着色和格式化开发完毕）

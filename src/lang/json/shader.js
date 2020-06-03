@@ -80,7 +80,7 @@ export default function (textString, colors, notToResult) {
 
         /* 3.边界 */
 
-        else if ([":", '{', '}', ","].indexOf(nextNValue(1)) > -1) {
+        else if ([":", '{', '}', ",", "[", "]"].indexOf(nextNValue(1)) > -1) {
 
             initTemplate();
             shaderArray.push({

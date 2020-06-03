@@ -4,14 +4,14 @@
 *
 * author 心叶
 *
-* version 1.5.6-beta
+* version 1.6.0
 *
 * build Fri May 08 2020
 *
 * Copyright yelloxing
 * Released under the MIT license
 *
-* Date:Mon Jun 01 2020 19:31:25 GMT+0800 (GMT+08:00)
+* Date:Wed Jun 03 2020 15:24:10 GMT+0800 (GMT+08:00)
 */
 
 "use strict";
@@ -1565,7 +1565,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
           template = "";
         }
         /* 3.边界 */
-        else if ([":", '{', '}', ","].indexOf(nextNValue(1)) > -1) {
+        else if ([":", '{', '}', ",", "[", "]"].indexOf(nextNValue(1)) > -1) {
             initTemplate();
             shaderArray.push({
               color: colors.border,
@@ -1595,7 +1595,8 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
     }
 
     return notToResult ? shaderArray : toShaderReult(shaderArray);
-  }
+  } // 温馨提示：只支持标准的JSON格式化
+
 
   function json_format(textString, tabNumber) {
     return JSON.stringify(JSON.parse(textString), null, tabNumber);
