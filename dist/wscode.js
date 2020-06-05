@@ -4,14 +4,14 @@
 *
 * author 心叶
 *
-* version 1.7.0
+* version 1.7.1
 *
 * build Fri May 08 2020
 *
 * Copyright yelloxing
 * Released under the MIT license
 *
-* Date:Fri Jun 05 2020 15:51:52 GMT+0800 (GMT+08:00)
+* Date:Fri Jun 05 2020 23:25:07 GMT+0800 (GMT+08:00)
 */
 
 "use strict";
@@ -36,6 +36,11 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
   'use strict';
 
   var _dictionary2;
+
+  if (!window.Symbol) {
+    // 这里其实没有用到Symbol，只是为了兼容IE浏览器，因此没有提供真正的实现
+    window.Symbol = function () {};
+  }
 
   var toString = Object.prototype.toString;
   /**
@@ -345,7 +350,8 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
     xhtml.css(this.__selectCanvas, {
       position: "absolute",
       left: "40px",
-      top: "10px"
+      top: "10px",
+      opacity: "0.5"
     });
     this.$$updateCanvasSize(1, 1);
   } // 初始化视图
@@ -3014,7 +3020,6 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
     // 借助开源项目获得的模板分析结果：git+https://github.com/yelloxing/xhtml-engine.git
     var domTree = DomTree("<help-root>" + textString + "</help-root>", true);
     var getTabString = getTabStringFactory(tabNumber);
-    console.log(domTree);
     /**
      * 为了避免使用递归，我们定义一个计算数组needCalcs来登记已经计算过的结果和待计算的内容
      * 虽然需要频繁插入，可是感觉问题不大，并且数组的话，方便最后模板的获取
@@ -3197,6 +3202,9 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
   var wscode = function wscode(options) {
     var _this5 = this;
 
+    if (!(this instanceof wscode)) {
+      throw new Error('WSCode is a constructor and should be called with the `new` keyword');
+    }
     /**
      * 
      * [格式化配置]
@@ -3207,6 +3215,8 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
      * 
      */
     // 编辑器挂载点
+
+
     if (isElement(options.el)) {
       // 着色器
       var shader = {
@@ -3255,7 +3265,7 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
       this._colorCursor = options.color.cursor || "#ff0000";
       /*光标颜色*/
 
-      this._colorSelect = options.color.select || "#6c6cf155";
+      this._colorSelect = options.color.select || "#6c6cf1";
       /*选择背景*/
 
       this._fontFamily = options["font-family"] || "新宋体";

@@ -67,3 +67,8 @@ v1.7.0:
     date:2020-06-05
     changes:
       -  HTML格式化（内嵌套的CSS和ES无格式）
+v1.7.1:
+    date:2020-06-05
+    changes:
+      -  修复IE和Edge不支持透明色问题
+      -  修复IE浏览器对Symbol的支持问题

@@ -69,7 +69,8 @@ export function initDom() {
     xhtml.css(this.__selectCanvas, {
         position: "absolute",
         left: "40px",
-        top: "10px"
+        top: "10px",
+        opacity: "0.5"
     });
 
     this.$$updateCanvasSize(1, 1);

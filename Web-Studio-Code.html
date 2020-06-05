@@ -58,6 +58,7 @@
             background-color: #9e9695;
             color: white;
             padding: 0 10px;
+            white-space: nowrap;
         }
 
         .help>a {
@@ -74,7 +75,7 @@
     <div id="wscode"></div>
     <input type='button' value='格式化' onclick='doFormat()' title='点击我格式化代码'>
     <span class='help'>
-        Web Studip Code:当前启用的是HTML语言编辑器，你可以在特殊标签中嵌套JS和CSS并测试他们，有任何意见你都可以
+        Web Studio Code : 当前启用的是HTML语言编辑器，你可以在特殊标签中嵌套JS和CSS并测试他们，有任何意见你都可以
         <a href="https://github.com/yelloxing/Web-Studio-Code/issues" target="_blank">提Issue</a>
         来告知我们！
     </span>
@@ -106,7 +107,7 @@
             content: "<html lang=\"zh-cn\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>Example | Web Studio Code</title>\n    <style>\n        /*css样式*/\n        body {\n            margin: 0px;\n        }\n    </style>\n</head>\n<body>\n    <script>\n\n        /*js代码*/\n        function doit() {\n            console.log('你好，世界！');\n        }\n\n    \</script\>\n</body>\n</html>\n\n<!-- Developed by 心叶（yelloxing@gmail.com） -->"
         });
 
-        console.log(wscode);
+        // console.log(wscode);
 
         function doFormat(){
             wscode.format();

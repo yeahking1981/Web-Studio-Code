@@ -10,8 +10,6 @@ export default function (textString, tabNumber) {
 
     let getTabString = getTabStringFactory(tabNumber);
 
-    console.log(domTree);
-
     /**
      * 为了避免使用递归，我们定义一个计算数组needCalcs来登记已经计算过的结果和待计算的内容
      * 虽然需要频繁插入，可是感觉问题不大，并且数组的话，方便最后模板的获取

@@ -1,6 +1,13 @@
+
+// 兼容方法
+
+import './Polyfill/Symbol';
+
 import isElement from '@yelloxing/core.js/isElement';
 import isString from '@yelloxing/core.js/isString';
 import isFunction from '@yelloxing/core.js/isFunction';
+
+// 核心方法和工具方法
 
 import { textWidth, bestLeftNum, calcCanvasXY, selectIsNotBlank } from './edit-view/tool';
 
@@ -25,6 +32,10 @@ import json_shader from './lang/json/shader';
 import json_format from './lang/json/format';
 
 let wscode = function (options) {
+
+    if (!(this instanceof wscode)) {
+        throw new Error('WSCode is a constructor and should be called with the `new` keyword');
+    }
 
     /**
      * 
@@ -70,7 +81,7 @@ let wscode = function (options) {
         this._colorNumber = options.color.number || "#888484"; /*行号颜色*/
         this._colorEdit = options.color.edit || "#eaeaf1"; /*编辑行颜色*/
         this._colorCursor = options.color.cursor || "#ff0000"; /*光标颜色*/
-        this._colorSelect = options.color.select || "#6c6cf155"; /*选择背景*/
+        this._colorSelect = options.color.select || "#6c6cf1"; /*选择背景*/
         this._fontFamily = options["font-family"] || "新宋体"; /*字体*/
         this._fontWeight = options["font-weight"] || 600;/*字重*/
         this._tabSpace = options.tabSpace || 4;/*设置一个tab表示多少个空格*/

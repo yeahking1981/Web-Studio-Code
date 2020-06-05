@@ -16,6 +16,8 @@
 
 > 温馨提示：使用过程中，你可以查看 [版本历史](./CHANGELOG) 来了解是否需要升级！
 
+> 兼容Chrome、Safari、Edge、Firefox和IE(9+)等常见浏览器！
+
 ## 如何引入
 
 我们推荐你使用npm的方式安装和使用：
@@ -27,7 +29,7 @@ npm install --save wscode
 当然，你也可以通过CDN的方式引入：
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/wscode@1.7.0/dist/wscode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/wscode@1.7.1/dist/wscode.min.js"></script>
 ```
 
 ## 如何使用
@@ -73,7 +75,7 @@ var wscode = new WSCode({
         number:"#888484", /*行号颜色*/
         edit:"#eaeaf1", /*编辑行背景色*/
         cursor:"#ff0000", /*光标颜色*/
-        select:"#6c6cf155", /*选择背景*/
+        select:"#6c6cf1", /*选择背景*/
     },
 
     // 设置一个tab表示多少个空格（可选，默认4）
