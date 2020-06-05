@@ -36,6 +36,33 @@
             font-family: sans-serif;
             text-decoration: none;
         }
+
+        input[type='button'] {
+            position: fixed;
+            left: 16px;
+            bottom: 18px;
+            cursor: pointer;
+            width: 70px;
+            height: 26px;
+            border: 1px solid #9e9695;
+            outline: none;
+        }
+
+        .help {
+            position: fixed;
+            left: 100px;
+            bottom: 18px;
+            font-size: 12px;
+            height: 26px;
+            line-height: 26px;
+            background-color: #9e9695;
+            color: white;
+            padding: 0 10px;
+        }
+
+        .help>a {
+            font-weight: 800;
+        }
     </style>
 
 </head>
@@ -45,6 +72,12 @@
     <a href="https://github.com/yelloxing/Web-Studio-Code" class='github' target="_blank">Fork me on Github</a>
 
     <div id="wscode"></div>
+    <input type='button' value='格式化' onclick='doFormat()' title='点击我格式化代码'>
+    <span class='help'>
+        Web Studip Code:当前启用的是HTML语言编辑器，你可以在特殊标签中嵌套JS和CSS并测试他们，有任何意见你都可以
+        <a href="https://github.com/yelloxing/Web-Studio-Code/issues" target="_blank">提Issue</a>
+        来告知我们！
+    </span>
 
     <script>
         window.wscode = new WSCode({
@@ -70,10 +103,14 @@
             },
 
             // 初始化文本
-            content: "<!DOCTYPE html>\n<html lang=\"zh-cn\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>Example | Web Studio Code</title>\n    <style>\n        /*css样式*/\n        body {\n            margin: 0px;\n        }\n    </style>\n</head>\n<body>\n    <script>\n\n        /*js代码*/\n        function doit() {\n            console.log('你好，世界！');\n        }\n\n    \</script\>\n</body>\n</html>\n\n<!-- Developed by 心叶（yelloxing@gmail.com） -->"
+            content: "<html lang=\"zh-cn\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>Example | Web Studio Code</title>\n    <style>\n        /*css样式*/\n        body {\n            margin: 0px;\n        }\n    </style>\n</head>\n<body>\n    <script>\n\n        /*js代码*/\n        function doit() {\n            console.log('你好，世界！');\n        }\n\n    \</script\>\n</body>\n</html>\n\n<!-- Developed by 心叶（yelloxing@gmail.com） -->"
         });
 
         console.log(wscode);
+
+        function doFormat(){
+            wscode.format();
+        }
     </script>
 
 </body>

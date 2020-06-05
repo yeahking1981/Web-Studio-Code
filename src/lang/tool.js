@@ -29,3 +29,25 @@ export function toShaderReult(words) {
 
     return resultData;
 };
+
+// 获取前置空格
+
+export function getTabStringFactory(tabNumber) {
+
+    let singleTab = "";
+    for (let i = 0; i < tabNumber; i++) {
+        singleTab += " ";
+    }
+
+    return function getTabString(num) {
+
+        let temp = '';
+        for (let j = 0; j < num; j++) {
+            temp += singleTab;
+        }
+
+        return temp;
+
+    };
+
+};
