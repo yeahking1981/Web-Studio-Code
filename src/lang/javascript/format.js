@@ -1,4 +1,9 @@
-export default function (textString, tabNumber) {
+
+import { getTabStringFactory } from '../tool';
+
+export default function (textString, tabNumber, preNumber = 0) {
+
+    let getTabString = getTabStringFactory(tabNumber);
 
     console.warn("[提醒] JavaScript格式化方法未提供！");
 

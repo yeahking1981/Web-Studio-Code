@@ -4,14 +4,14 @@
 *
 * author 心叶
 *
-* version 1.7.1
+* version 1.7.2
 *
 * build Fri May 08 2020
 *
 * Copyright yelloxing
 * Released under the MIT license
 *
-* Date:Fri Jun 05 2020 23:25:07 GMT+0800 (GMT+08:00)
+* Date:Sat Jun 06 2020 15:23:42 GMT+0800 (GMT+08:00)
 */
 
 "use strict";
@@ -2706,7 +2706,7 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
         tagObj.type = 'textcode';
         tagObj.tagName = tag;
 
-        while (nextNValue(specialCode.length + 3) != '</' + specialCode + '>') {
+        while (nextNValue(specialCode.length + 3) != '</' + specialCode + '>' && i < template.length) {
           tagObj.tagName += next();
         }
 
@@ -2725,7 +2725,7 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
         tagObj.type = 'comment';
         tagObj.tagName = tag;
 
-        while (nextNValue(3) != '-->') {
+        while (nextNValue(3) != '-->' && i < template.length) {
           tagObj.tagName += next();
         }
 
@@ -2741,7 +2741,7 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
         tagObj.type = 'DOCTYPE';
         tagObj.tagName = tag;
 
-        while (nextNValue(1) != '>') {
+        while (nextNValue(1) != '>' && i < template.length) {
           tagObj.tagName += next();
         }
 
@@ -2760,7 +2760,7 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
               attrLeftValue = null,
               attrLeftLen = null; // 如果在包裹中或者没有遇到‘>’说明没有结束
 
-          while (isAttrString || currentChar != '>') {
+          while (isAttrString || currentChar != '>' && i < template.length) {
             tag += next(); // 如果是包裹里面，试探是否即将遇到了结束
 
             if (isAttrString) {
@@ -2825,7 +2825,7 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
             tagObj.type = 'textcode';
             tagObj.tagName = currentChar;
 
-            while (nextNValue(1) != '<') {
+            while (nextNValue(1) != '<' && i < template.length) {
               tagObj.tagName += next();
             }
 
@@ -3016,9 +3016,28 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
     return DomTree;
   };
 
+  function css_format(textString, tabNumber) {
+    var preNumber = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
+    var getTabString = getTabStringFactory(tabNumber);
+    console.warn("[提醒] CSS格式化方法未提供！");
+    return textString;
+  }
+
+  function javascript_format(textString, tabNumber) {
+    var preNumber = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
+    var getTabString = getTabStringFactory(tabNumber);
+    console.warn("[提醒] JavaScript格式化方法未提供！");
+    return textString;
+  }
+
   function html_format(textString, tabNumber) {
     // 借助开源项目获得的模板分析结果：git+https://github.com/yelloxing/xhtml-engine.git
     var domTree = DomTree("<help-root>" + textString + "</help-root>", true);
+
+    if (domTree[domTree.length - 1].type == 'comment') {
+      domTree[domTree.length - 1].content = domTree[domTree.length - 1].content.replace(/\<\/help\-root\>null$/, '');
+    }
+
     var getTabString = getTabStringFactory(tabNumber);
     /**
      * 为了避免使用递归，我们定义一个计算数组needCalcs来登记已经计算过的结果和待计算的内容
@@ -3032,7 +3051,8 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
         index = 0,
         currentNode,
         attrsString,
-        needReplace;
+        needReplace,
+        preTag = "";
 
     while (index < needCalcs.length) {
       // 寻找第一个没有计算的
@@ -3060,6 +3080,7 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
 
 
         if (currentNode.__tagType__ == 'double') {
+          preTag = currentNode.name;
           needReplace = []; // 登记开头
 
           needReplace.push(getTabString(currentNode.__deep__ - 2) + "<".concat(currentNode.name, " ").concat(attrsString, ">")); // 登记孩子
@@ -3077,7 +3098,24 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
           }
       } // 如果是文本
       else if (currentNode.type == 'text') {
-          needCalcs[index - 1] = getTabString(currentNode.__deep__ - 2) + currentNode.content.trim();
+          switch (preTag) {
+            case "script":
+              {
+                needCalcs[index - 1] = javascript_format(currentNode.content.trim(), tabNumber, currentNode.__deep__ - 2);
+                break;
+              }
+
+            case "style":
+              {
+                needCalcs[index - 1] = css_format(currentNode.content.trim(), tabNumber, currentNode.__deep__ - 2);
+                break;
+              }
+
+            default:
+              {
+                needCalcs[index - 1] = getTabString(currentNode.__deep__ - 2) + currentNode.content.trim();
+              }
+          }
         } // 如果是注释
         else if (currentNode.type == 'comment') {
             needCalcs[index - 1] = getTabString(currentNode.__deep__ - 2) + "<!-- " + currentNode.content.trim() + " -->";
@@ -3085,16 +3123,6 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
     }
 
     return needCalcs.join("\n");
-  }
-
-  function css_format(textString, tabNumber) {
-    console.warn("[提醒] CSS格式化方法未提供！");
-    return textString;
-  }
-
-  function javascript_format(textString, tabNumber) {
-    console.warn("[提醒] JavaScript格式化方法未提供！");
-    return textString;
   }
 
   function json_shader(textString, colors, notToResult) {

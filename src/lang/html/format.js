@@ -3,10 +3,19 @@ import DomTree from 'xhtml-engine/DomTree/index';
 import { getTabStringFactory } from '../tool';
 import isString from '@yelloxing/core.js/isString';
 
+// 内置语言格式化
+
+import format_css from '../css/format';
+import format_javascript from '../javascript/format';
+
 export default function (textString, tabNumber) {
 
     // 借助开源项目获得的模板分析结果：git+https://github.com/yelloxing/xhtml-engine.git
     let domTree = DomTree("<help-root>" + textString + "</help-root>", true);
+
+    if (domTree[domTree.length - 1].type == 'comment') {
+        domTree[domTree.length - 1].content = domTree[domTree.length - 1].content.replace(/\<\/help\-root\>null$/, '');
+    }
 
     let getTabString = getTabStringFactory(tabNumber);
 
@@ -18,7 +27,7 @@ export default function (textString, tabNumber) {
      * 
      */
 
-    let needCalcs = domTree[0].childNodes, index = 0, currentNode, attrsString, needReplace;
+    let needCalcs = domTree[0].childNodes, index = 0, currentNode, attrsString, needReplace, preTag = "";
 
     while (index < needCalcs.length) {
 
@@ -49,6 +58,8 @@ export default function (textString, tabNumber) {
             // 这种情况稍微麻烦点，需要登记开头和结尾，而且需要插入孩子
             if (currentNode.__tagType__ == 'double') {
 
+                preTag = currentNode.name;
+
                 needReplace = [];
 
                 // 登记开头
@@ -77,7 +88,20 @@ export default function (textString, tabNumber) {
 
         // 如果是文本
         else if (currentNode.type == 'text') {
-            needCalcs[index - 1] = getTabString(currentNode.__deep__ - 2) + (currentNode.content).trim();
+
+            switch (preTag) {
+                case "script": {
+                    needCalcs[index - 1] = format_javascript((currentNode.content).trim(), tabNumber, currentNode.__deep__ - 2);
+                    break;
+                }
+                case "style": {
+                    needCalcs[index - 1] = format_css((currentNode.content).trim(), tabNumber, currentNode.__deep__ - 2);
+                    break;
+                }
+                default: {
+                    needCalcs[index - 1] = getTabString(currentNode.__deep__ - 2) + (currentNode.content).trim();
+                }
+            }
         }
         // 如果是注释
         else if (currentNode.type == 'comment') {

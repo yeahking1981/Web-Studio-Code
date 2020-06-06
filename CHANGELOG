@@ -72,3 +72,7 @@ v1.7.1:
     changes:
       -  修复IE和Edge不支持透明色问题
       -  修复IE浏览器对Symbol的支持问题
+v1.7.2:
+    date:2020-06-06
+    changes:
+      -  解决错误的HTML模板格式化卡顿问题

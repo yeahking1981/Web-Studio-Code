@@ -16,7 +16,7 @@
 
 > 温馨提示：使用过程中，你可以查看 [版本历史](./CHANGELOG) 来了解是否需要升级！
 
-> 兼容Chrome、Safari、Edge、Firefox和IE(9+)等常见浏览器！
+> 兼容Chrome、Safari、Edge、Firefox、Opera和IE(9+)等常见浏览器！
 
 ## 如何引入
 
@@ -29,7 +29,7 @@ npm install --save wscode
 当然，你也可以通过CDN的方式引入：
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/wscode@1.7.1/dist/wscode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/wscode@1.7.2/dist/wscode.min.js"></script>
 ```
 
 ## 如何使用
