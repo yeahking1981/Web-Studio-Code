@@ -29,7 +29,7 @@ npm install --save wscode
 当然，你也可以通过CDN的方式引入：
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/wscode@1.7.2/dist/wscode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/wscode@1.7.4/dist/wscode.min.js"></script>
 ```
 
 ## 如何使用
