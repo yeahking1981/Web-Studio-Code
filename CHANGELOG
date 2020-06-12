@@ -76,3 +76,7 @@ v1.7.2:
     date:2020-06-06
     changes:
       -  解决错误的HTML模板格式化卡顿问题
+v1.7.3:
+    date:2020-06-12
+    changes:
+      -  添加文本内容改变通知钩子`this.updated(callback);`

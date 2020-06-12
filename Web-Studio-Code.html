@@ -109,6 +109,10 @@
 
         console.log(wscode);
 
+        wscode.updated(function(){
+            console.log('数据更新了'+new Date());
+        });
+
         function doFormat(){
             wscode.format();
         }

@@ -158,6 +158,9 @@ export default function () {
         this.$$updateCursorPosition();
         this.$$updateView();
 
+        // 通知文本改动
+        this.__updated__();
+
     };
 
     // 中文输入开始
@@ -224,6 +227,9 @@ export default function () {
                     this.$$updateView();
                     this.$$cancelSelect();
 
+                    // 通知文本改动
+                    this.__updated__();
+
                 }
                 break;
             }
@@ -265,6 +271,9 @@ export default function () {
                     this.$$updateView();
                     this.$$updateCanvasSize();
                     this.$$updateSelectView();
+
+                    // 通知文本改动
+                    this.__updated__();
 
                 } else {
                     update(blanks);
@@ -382,6 +391,9 @@ export default function () {
                 this.$$updateCursorPosition();
                 this.$$updateView();
                 this.$$cancelSelect();
+
+                // 通知文本改动
+                this.__updated__();
 
                 break;
             }

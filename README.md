@@ -118,6 +118,12 @@ wscode.format();
 wscode.valueOf();
 ```
 
+- 编辑器管理的文本发生改变后会主动触发callback方法
+
+```js
+wscode.updated(callback);
+```
+
 ## 开源协议
 
 [MIT](https://github.com/yelloxing/Web-Studio-Code/blob/master/LICENSE)

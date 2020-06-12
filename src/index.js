@@ -157,6 +157,11 @@ let wscode = function (options) {
     // 绑定操作
     this.$$bindEvent();
 
+    this.__updated__ = () => { };
+    this.updated = callback => {
+        this.__updated__ = callback;
+    };
+
     this.valueOf = () => {
         return this._contentArray.join('\n');
     };

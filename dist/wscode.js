@@ -4,14 +4,14 @@
 *
 * author 心叶
 *
-* version 1.7.2
+* version 1.7.3
 *
 * build Fri May 08 2020
 *
 * Copyright yelloxing
 * Released under the MIT license
 *
-* Date:Sat Jun 06 2020 15:23:42 GMT+0800 (GMT+08:00)
+* Date:Fri Jun 12 2020 09:06:32 GMT+0800 (GMT+08:00)
 */
 
 "use strict";
@@ -768,7 +768,10 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
 
       _this4.$$updateCursorPosition();
 
-      _this4.$$updateView();
+      _this4.$$updateView(); // 通知文本改动
+
+
+      _this4.__updated__();
     }; // 中文输入开始
 
 
@@ -839,7 +842,10 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
 
               _this4.$$updateView();
 
-              _this4.$$cancelSelect();
+              _this4.$$cancelSelect(); // 通知文本改动
+
+
+              _this4.__updated__();
             }
 
             break;
@@ -886,7 +892,10 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
 
               _this4.$$updateCanvasSize();
 
-              _this4.$$updateSelectView();
+              _this4.$$updateSelectView(); // 通知文本改动
+
+
+              _this4.__updated__();
             } else {
               update(blanks);
             }
@@ -997,7 +1006,10 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
 
             _this4.$$updateView();
 
-            _this4.$$cancelSelect();
+            _this4.$$cancelSelect(); // 通知文本改动
+
+
+            _this4.__updated__();
 
             break;
           }
@@ -3379,6 +3391,12 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
     this.$$updateView(); // 绑定操作
 
     this.$$bindEvent();
+
+    this.__updated__ = function () {};
+
+    this.updated = function (callback) {
+      _this5.__updated__ = callback;
+    };
 
     this.valueOf = function () {
       return _this5._contentArray.join('\n');
