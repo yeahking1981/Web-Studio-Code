@@ -1,6 +1,6 @@
 {
   "name": "wscode",
-  "version": "1.7.4",
+  "version": "1.7.5",
   "description": "🎉 An Editor Used on the Browser Side.",
   "main": "dist/wscode.min.js",
   "scripts": {
@@ -37,9 +37,7 @@
     "babelify": "^10.0.0",
     "cuf": "^1.2.0",
     "rollup": "^1.17.0",
-    "uglify-js": "^3.5.6"
-  },
-  "dependencies": {
+    "uglify-js": "^3.5.6",
     "xhtml-engine": "^1.1.5"
   }
 }

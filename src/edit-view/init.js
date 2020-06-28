@@ -16,7 +16,12 @@ export function initDom() {
     });
 
     xhtml.bind(this._el, 'click', () => {
-        this.__focusDOM.focus();
+
+        // 由于有时候点击屏幕的时候，是滚动导致的，因此位置可能没有计算好前聚焦了，导致光标错位
+        setTimeout(() => {
+            this.__focusDOM.focus();
+        });
+
     })
 
     // 辅助标签

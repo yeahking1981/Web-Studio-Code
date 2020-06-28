@@ -4,14 +4,14 @@
 *
 * author 心叶
 *
-* version 1.7.4
+* version 1.7.5
 *
 * build Fri May 08 2020
 *
 * Copyright yelloxing
 * Released under the MIT license
 *
-* Date:Fri Jun 12 2020 09:11:48 GMT+0800 (GMT+08:00)
+* Date:Sun Jun 28 2020 11:56:47 GMT+0800 (GMT+08:00)
 */
 
 "use strict";
@@ -39,7 +39,10 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
 
   if (!window.Symbol) {
     // 这里其实没有用到Symbol，只是为了兼容IE浏览器，因此没有提供真正的实现
-    window.Symbol = function () {};
+    window.Symbol = function () {
+      // 为了以防万一，添加错误提示
+      console.error("\n[Web Studio Code] Symbol Unexpected!\n------------------------------------------------------------------\nhttps://github.com/yelloxing/Web-Studio-Code/issues\n\n");
+    };
   }
 
   var toString = Object.prototype.toString;
@@ -306,7 +309,10 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
       overflow: "auto"
     });
     xhtml.bind(this._el, 'click', function () {
-      _this.__focusDOM.focus();
+      // 由于有时候点击屏幕的时候，是滚动导致的，因此位置可能没有计算好前聚焦了，导致光标错位
+      setTimeout(function () {
+        _this.__focusDOM.focus();
+      });
     }); // 辅助标签
 
     this.__helpDOM = xhtml.appendTo(this._el, "<span></span>");

@@ -80,3 +80,7 @@ v1.7.4:
     date:2020-06-12
     changes:
       -  添加文本内容改变通知钩子`this.updated(callback);`
+v1.7.5:
+    date:2020-06-28
+    changes:
+      -  针对编辑器滚动后聚焦位置错误进行了修复
