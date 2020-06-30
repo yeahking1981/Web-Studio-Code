@@ -4,14 +4,14 @@
 *
 * author 心叶
 *
-* version 1.8.0-alpha.1
+* version 1.8.0-alpha.2
 *
 * build Fri May 08 2020
 *
 * Copyright yelloxing
 * Released under the MIT license
 *
-* Date:Tue Jun 30 2020 16:09:04 GMT+0800 (GMT+08:00)
+* Date:Tue Jun 30 2020 16:50:09 GMT+0800 (GMT+08:00)
 */
 
 "use strict";
@@ -191,14 +191,8 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
   function toTemplate(line, index) {
     var _this = this;
 
-    var bgcolor = "",
-        template = "";
-
-    if (index == this.__lineNum) {
-      bgcolor = "background-color:" + this._colorEdit;
-    }
-
-    template += "<div style='min-width: fit-content;white-space: nowrap;line-height:21px;height:21px;" + bgcolor + "'>";
+    var template = "";
+    template += "<div style='min-width: fit-content;white-space: nowrap;line-height:21px;height:21px;'>";
     template += "<em style='color:" + this._colorNumber + ";user-select: none;display:inline-block;font-style:normal;width:35px;text-align:right;margin-right:5px;'>" + (index + 1) + "</em>";
     line.forEach(function (text) {
       var contentText = text.content; // 提前对特殊字符进行处理
@@ -415,8 +409,7 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
   function updateView() {
     var _this3 = this;
 
-    if (this.__diff == "not update") return; // 如果有重复利用的行(可复用的过少就不选择这种方法了)
-
+    // 如果有重复利用的行(可复用的过少就不选择这种方法了)
     if (this.__diff && this.__diff.beginNum + this.__diff.endNum > 10) {
       var lineDoms = this.__showDOM.childNodes; // 先删除无用的行
 
@@ -436,7 +429,7 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
         }
       }
     } // 有时候，可能直接替换更快
-    else {
+    else if (this.__diff != "not update") {
         var template = "";
 
         this.__formatData.forEach(function (line, index) {
@@ -446,7 +439,11 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
         this.__showDOM.innerHTML = template;
       }
 
-    this.__diff = "not update";
+    this.__diff = "not update"; // 修改当前编辑的行
+
+    if (this.__lineNum) this.__lineDom.style.backgroundColor = this._colorBackground;
+    this.__lineDom = this.__showDOM.childNodes[this.__lineNum];
+    this.__lineDom.style.backgroundColor = this._colorEdit;
   } // 更新编辑器选中视图
 
 

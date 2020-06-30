@@ -52,12 +52,9 @@ export function selectIsNotBlank() {
 // 根据内容生成模板
 
 export function toTemplate(line, index) {
-    let bgcolor = "", template = "";
-    if (index == this.__lineNum) {
-        bgcolor = "background-color:" + this._colorEdit;
-    }
+    let template = "";
 
-    template += "<div style='min-width: fit-content;white-space: nowrap;line-height:21px;height:21px;" + bgcolor + "'>";
+    template += "<div style='min-width: fit-content;white-space: nowrap;line-height:21px;height:21px;'>";
 
     template += "<em style='color:" + this._colorNumber + ";user-select: none;display:inline-block;font-style:normal;width:35px;text-align:right;margin-right:5px;'>" + (index + 1) + "</em>";
 

@@ -4,8 +4,6 @@ import xhtml from '../xhtml';
 
 export function updateView() {
 
-    if (this.__diff == "not update") return;
-
     // 如果有重复利用的行(可复用的过少就不选择这种方法了)
     if (this.__diff && this.__diff.beginNum + this.__diff.endNum > 10) {
 
@@ -33,13 +31,19 @@ export function updateView() {
     }
 
     // 有时候，可能直接替换更快
-    else {
+    else if (this.__diff != "not update") {
         let template = "";
         this.__formatData.forEach((line, index) => { template += this.$$toTemplate(line, index); });
         this.__showDOM.innerHTML = template;
     }
 
     this.__diff = "not update";
+
+    // 修改当前编辑的行
+    if (this.__lineNum) this.__lineDom.style.backgroundColor = this._colorBackground;
+    this.__lineDom = this.__showDOM.childNodes[this.__lineNum];
+    this.__lineDom.style.backgroundColor = this._colorEdit;
+
 };
 
 // 更新编辑器选中视图
