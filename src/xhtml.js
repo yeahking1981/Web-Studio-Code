@@ -62,7 +62,7 @@ export default {
         return null;
     },
 
-    // 结点
+    // 追加结点
     "appendTo": function (el, template) {
         let node = isElement(template) ? template : this.toNode(template);
         el.appendChild(node);

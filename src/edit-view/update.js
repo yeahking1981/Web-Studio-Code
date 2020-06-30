@@ -4,6 +4,9 @@ import xhtml from '../xhtml';
 
 export function updateView() {
 
+    if (this.__diff == "not update") return;
+    this.__diff = "not update";
+
     let template = "";
 
     this.__formatData.forEach((line, index) => {

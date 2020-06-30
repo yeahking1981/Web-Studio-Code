@@ -154,7 +154,7 @@ export default function () {
 
         // 着色并更新视图
 
-        this.__formatData = this.$shader(this._contentArray.join('\n'), this._langColors);
+        this.__formatData = this.$$diff(this.$shader(this._contentArray.join('\n'), this._langColors));
         this.$$updateCursorPosition();
         this.$$updateView();
 
@@ -220,7 +220,7 @@ export default function () {
                     this.$$deleteSelect();
 
                     // 由于内容改变，需要重新调用着色
-                    this.__formatData = this.$shader(this._contentArray.join('\n'), this._langColors);
+                    this.__formatData = this.$$diff(this.$shader(this._contentArray.join('\n'), this._langColors));
 
                     // 更新视图
                     this.$$updateCursorPosition();
@@ -266,7 +266,7 @@ export default function () {
                     // 校对光标
                     this.__leftNum += this._tabSpace;
 
-                    this.__formatData = this.$shader(this._contentArray.join('\n'), this._langColors);
+                    this.__formatData = this.$$diff(this.$shader(this._contentArray.join('\n'), this._langColors));
                     this.$$updateCursorPosition();
                     this.$$updateView();
                     this.$$updateCanvasSize();
@@ -385,7 +385,7 @@ export default function () {
                 }
 
                 // 由于内容改变，需要重新调用着色
-                this.__formatData = this.$shader(this._contentArray.join('\n'), this._langColors);
+                this.__formatData = this.$$diff(this.$shader(this._contentArray.join('\n'), this._langColors));
 
                 // 更新视图
                 this.$$updateCursorPosition();

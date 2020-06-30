@@ -4,14 +4,14 @@
 *
 * author 心叶
 *
-* version 1.7.5
+* version 1.8.0-alpha.0
 *
 * build Fri May 08 2020
 *
 * Copyright yelloxing
 * Released under the MIT license
 *
-* Date:Sun Jun 28 2020 11:56:47 GMT+0800 (GMT+08:00)
+* Date:Tue Jun 30 2020 11:46:29 GMT+0800 (GMT+08:00)
 */
 
 "use strict";
@@ -245,7 +245,7 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
 
       return null;
     },
-    // 结点
+    // 追加结点
     "appendTo": function appendTo(el, template) {
       var node = isElement(template) ? template : this.toNode(template);
       el.appendChild(node);
@@ -377,6 +377,8 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
   function updateView() {
     var _this2 = this;
 
+    if (this.__diff == "not update") return;
+    this.__diff = "not update";
     var template = "";
 
     this.__formatData.forEach(function (line, index) {
@@ -770,7 +772,7 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
         } // 着色并更新视图
 
 
-      _this4.__formatData = _this4.$shader(_this4._contentArray.join('\n'), _this4._langColors);
+      _this4.__formatData = _this4.$$diff(_this4.$shader(_this4._contentArray.join('\n'), _this4._langColors));
 
       _this4.$$updateCursorPosition();
 
@@ -842,7 +844,7 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
               _this4.$$deleteSelect(); // 由于内容改变，需要重新调用着色
 
 
-              _this4.__formatData = _this4.$shader(_this4._contentArray.join('\n'), _this4._langColors); // 更新视图
+              _this4.__formatData = _this4.$$diff(_this4.$shader(_this4._contentArray.join('\n'), _this4._langColors)); // 更新视图
 
               _this4.$$updateCursorPosition();
 
@@ -890,7 +892,7 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
               _this4.__cursor2.leftNum += _this4._tabSpace; // 校对光标
 
               _this4.__leftNum += _this4._tabSpace;
-              _this4.__formatData = _this4.$shader(_this4._contentArray.join('\n'), _this4._langColors);
+              _this4.__formatData = _this4.$$diff(_this4.$shader(_this4._contentArray.join('\n'), _this4._langColors));
 
               _this4.$$updateCursorPosition();
 
@@ -1006,7 +1008,7 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
               } // 由于内容改变，需要重新调用着色
 
 
-            _this4.__formatData = _this4.$shader(_this4._contentArray.join('\n'), _this4._langColors); // 更新视图
+            _this4.__formatData = _this4.$$diff(_this4.$shader(_this4._contentArray.join('\n'), _this4._langColors)); // 更新视图
 
             _this4.$$updateCursorPosition();
 
@@ -1021,6 +1023,29 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
           }
       }
     });
+  }
+  /**
+   * 为了加速页面渲染，我们引入差异对比
+   * 简单的理解就是：
+   * 原本在数据改变的时候直接更新整个DOM的方式替换成只功能必要的DOM
+   */
+
+
+  function diff(newFormatData) {
+    /**
+     * 思路：
+     * 
+     * 从开始匹配无法匹配的，位置记作begin
+     * 再从结尾匹配无法匹配的，位置记作end
+     * 只有begin和end之间的数据需要更新DOM
+     * 
+     * 当然，也有特殊情况，因此在进行回归前，先把特殊情况提取处理
+     * 
+     */
+    var oldFormatData = this.__formatData; // 对比以后的差异信息
+
+    this.__diff = {};
+    return newFormatData;
   } // 外来文本统一过滤处理
 
 
@@ -3390,7 +3415,7 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
       leftNum: 0,
       lineNum: 0
     };
-    this.__formatData = this.$shader(this._contentArray.join('\n'), this._langColors); // 初始化视图
+    this.__formatData = this.$$diff(this.$shader(this._contentArray.join('\n'), this._langColors)); // 初始化视图
 
     this.$$initView(); // 更新视图
 
@@ -3414,7 +3439,7 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
       _this5.__lineNum = _this5._contentArray.length - 1;
       _this5.__leftNum = _this5._contentArray[_this5.__lineNum].length; // 着色
 
-      _this5.__formatData = _this5.$shader(_this5._contentArray.join('\n'), _this5._langColors); // 更新视图
+      _this5.__formatData = _this5.$$diff(_this5.$shader(_this5._contentArray.join('\n'), _this5._langColors)); // 更新视图
 
       _this5.$$updateView(); // 更新光标位置
 
@@ -3438,7 +3463,9 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
   wscode.prototype.$$updateCanvasSize = updateCanvasSize;
   wscode.prototype.$$cancelSelect = cancelSelect;
   wscode.prototype.$$deleteSelect = deleteSelect;
-  wscode.prototype.$$bindEvent = bindEvent;
+  wscode.prototype.$$bindEvent = bindEvent; // 性能优化系列方法
+
+  wscode.prototype.$$diff = diff;
   wscode.author = '心叶（yelloxing@gmail.com）';
 
   if ((typeof module === "undefined" ? "undefined" : _typeof2(module)) === "object" && _typeof2(module.exports) === "object") {

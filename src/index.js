@@ -14,6 +14,7 @@ import { textWidth, bestLeftNum, calcCanvasXY, selectIsNotBlank } from './edit-v
 import { initDom, initView } from './edit-view/init';
 import { updateView, updateSelectView, updateCursorPosition, updateCanvasSize, cancelSelect, deleteSelect } from './edit-view/update';
 import bindEvent from './edit-view/bind';
+import diff from './edit-view/diff';
 
 import filterText from './edit-view/filter';
 
@@ -146,7 +147,7 @@ let wscode = function (options) {
     this.__lineNum = this._contentArray.length - 1;
     this.__leftNum = this._contentArray[this.__lineNum].length;
     this.__cursor1 = this.__cursor2 = { leftNum: 0, lineNum: 0 };
-    this.__formatData = this.$shader(this._contentArray.join('\n'), this._langColors);
+    this.__formatData = this.$$diff(this.$shader(this._contentArray.join('\n'), this._langColors));
 
     // 初始化视图
     this.$$initView();
@@ -175,7 +176,7 @@ let wscode = function (options) {
         this.__leftNum = this._contentArray[this.__lineNum].length;
 
         // 着色
-        this.__formatData = this.$shader(this._contentArray.join('\n'), this._langColors);
+        this.__formatData = this.$$diff(this.$shader(this._contentArray.join('\n'), this._langColors));
 
         // 更新视图
         this.$$updateView();
@@ -207,6 +208,10 @@ wscode.prototype.$$cancelSelect = cancelSelect;
 wscode.prototype.$$deleteSelect = deleteSelect;
 
 wscode.prototype.$$bindEvent = bindEvent;
+
+// 性能优化系列方法
+
+wscode.prototype.$$diff = diff;
 
 wscode.author = '心叶（yelloxing@gmail.com）';
 
