@@ -4,14 +4,14 @@
 *
 * author 心叶
 *
-* version 1.8.0-alpha.0
+* version 1.8.0-alpha.1
 *
 * build Fri May 08 2020
 *
 * Copyright yelloxing
 * Released under the MIT license
 *
-* Date:Tue Jun 30 2020 11:46:29 GMT+0800 (GMT+08:00)
+* Date:Tue Jun 30 2020 16:09:04 GMT+0800 (GMT+08:00)
 */
 
 "use strict";
@@ -185,6 +185,34 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
 
   function selectIsNotBlank() {
     return this.__cursor1.lineNum != this.__cursor2.lineNum || this.__cursor1.leftNum != this.__cursor2.leftNum;
+  } // 根据内容生成模板
+
+
+  function toTemplate(line, index) {
+    var _this = this;
+
+    var bgcolor = "",
+        template = "";
+
+    if (index == this.__lineNum) {
+      bgcolor = "background-color:" + this._colorEdit;
+    }
+
+    template += "<div style='min-width: fit-content;white-space: nowrap;line-height:21px;height:21px;" + bgcolor + "'>";
+    template += "<em style='color:" + this._colorNumber + ";user-select: none;display:inline-block;font-style:normal;width:35px;text-align:right;margin-right:5px;'>" + (index + 1) + "</em>";
+    line.forEach(function (text) {
+      var contentText = text.content; // 提前对特殊字符进行处理
+
+      contentText = contentText.replace(/\&/g, "&amp;");
+      /*[&]*/
+
+      contentText = contentText.replace(/</g, "&lt;");
+      contentText = contentText.replace(/>/g, "&gt;");
+      /*[<,>]*/
+
+      template += "<span style='user-select: none;font-weight:" + _this._fontWeight + ";white-space: pre;color:" + text.color + "'>" + contentText + "</span>";
+    });
+    return template + "</div>";
   }
 
   var xhtml = {
@@ -251,6 +279,16 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
       el.appendChild(node);
       return node;
     },
+    // 删除结点
+    "remove": function remove(el) {
+      el.parentNode.removeChild(el);
+    },
+    // 在被指定元素之后插入结点
+    "after": function after(el, template) {
+      var node = isElement(template) ? template : this.toNode(template);
+      el.parentNode.insertBefore(node, el.nextSibling);
+      return node;
+    },
     // 修改样式
     "css": function css(el, styles) {
       for (var key in styles) {
@@ -297,7 +335,7 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
   }; // 初始化结点
 
   function initDom() {
-    var _this = this;
+    var _this2 = this;
 
     this._el.innerHTML = "";
     xhtml.css(this._el, {
@@ -311,7 +349,7 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
     xhtml.bind(this._el, 'click', function () {
       // 由于有时候点击屏幕的时候，是滚动导致的，因此位置可能没有计算好前聚焦了，导致光标错位
       setTimeout(function () {
-        _this.__focusDOM.focus();
+        _this2.__focusDOM.focus();
       });
     }); // 辅助标签
 
@@ -375,42 +413,45 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
 
 
   function updateView() {
-    var _this2 = this;
+    var _this3 = this;
 
-    if (this.__diff == "not update") return;
-    this.__diff = "not update";
-    var template = "";
+    if (this.__diff == "not update") return; // 如果有重复利用的行(可复用的过少就不选择这种方法了)
 
-    this.__formatData.forEach(function (line, index) {
-      var bgcolor = "";
+    if (this.__diff && this.__diff.beginNum + this.__diff.endNum > 10) {
+      var lineDoms = this.__showDOM.childNodes; // 先删除无用的行
 
-      if (index == _this2.__lineNum) {
-        bgcolor = "background-color:" + _this2._colorEdit;
+      for (var i = this.__diff.beginNum; i < lineDoms.length - this.__diff.endNum; i++) {
+        xhtml.remove(lineDoms[i]);
+      } // 追加不足的行
+
+
+      if (this.__diff.beginNum > 0) {
+        for (var _i = this.__formatData.length - 1 - this.__diff.endNum; _i >= this.__diff.beginNum; _i--) {
+          xhtml.after(lineDoms[this.__diff.beginNum - 1], this.$$toTemplate(this.__formatData[_i], _i));
+        }
+      } else {
+        // 如果开头没有结点保留，为了简单，我们直接采用append方法追加
+        for (var _i2 = 0; _i2 < this.__formatData.length - this.__diff.endNum; _i2++) {
+          xhtml.appendTo(this.__showDOM, this.$$toTemplate(this.__formatData[_i2], _i2));
+        }
+      }
+    } // 有时候，可能直接替换更快
+    else {
+        var template = "";
+
+        this.__formatData.forEach(function (line, index) {
+          template += _this3.$$toTemplate(line, index);
+        });
+
+        this.__showDOM.innerHTML = template;
       }
 
-      template += "<div style='min-width: fit-content;white-space: nowrap;line-height:21px;height:21px;" + bgcolor + "'>";
-      template += "<em style='color:" + _this2._colorNumber + ";user-select: none;display:inline-block;font-style:normal;width:35px;text-align:right;margin-right:5px;'>" + (index + 1) + "</em>";
-      line.forEach(function (text) {
-        var contentText = text.content; // 提前对特殊字符进行处理
-
-        contentText = contentText.replace(/\&/g, "&amp;");
-        /*[&]*/
-
-        contentText = contentText.replace(/</g, "&lt;");
-        contentText = contentText.replace(/>/g, "&gt;");
-        /*[<,>]*/
-
-        template += "<span style='user-select: none;font-weight:" + _this2._fontWeight + ";white-space: pre;color:" + text.color + "'>" + contentText + "</span>";
-      });
-      template += "</div>";
-    });
-
-    this.__showDOM.innerHTML = template;
+    this.__diff = "not update";
   } // 更新编辑器选中视图
 
 
   function updateSelectView() {
-    var _this3 = this;
+    var _this4 = this;
 
     var ctx = this.__selectCanvas.getContext('2d');
 
@@ -418,9 +459,9 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
     ctx.clearRect(0, 0, this.__selectCanvas.scrollWidth, this.__selectCanvas.scrollHeight); // 绘制二个区间
 
     var drawerSelect = function drawerSelect(beginLeftNum, endLeftNum, lineNum) {
-      var xy1 = _this3.$$calcCanvasXY(beginLeftNum, lineNum);
+      var xy1 = _this4.$$calcCanvasXY(beginLeftNum, lineNum);
 
-      var xy2 = _this3.$$calcCanvasXY(endLeftNum, lineNum);
+      var xy2 = _this4.$$calcCanvasXY(endLeftNum, lineNum);
 
       ctx.fillRect(xy1.x, xy1.y, xy2.x - xy1.x, 21);
     }; // 如果选中区域为空，不用绘制
@@ -641,17 +682,17 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
 
 
   function bindEvent() {
-    var _this4 = this;
+    var _this5 = this;
 
     var mouseDown = false; // 辅助计算选择光标位置
 
     var calcCursor = function calcCursor(event) {
-      var position = xhtml.position(_this4._el, event);
+      var position = xhtml.position(_this5._el, event);
       var topIndex = Math.round((position.y - 20.5) / 21);
       if (topIndex < 0) topIndex = 0;
-      if (topIndex >= _this4._contentArray.length) topIndex = _this4._contentArray.length - 1;
+      if (topIndex >= _this5._contentArray.length) topIndex = _this5._contentArray.length - 1;
       return {
-        leftNum: _this4.$$bestLeftNum(position.x, topIndex),
+        leftNum: _this5.$$bestLeftNum(position.x, topIndex),
         lineNum: topIndex
       };
     }; // 获取光标之间的内容
@@ -659,50 +700,50 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
 
     var calcTwoCursor = function calcTwoCursor() {
       // 假定cursor2是结束光标
-      var beginCursor = _this4.__cursor2,
-          endCursor = _this4.__cursor1; // 根据行号来校对
+      var beginCursor = _this5.__cursor2,
+          endCursor = _this5.__cursor1; // 根据行号来校对
 
-      if (_this4.__cursor1.lineNum < _this4.__cursor2.lineNum) {
-        beginCursor = _this4.__cursor1;
-        endCursor = _this4.__cursor2;
-      } else if (_this4.__cursor1.lineNum == _this4.__cursor2.lineNum) {
+      if (_this5.__cursor1.lineNum < _this5.__cursor2.lineNum) {
+        beginCursor = _this5.__cursor1;
+        endCursor = _this5.__cursor2;
+      } else if (_this5.__cursor1.lineNum == _this5.__cursor2.lineNum) {
         // 根据列号来校对
-        if (_this4.__cursor1.leftNum < _this4.__cursor2.leftNum) {
-          beginCursor = _this4.__cursor1;
-          endCursor = _this4.__cursor2;
+        if (_this5.__cursor1.leftNum < _this5.__cursor2.leftNum) {
+          beginCursor = _this5.__cursor1;
+          endCursor = _this5.__cursor2;
         }
 
-        return _this4._contentArray[beginCursor.lineNum].substring(beginCursor.leftNum, endCursor.leftNum);
+        return _this5._contentArray[beginCursor.lineNum].substring(beginCursor.leftNum, endCursor.leftNum);
       } // 余下的一定是多行
 
 
       var resultData = "";
-      resultData += _this4._contentArray[beginCursor.lineNum].substr(beginCursor.leftNum) + "\n";
+      resultData += _this5._contentArray[beginCursor.lineNum].substr(beginCursor.leftNum) + "\n";
 
       for (var lineNum = beginCursor.lineNum + 1; lineNum < endCursor.lineNum; lineNum++) {
-        resultData += _this4._contentArray[lineNum] + "\n";
+        resultData += _this5._contentArray[lineNum] + "\n";
       }
 
-      resultData += _this4._contentArray[endCursor.lineNum].substr(0, endCursor.leftNum);
+      resultData += _this5._contentArray[endCursor.lineNum].substr(0, endCursor.leftNum);
       return resultData;
     }; // 鼠标按下的时候，记录开始光标位置并标记鼠标按下动作
 
 
     xhtml.bind(document, 'mousedown', function (event) {
       mouseDown = true;
-      _this4.__cursor2 = _this4.__cursor1 = calcCursor(event);
+      _this5.__cursor2 = _this5.__cursor1 = calcCursor(event);
 
-      _this4.$$updateCanvasSize(); // 绘制选中效果
+      _this5.$$updateCanvasSize(); // 绘制选中效果
 
 
-      _this4.$$updateSelectView();
+      _this5.$$updateSelectView();
     }); // 移动的时候不停的同步结束光标位置
 
     xhtml.bind(document, 'mousemove', function (event) {
       if (!mouseDown) return;
-      _this4.__cursor2 = calcCursor(event); // 绘制选中效果
+      _this5.__cursor2 = calcCursor(event); // 绘制选中效果
 
-      _this4.$$updateSelectView();
+      _this5.$$updateSelectView();
     }); // 鼠标分开或移出的时候，标记鼠标放开
 
     xhtml.bind(document, 'mouseup', function () {
@@ -713,92 +754,92 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
     }); // 点击编辑界面
 
     xhtml.bind(this._el, 'click', function (event) {
-      var position = xhtml.position(_this4._el, event);
+      var position = xhtml.position(_this5._el, event);
       var topIndex = Math.round((position.y - 20.5) / 21); // 如果超过了内容区域
 
-      if (topIndex < 0 || topIndex >= _this4._contentArray.length) return;
-      _this4.__lineNum = topIndex;
-      _this4.__leftNum = _this4.$$bestLeftNum(position.x);
+      if (topIndex < 0 || topIndex >= _this5._contentArray.length) return;
+      _this5.__lineNum = topIndex;
+      _this5.__leftNum = _this5.$$bestLeftNum(position.x);
 
-      _this4.$$updateCursorPosition();
+      _this5.$$updateCursorPosition();
 
-      _this4.$$updateView();
+      _this5.$$updateView();
     });
 
     var update = function update(text) {
       // 获取输入内容
-      text = text || _this4.__focusDOM.value;
-      text = _this4.$$filterText(text);
-      _this4.__focusDOM.value = ""; // 如果有选区，先删除选区
+      text = text || _this5.__focusDOM.value;
+      text = _this5.$$filterText(text);
+      _this5.__focusDOM.value = ""; // 如果有选区，先删除选区
 
-      if (_this4.$$selectIsNotBlank()) _this4.$$deleteSelect(); // 如果输入的是回车，切割文本
+      if (_this5.$$selectIsNotBlank()) _this5.$$deleteSelect(); // 如果输入的是回车，切割文本
 
       if (/^\n$/.test(text)) {
-        if (_this4.__leftNum >= _this4._contentArray[_this4.__lineNum].length) {
-          _this4._contentArray.splice(_this4.__lineNum + 1, 0, "");
+        if (_this5.__leftNum >= _this5._contentArray[_this5.__lineNum].length) {
+          _this5._contentArray.splice(_this5.__lineNum + 1, 0, "");
         } else {
-          _this4._contentArray.splice(_this4.__lineNum + 1, 0, _this4._contentArray[_this4.__lineNum].substring(_this4.__leftNum));
+          _this5._contentArray.splice(_this5.__lineNum + 1, 0, _this5._contentArray[_this5.__lineNum].substring(_this5.__leftNum));
 
-          _this4._contentArray[_this4.__lineNum] = _this4._contentArray[_this4.__lineNum].substring(0, _this4.__leftNum);
+          _this5._contentArray[_this5.__lineNum] = _this5._contentArray[_this5.__lineNum].substring(0, _this5.__leftNum);
         }
 
-        _this4.__lineNum += 1;
-        _this4.__leftNum = 0;
+        _this5.__lineNum += 1;
+        _this5.__leftNum = 0;
       } // 否则就是一堆文本（包括复制来的）
       else {
           var textArray = text.split(/\n/); // 如果只有一行文本(分开是为了加速)
 
           if (textArray.length <= 1) {
-            _this4._contentArray[_this4.__lineNum] = _this4._contentArray[_this4.__lineNum].substring(0, _this4.__leftNum) + text + _this4._contentArray[_this4.__lineNum].substring(_this4.__leftNum);
-            _this4.__leftNum += text.length;
+            _this5._contentArray[_this5.__lineNum] = _this5._contentArray[_this5.__lineNum].substring(0, _this5.__leftNum) + text + _this5._contentArray[_this5.__lineNum].substring(_this5.__leftNum);
+            _this5.__leftNum += text.length;
           } // 如果是复制的多行文本
           else {
-              var _this4$_contentArray;
+              var _this5$_contentArray;
 
               // 需要切割的行两边文本
-              var leftText = _this4._contentArray[_this4.__lineNum].substring(0, _this4.__leftNum);
+              var leftText = _this5._contentArray[_this5.__lineNum].substring(0, _this5.__leftNum);
 
-              var rightText = _this4._contentArray[_this4.__lineNum].substring(_this4.__leftNum); // 旧行文本拼接进来
+              var rightText = _this5._contentArray[_this5.__lineNum].substring(_this5.__leftNum); // 旧行文本拼接进来
 
 
               textArray[0] = leftText + textArray[0];
               textArray[textArray.length - 1] += rightText; // 新内容记录下来
 
-              (_this4$_contentArray = _this4._contentArray).splice.apply(_this4$_contentArray, [_this4.__lineNum, 1].concat(_toConsumableArray2(textArray)));
+              (_this5$_contentArray = _this5._contentArray).splice.apply(_this5$_contentArray, [_this5.__lineNum, 1].concat(_toConsumableArray2(textArray)));
 
-              _this4.__lineNum += textArray.length - 1;
-              _this4.__leftNum = textArray[textArray.length - 1].length - rightText.length;
+              _this5.__lineNum += textArray.length - 1;
+              _this5.__leftNum = textArray[textArray.length - 1].length - rightText.length;
             }
         } // 着色并更新视图
 
 
-      _this4.__formatData = _this4.$$diff(_this4.$shader(_this4._contentArray.join('\n'), _this4._langColors));
+      _this5.__formatData = _this5.$$diff(_this5.$shader(_this5._contentArray.join('\n'), _this5._langColors));
 
-      _this4.$$updateCursorPosition();
+      _this5.$$updateCursorPosition();
 
-      _this4.$$updateView(); // 通知文本改动
+      _this5.$$updateView(); // 通知文本改动
 
 
-      _this4.__updated__();
+      _this5.__updated__();
     }; // 中文输入开始
 
 
     xhtml.bind(this.__focusDOM, 'compositionstart', function () {
-      _this4.__needUpdate = false;
-      _this4.__focusDOM.style.color = "rgba(0,0,0,0)";
-      _this4.__focusDOM.style.borderLeft = '1px solid ' + _this4._colorCursor;
+      _this5.__needUpdate = false;
+      _this5.__focusDOM.style.color = "rgba(0,0,0,0)";
+      _this5.__focusDOM.style.borderLeft = '1px solid ' + _this5._colorCursor;
     }); // 中文输入结束
 
     xhtml.bind(this.__focusDOM, 'compositionend', function () {
-      _this4.__needUpdate = true;
-      _this4.__focusDOM.style.color = _this4._colorCursor;
-      _this4.__focusDOM.style.borderLeft = "none";
+      _this5.__needUpdate = true;
+      _this5.__focusDOM.style.color = _this5._colorCursor;
+      _this5.__focusDOM.style.borderLeft = "none";
       update();
     }); // 输入
 
     xhtml.bind(this.__focusDOM, 'input', function () {
       // 如果是中文输入开始，不应该更新
-      if (_this4.__needUpdate) update();
+      if (_this5.__needUpdate) update();
     }); // 处理键盘控制
 
     xhtml.bind(this._el, 'keydown', function (event) {
@@ -807,16 +848,16 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
         case "ctrl+a":
           {
             // 修改选区范围
-            _this4.__cursor1 = {
+            _this5.__cursor1 = {
               leftNum: 0,
               lineNum: 0
             };
-            _this4.__cursor2 = {
-              lineNum: _this4._contentArray.length - 1,
-              leftNum: _this4._contentArray[_this4._contentArray.length - 1].length
+            _this5.__cursor2 = {
+              lineNum: _this5._contentArray.length - 1,
+              leftNum: _this5._contentArray[_this5._contentArray.length - 1].length
             }; // 绘制选中效果
 
-            _this4.$$updateSelectView();
+            _this5.$$updateSelectView();
 
             break;
           }
@@ -824,10 +865,10 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
 
         case "ctrl+c":
           {
-            if (_this4.$$selectIsNotBlank()) {
+            if (_this5.$$selectIsNotBlank()) {
               xhtml.copy(calcTwoCursor());
 
-              _this4.__focusDOM.focus();
+              _this5.__focusDOM.focus();
             }
 
             break;
@@ -836,24 +877,24 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
 
         case "ctrl+x":
           {
-            if (_this4.$$selectIsNotBlank()) {
+            if (_this5.$$selectIsNotBlank()) {
               xhtml.copy(calcTwoCursor());
 
-              _this4.__focusDOM.focus();
+              _this5.__focusDOM.focus();
 
-              _this4.$$deleteSelect(); // 由于内容改变，需要重新调用着色
-
-
-              _this4.__formatData = _this4.$$diff(_this4.$shader(_this4._contentArray.join('\n'), _this4._langColors)); // 更新视图
-
-              _this4.$$updateCursorPosition();
-
-              _this4.$$updateView();
-
-              _this4.$$cancelSelect(); // 通知文本改动
+              _this5.$$deleteSelect(); // 由于内容改变，需要重新调用着色
 
 
-              _this4.__updated__();
+              _this5.__formatData = _this5.$$diff(_this5.$shader(_this5._contentArray.join('\n'), _this5._langColors)); // 更新视图
+
+              _this5.$$updateCursorPosition();
+
+              _this5.$$updateView();
+
+              _this5.$$cancelSelect(); // 通知文本改动
+
+
+              _this5.__updated__();
             }
 
             break;
@@ -868,42 +909,42 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
 
             var blanks = "";
 
-            for (var i = 0; i < _this4._tabSpace; i++) {
+            for (var i = 0; i < _this5._tabSpace; i++) {
               blanks += " ";
             } // 如果有选区，特殊处理
 
 
-            if (_this4.$$selectIsNotBlank()) {
-              var beginLineNum = _this4.__cursor1.lineNum,
-                  endLineNum = _this4.__cursor2.lineNum;
+            if (_this5.$$selectIsNotBlank()) {
+              var beginLineNum = _this5.__cursor1.lineNum,
+                  endLineNum = _this5.__cursor2.lineNum;
 
               if (beginLineNum > endLineNum) {
-                beginLineNum = _this4.__cursor2.lineNum;
-                endLineNum = _this4.__cursor1.lineNum;
+                beginLineNum = _this5.__cursor2.lineNum;
+                endLineNum = _this5.__cursor1.lineNum;
               } // 在开头追究tab
 
 
               for (var lineNum = beginLineNum; lineNum <= endLineNum; lineNum++) {
-                _this4._contentArray[lineNum] = blanks + _this4._contentArray[lineNum];
+                _this5._contentArray[lineNum] = blanks + _this5._contentArray[lineNum];
               } // 校对选择区域
 
 
-              _this4.__cursor1.leftNum += _this4._tabSpace;
-              _this4.__cursor2.leftNum += _this4._tabSpace; // 校对光标
+              _this5.__cursor1.leftNum += _this5._tabSpace;
+              _this5.__cursor2.leftNum += _this5._tabSpace; // 校对光标
 
-              _this4.__leftNum += _this4._tabSpace;
-              _this4.__formatData = _this4.$$diff(_this4.$shader(_this4._contentArray.join('\n'), _this4._langColors));
+              _this5.__leftNum += _this5._tabSpace;
+              _this5.__formatData = _this5.$$diff(_this5.$shader(_this5._contentArray.join('\n'), _this5._langColors));
 
-              _this4.$$updateCursorPosition();
+              _this5.$$updateCursorPosition();
 
-              _this4.$$updateView();
+              _this5.$$updateView();
 
-              _this4.$$updateCanvasSize();
+              _this5.$$updateCanvasSize();
 
-              _this4.$$updateSelectView(); // 通知文本改动
+              _this5.$$updateSelectView(); // 通知文本改动
 
 
-              _this4.__updated__();
+              _this5.__updated__();
             } else {
               update(blanks);
             }
@@ -915,53 +956,53 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
         case "up":
           {
             // 如果是第一行不需要任何处理
-            if (_this4.__lineNum <= 0) return; // 向上一行
+            if (_this5.__lineNum <= 0) return; // 向上一行
 
-            _this4.__lineNum -= 1;
-            _this4.__leftNum = _this4.$$bestLeftNum(_this4.$$textWidth(_this4._contentArray[_this4.__lineNum + 1].substr(0, _this4.__leftNum)) + 40);
+            _this5.__lineNum -= 1;
+            _this5.__leftNum = _this5.$$bestLeftNum(_this5.$$textWidth(_this5._contentArray[_this5.__lineNum + 1].substr(0, _this5.__leftNum)) + 40);
 
-            _this4.$$updateCursorPosition();
+            _this5.$$updateCursorPosition();
 
-            _this4.$$updateView();
+            _this5.$$updateView();
 
-            _this4.$$cancelSelect();
+            _this5.$$cancelSelect();
 
-            _this4._el.scrollTop -= 21;
+            _this5._el.scrollTop -= 21;
             break;
           }
         // 光标向下
 
         case "down":
           {
-            if (_this4.__lineNum >= _this4._contentArray.length - 1) return; // 向下一行
+            if (_this5.__lineNum >= _this5._contentArray.length - 1) return; // 向下一行
 
-            _this4.__lineNum += 1;
-            _this4.__leftNum = _this4.$$bestLeftNum(_this4.$$textWidth(_this4._contentArray[_this4.__lineNum - 1].substr(0, _this4.__leftNum)) + 40);
+            _this5.__lineNum += 1;
+            _this5.__leftNum = _this5.$$bestLeftNum(_this5.$$textWidth(_this5._contentArray[_this5.__lineNum - 1].substr(0, _this5.__leftNum)) + 40);
 
-            _this4.$$updateCursorPosition();
+            _this5.$$updateCursorPosition();
 
-            _this4.$$updateView();
+            _this5.$$updateView();
 
-            _this4.$$cancelSelect();
+            _this5.$$cancelSelect();
 
-            _this4._el.scrollTop += 21;
+            _this5._el.scrollTop += 21;
             break;
           }
         // 光标向左
 
         case "left":
           {
-            if (_this4.__leftNum <= 0) {
-              if (_this4.__lineNum <= 0) return;
-              _this4.__lineNum -= 1;
-              _this4.__leftNum = _this4._contentArray[_this4.__lineNum].length;
+            if (_this5.__leftNum <= 0) {
+              if (_this5.__lineNum <= 0) return;
+              _this5.__lineNum -= 1;
+              _this5.__leftNum = _this5._contentArray[_this5.__lineNum].length;
             } else {
-              _this4.__leftNum -= 1;
+              _this5.__leftNum -= 1;
             }
 
-            _this4.$$updateCursorPosition();
+            _this5.$$updateCursorPosition();
 
-            _this4.$$cancelSelect();
+            _this5.$$cancelSelect();
 
             break;
           }
@@ -969,17 +1010,17 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
 
         case "right":
           {
-            if (_this4.__leftNum >= _this4._contentArray[_this4.__lineNum].length) {
-              if (_this4.__lineNum >= _this4._contentArray.length - 1) return;
-              _this4.__lineNum += 1;
-              _this4.__leftNum = 0;
+            if (_this5.__leftNum >= _this5._contentArray[_this5.__lineNum].length) {
+              if (_this5.__lineNum >= _this5._contentArray.length - 1) return;
+              _this5.__lineNum += 1;
+              _this5.__leftNum = 0;
             } else {
-              _this4.__leftNum += 1;
+              _this5.__leftNum += 1;
             }
 
-            _this4.$$updateCursorPosition();
+            _this5.$$updateCursorPosition();
 
-            _this4.$$cancelSelect();
+            _this5.$$cancelSelect();
 
             break;
           }
@@ -988,42 +1029,53 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
         case "backspace":
           {
             // 如果有选区
-            if (_this4.$$selectIsNotBlank()) {
+            if (_this5.$$selectIsNotBlank()) {
               // 删除选区
-              _this4.$$deleteSelect();
+              _this5.$$deleteSelect();
             } // 无选区的常规操作
             else {
-                if (_this4.__leftNum <= 0) {
-                  if (_this4.__lineNum <= 0) return;
-                  _this4.__lineNum -= 1;
-                  _this4.__leftNum = _this4._contentArray[_this4.__lineNum].length; // 一行的开头应该删除本行（合并到前一行）
+                if (_this5.__leftNum <= 0) {
+                  if (_this5.__lineNum <= 0) return;
+                  _this5.__lineNum -= 1;
+                  _this5.__leftNum = _this5._contentArray[_this5.__lineNum].length; // 一行的开头应该删除本行（合并到前一行）
 
-                  _this4._contentArray[_this4.__lineNum] += _this4._contentArray[_this4.__lineNum + 1];
+                  _this5._contentArray[_this5.__lineNum] += _this5._contentArray[_this5.__lineNum + 1];
 
-                  _this4._contentArray.splice(_this4.__lineNum + 1, 1);
+                  _this5._contentArray.splice(_this5.__lineNum + 1, 1);
                 } else {
-                  _this4.__leftNum -= 1;
-                  _this4._contentArray[_this4.__lineNum] = _this4._contentArray[_this4.__lineNum].substring(0, _this4.__leftNum) + _this4._contentArray[_this4.__lineNum].substring(_this4.__leftNum + 1);
+                  _this5.__leftNum -= 1;
+                  _this5._contentArray[_this5.__lineNum] = _this5._contentArray[_this5.__lineNum].substring(0, _this5.__leftNum) + _this5._contentArray[_this5.__lineNum].substring(_this5.__leftNum + 1);
                 }
               } // 由于内容改变，需要重新调用着色
 
 
-            _this4.__formatData = _this4.$$diff(_this4.$shader(_this4._contentArray.join('\n'), _this4._langColors)); // 更新视图
+            _this5.__formatData = _this5.$$diff(_this5.$shader(_this5._contentArray.join('\n'), _this5._langColors)); // 更新视图
 
-            _this4.$$updateCursorPosition();
+            _this5.$$updateCursorPosition();
 
-            _this4.$$updateView();
+            _this5.$$updateView();
 
-            _this4.$$cancelSelect(); // 通知文本改动
+            _this5.$$cancelSelect(); // 通知文本改动
 
 
-            _this4.__updated__();
+            _this5.__updated__();
 
             break;
           }
       }
     });
-  }
+  } // 判断一行是否匹配
+
+
+  var euqalLine = function euqalLine(line1, line2) {
+    if (line1.length != line2.length) return false;
+
+    for (var i = 0; i < line1.length; i++) {
+      if (line1[i].content != line2[i].content || line1[i].color != line2[i].color) return false;
+    }
+
+    return true;
+  };
   /**
    * 为了加速页面渲染，我们引入差异对比
    * 简单的理解就是：
@@ -1035,16 +1087,50 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
     /**
      * 思路：
      * 
-     * 从开始匹配无法匹配的，位置记作begin
-     * 再从结尾匹配无法匹配的，位置记作end
+     * 从开始匹配无法匹配的，匹配条个数记作beginNum
+     * 再从结尾匹配无法匹配的，匹配条个数记作endNum
      * 只有begin和end之间的数据需要更新DOM
      * 
      * 当然，也有特殊情况，因此在进行回归前，先把特殊情况提取处理
      * 
      */
-    var oldFormatData = this.__formatData; // 对比以后的差异信息
+    var oldFormatData = this.__formatData;
 
-    this.__diff = {};
+    if (oldFormatData) {
+      // 寻找开始匹配行数
+      var beginNum = 0;
+
+      for (var i = 0; i < oldFormatData.length && i < newFormatData.length; i++) {
+        if (!euqalLine(oldFormatData[i], newFormatData[i])) {
+          break;
+        }
+
+        beginNum += 1;
+      } // 寻找结束匹配行数
+
+
+      var endNum = 0;
+
+      for (var _i3 = 1; _i3 <= oldFormatData.length && _i3 <= newFormatData.length; _i3++) {
+        if (!euqalLine(oldFormatData[oldFormatData.length - _i3], newFormatData[newFormatData.length - _i3])) {
+          break;
+        }
+
+        endNum += 1;
+      } // 校对(如果复用重叠了)
+
+
+      if (beginNum + endNum > this.__formatData.length) {
+        endNum = this.__formatData.length - beginNum;
+      } // 对比以后的差异信息
+
+
+      this.__diff = {
+        beginNum: beginNum,
+        endNum: endNum
+      };
+    }
+
     return newFormatData;
   } // 外来文本统一过滤处理
 
@@ -2847,14 +2933,14 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
 
             tag = tag.replace(/^</, '');
             tagObj.tagName = "";
-            var _i = 0;
+            var _i4 = 0;
 
-            for (; _i < tag.length; _i++) {
-              if (tag[_i] == ' ') break;
-              tagObj.tagName += tag[_i];
+            for (; _i4 < tag.length; _i4++) {
+              if (tag[_i4] == ' ') break;
+              tagObj.tagName += tag[_i4];
             }
 
-            var attrString = tag.substring(_i);
+            var attrString = tag.substring(_i4);
 
             if (blanksReg$1.test(attrString)) {
               tagObj.attrs = {};
@@ -3046,7 +3132,7 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
             DomTree[currentIndex].parentNode = preTemp2Index;
             if (preTemp2Index != null) DomTree[preTemp2Index].childNodes.push(currentIndex); // 校对presNode
 
-            for (var _i2 = 0; _i2 < preDeep - currentDeep; _i2++) {
+            for (var _i5 = 0; _i5 < preDeep - currentDeep; _i5++) {
               presNode.pop();
             }
 
@@ -3271,7 +3357,7 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
   }
 
   var wscode = function wscode(options) {
-    var _this5 = this;
+    var _this6 = this;
 
     if (!(this instanceof wscode)) {
       throw new Error('WSCode is a constructor and should be called with the `new` keyword');
@@ -3298,10 +3384,10 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
         normal: function normal() {
           var resultData = [];
 
-          _this5._contentArray.forEach(function (text) {
+          _this6._contentArray.forEach(function (text) {
             resultData.push([{
               content: text,
-              color: _this5._colorText
+              color: _this6._colorText
             }]);
           });
 
@@ -3426,25 +3512,25 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
     this.__updated__ = function () {};
 
     this.updated = function (callback) {
-      _this5.__updated__ = callback;
+      _this6.__updated__ = callback;
     };
 
     this.valueOf = function () {
-      return _this5._contentArray.join('\n');
+      return _this6._contentArray.join('\n');
     };
 
     this.format = function () {
       // 格式化内容
-      _this5._contentArray = _this5.$format(_this5._contentArray.join('\n'), _this5._tabSpace).split('\n');
-      _this5.__lineNum = _this5._contentArray.length - 1;
-      _this5.__leftNum = _this5._contentArray[_this5.__lineNum].length; // 着色
+      _this6._contentArray = _this6.$format(_this6._contentArray.join('\n'), _this6._tabSpace).split('\n');
+      _this6.__lineNum = _this6._contentArray.length - 1;
+      _this6.__leftNum = _this6._contentArray[_this6.__lineNum].length; // 着色
 
-      _this5.__formatData = _this5.$$diff(_this5.$shader(_this5._contentArray.join('\n'), _this5._langColors)); // 更新视图
+      _this6.__formatData = _this6.$$diff(_this6.$shader(_this6._contentArray.join('\n'), _this6._langColors)); // 更新视图
 
-      _this5.$$updateView(); // 更新光标位置
+      _this6.$$updateView(); // 更新光标位置
 
 
-      _this5.$$initView();
+      _this6.$$initView();
     };
   }; // 挂载辅助方法
 
@@ -3453,7 +3539,8 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
   wscode.prototype.$$bestLeftNum = bestLeftNum;
   wscode.prototype.$$calcCanvasXY = calcCanvasXY;
   wscode.prototype.$$selectIsNotBlank = selectIsNotBlank;
-  wscode.prototype.$$filterText = filterText; // 挂载核心方法
+  wscode.prototype.$$filterText = filterText;
+  wscode.prototype.$$toTemplate = toTemplate; // 挂载核心方法
 
   wscode.prototype.$$initDom = initDom;
   wscode.prototype.$$initView = initView;

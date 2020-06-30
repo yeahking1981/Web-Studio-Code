@@ -48,3 +48,30 @@ export function calcCanvasXY(leftNum, lineNum) {
 export function selectIsNotBlank() {
     return this.__cursor1.lineNum != this.__cursor2.lineNum || this.__cursor1.leftNum != this.__cursor2.leftNum;
 };
+
+// 根据内容生成模板
+
+export function toTemplate(line, index) {
+    let bgcolor = "", template = "";
+    if (index == this.__lineNum) {
+        bgcolor = "background-color:" + this._colorEdit;
+    }
+
+    template += "<div style='min-width: fit-content;white-space: nowrap;line-height:21px;height:21px;" + bgcolor + "'>";
+
+    template += "<em style='color:" + this._colorNumber + ";user-select: none;display:inline-block;font-style:normal;width:35px;text-align:right;margin-right:5px;'>" + (index + 1) + "</em>";
+
+    line.forEach(text => {
+
+        let contentText = text.content;
+
+        // 提前对特殊字符进行处理
+        contentText = contentText.replace(/\&/g, "&amp;");/*[&]*/
+        contentText = contentText.replace(/</g, "&lt;"); contentText = contentText.replace(/>/g, "&gt;");/*[<,>]*/
+
+        template += "<span style='user-select: none;font-weight:" + this._fontWeight + ";white-space: pre;color:" + text.color + "'>" + contentText + "</span>";
+
+    });
+
+    return template + "</div>";
+};

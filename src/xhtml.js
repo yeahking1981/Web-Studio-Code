@@ -69,6 +69,18 @@ export default {
         return node;
     },
 
+    // 删除结点
+    "remove": function (el) {
+        el.parentNode.removeChild(el);
+    },
+
+    // 在被指定元素之后插入结点
+    "after": function (el, template) {
+        let node = isElement(template) ? template : this.toNode(template);
+        el.parentNode.insertBefore(node, el.nextSibling);
+        return node;
+    },
+
     // 修改样式
     "css": function (el, styles) {
         for (let key in styles) {

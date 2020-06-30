@@ -5,39 +5,41 @@ import xhtml from '../xhtml';
 export function updateView() {
 
     if (this.__diff == "not update") return;
-    this.__diff = "not update";
 
-    let template = "";
+    // 如果有重复利用的行(可复用的过少就不选择这种方法了)
+    if (this.__diff && this.__diff.beginNum + this.__diff.endNum > 10) {
 
-    this.__formatData.forEach((line, index) => {
+        let lineDoms = this.__showDOM.childNodes;
 
-        let bgcolor = "";
-        if (index == this.__lineNum) {
-            bgcolor = "background-color:" + this._colorEdit;
+        // 先删除无用的行
+        for (let i = this.__diff.beginNum; i < lineDoms.length - this.__diff.endNum; i++) {
+            xhtml.remove(lineDoms[i]);
         }
 
-        template += "<div style='min-width: fit-content;white-space: nowrap;line-height:21px;height:21px;" + bgcolor + "'>";
+        // 追加不足的行
+        if (this.__diff.beginNum > 0) {
+            for (let i = this.__formatData.length - 1 - this.__diff.endNum; i >= this.__diff.beginNum; i--) {
+                xhtml.after(lineDoms[this.__diff.beginNum - 1], this.$$toTemplate(this.__formatData[i], i));
+            }
+        } else {
 
-        template += "<em style='color:" + this._colorNumber + ";user-select: none;display:inline-block;font-style:normal;width:35px;text-align:right;margin-right:5px;'>" + (index + 1) + "</em>";
+            // 如果开头没有结点保留，为了简单，我们直接采用append方法追加
+            for (let i = 0; i < this.__formatData.length - this.__diff.endNum; i++) {
+                xhtml.appendTo(this.__showDOM, this.$$toTemplate(this.__formatData[i], i));
+            }
 
-        line.forEach(text => {
+        }
 
-            let contentText = text.content;
+    }
 
-            // 提前对特殊字符进行处理
-            contentText = contentText.replace(/\&/g, "&amp;");/*[&]*/
-            contentText = contentText.replace(/</g, "&lt;"); contentText = contentText.replace(/>/g, "&gt;");/*[<,>]*/
+    // 有时候，可能直接替换更快
+    else {
+        let template = "";
+        this.__formatData.forEach((line, index) => { template += this.$$toTemplate(line, index); });
+        this.__showDOM.innerHTML = template;
+    }
 
-            template += "<span style='user-select: none;font-weight:" + this._fontWeight + ";white-space: pre;color:" + text.color + "'>" + contentText + "</span>";
-
-        });
-
-        template += "</div>";
-
-    });
-
-    this.__showDOM.innerHTML = template;
-
+    this.__diff = "not update";
 };
 
 // 更新编辑器选中视图

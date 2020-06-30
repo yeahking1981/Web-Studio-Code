@@ -9,7 +9,7 @@ import isFunction from '@yelloxing/core.js/isFunction';
 
 // 核心方法和工具方法
 
-import { textWidth, bestLeftNum, calcCanvasXY, selectIsNotBlank } from './edit-view/tool';
+import { textWidth, bestLeftNum, calcCanvasXY, selectIsNotBlank, toTemplate } from './edit-view/tool';
 
 import { initDom, initView } from './edit-view/init';
 import { updateView, updateSelectView, updateCursorPosition, updateCanvasSize, cancelSelect, deleteSelect } from './edit-view/update';
@@ -194,6 +194,7 @@ wscode.prototype.$$bestLeftNum = bestLeftNum;
 wscode.prototype.$$calcCanvasXY = calcCanvasXY;
 wscode.prototype.$$selectIsNotBlank = selectIsNotBlank;
 wscode.prototype.$$filterText = filterText;
+wscode.prototype.$$toTemplate = toTemplate;
 
 // 挂载核心方法
 
