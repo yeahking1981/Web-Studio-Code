@@ -62,8 +62,6 @@ export default function (newFormatData) {
             endNum
         };
 
-        console.log(minLength, beginNum, endNum);
-
     }
 
     return newFormatData;

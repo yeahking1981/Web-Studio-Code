@@ -4,14 +4,14 @@
 *
 * author 心叶
 *
-* version 1.8.0-beta.1
+* version 1.8.0
 *
 * build Fri May 08 2020
 *
 * Copyright yelloxing
 * Released under the MIT license
 *
-* Date:Wed Jul 01 2020 10:18:33 GMT+0800 (GMT+08:00)
+* Date:Wed Jul 01 2020 11:00:36 GMT+0800 (GMT+08:00)
 */
 
 "use strict";
@@ -1141,7 +1141,6 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
         beginNum: beginNum,
         endNum: endNum
       };
-      console.log(minLength, beginNum, endNum);
     }
 
     return newFormatData;
