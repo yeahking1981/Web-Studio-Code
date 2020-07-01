@@ -4,14 +4,14 @@
 *
 * author 心叶
 *
-* version 1.8.0
+* version 1.8.1
 *
 * build Fri May 08 2020
 *
 * Copyright yelloxing
 * Released under the MIT license
 *
-* Date:Wed Jul 01 2020 11:00:36 GMT+0800 (GMT+08:00)
+* Date:Wed Jul 01 2020 12:07:13 GMT+0800 (GMT+08:00)
 */
 
 "use strict";
@@ -1133,7 +1133,9 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
       var minLength = Math.min(oldFormatData.length, newFormatData.length); // 校对(如果复用重叠了)
 
       if (beginNum + endNum >= minLength) {
-        endNum = minLength - beginNum - 1;
+        endNum = minLength - beginNum - 1; // 由于不知道是删除还是增加，因此可能出现负数
+
+        if (endNum < 0) endNum = 0;
       } // 对比以后的差异信息
 
 

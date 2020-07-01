@@ -54,6 +54,9 @@ export default function (newFormatData) {
         // 校对(如果复用重叠了)
         if (beginNum + endNum >= minLength) {
             endNum = minLength - beginNum - 1;
+
+            // 由于不知道是删除还是增加，因此可能出现负数
+            if (endNum < 0) endNum = 0;
         }
 
         // 对比以后的差异信息
