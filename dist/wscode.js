@@ -4,14 +4,14 @@
 *
 * author 心叶
 *
-* version 1.8.0-beta
+* version 1.8.0-beta.1
 *
 * build Fri May 08 2020
 *
 * Copyright yelloxing
 * Released under the MIT license
 *
-* Date:Wed Jul 01 2020 10:04:34 GMT+0800 (GMT+08:00)
+* Date:Wed Jul 01 2020 10:18:33 GMT+0800 (GMT+08:00)
 */
 
 "use strict";
@@ -455,7 +455,7 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
 
     this.__diff = "not update"; // 修改当前编辑的行
 
-    if (this.__lineNum) this.__lineDom.style.backgroundColor = this._colorBackground;
+    if (this.__lineDom) this.__lineDom.style.backgroundColor = this._colorBackground;
     this.__lineDom = this.__showDOM.childNodes[this.__lineNum];
     this.__lineDom.style.backgroundColor = this._colorEdit;
   } // 更新编辑器选中视图
