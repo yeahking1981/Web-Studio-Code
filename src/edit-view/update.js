@@ -8,9 +8,17 @@ export function updateView() {
     if (this.__diff && this.__diff.beginNum + this.__diff.endNum > 10) {
 
         let lineDoms = this.__showDOM.childNodes;
+        let lineDoms_length = lineDoms.length;
 
         // 先删除无用的行
-        for (let i = this.__diff.beginNum; i < lineDoms.length - this.__diff.endNum; i++) {
+
+        /**
+         * 这里的删除需要稍微注意一下
+         * 因为结点删除以后就没有了，这会导致lineDoms的更新，这也是为什么备份数组长度的原因
+         * 倒着删除同样是因为这个原因
+         */
+
+        for (let i = lineDoms_length - this.__diff.endNum - 1; i >= this.__diff.beginNum; i--) {
             xhtml.remove(lineDoms[i]);
         }
 
@@ -26,6 +34,12 @@ export function updateView() {
                 xhtml.appendTo(this.__showDOM, this.$$toTemplate(this.__formatData[i], i));
             }
 
+        }
+
+        // 更新行号
+        lineDoms = this.__showDOM.childNodes;
+        for (let i = this.__diff.beginNum; i < this.__formatData.length; i++) {
+            lineDoms[i].getElementsByTagName('em')[0].innerText = i + 1;
         }
 
     }

@@ -49,9 +49,11 @@ export default function (newFormatData) {
             endNum += 1;
         }
 
+        let minLength = Math.min(oldFormatData.length, newFormatData.length);
+
         // 校对(如果复用重叠了)
-        if (beginNum + endNum > this.__formatData.length) {
-            endNum = this.__formatData.length - beginNum;
+        if (beginNum + endNum >= minLength) {
+            endNum = minLength - beginNum - 1;
         }
 
         // 对比以后的差异信息
@@ -59,6 +61,8 @@ export default function (newFormatData) {
             beginNum,
             endNum
         };
+
+        console.log(minLength, beginNum, endNum);
 
     }
 

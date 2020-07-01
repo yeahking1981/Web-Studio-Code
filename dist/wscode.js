@@ -4,14 +4,14 @@
 *
 * author 心叶
 *
-* version 1.8.0-alpha.2
+* version 1.8.0-beta
 *
 * build Fri May 08 2020
 *
 * Copyright yelloxing
 * Released under the MIT license
 *
-* Date:Tue Jun 30 2020 16:50:09 GMT+0800 (GMT+08:00)
+* Date:Wed Jul 01 2020 10:04:34 GMT+0800 (GMT+08:00)
 */
 
 "use strict";
@@ -411,9 +411,16 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
 
     // 如果有重复利用的行(可复用的过少就不选择这种方法了)
     if (this.__diff && this.__diff.beginNum + this.__diff.endNum > 10) {
-      var lineDoms = this.__showDOM.childNodes; // 先删除无用的行
+      var lineDoms = this.__showDOM.childNodes;
+      var lineDoms_length = lineDoms.length; // 先删除无用的行
 
-      for (var i = this.__diff.beginNum; i < lineDoms.length - this.__diff.endNum; i++) {
+      /**
+       * 这里的删除需要稍微注意一下
+       * 因为结点删除以后就没有了，这会导致lineDoms的更新，这也是为什么备份数组长度的原因
+       * 倒着删除同样是因为这个原因
+       */
+
+      for (var i = lineDoms_length - this.__diff.endNum - 1; i >= this.__diff.beginNum; i--) {
         xhtml.remove(lineDoms[i]);
       } // 追加不足的行
 
@@ -427,6 +434,13 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
         for (var _i2 = 0; _i2 < this.__formatData.length - this.__diff.endNum; _i2++) {
           xhtml.appendTo(this.__showDOM, this.$$toTemplate(this.__formatData[_i2], _i2));
         }
+      } // 更新行号
+
+
+      lineDoms = this.__showDOM.childNodes;
+
+      for (var _i3 = this.__diff.beginNum; _i3 < this.__formatData.length; _i3++) {
+        lineDoms[_i3].getElementsByTagName('em')[0].innerText = _i3 + 1;
       }
     } // 有时候，可能直接替换更快
     else if (this.__diff != "not update") {
@@ -1108,17 +1122,18 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
 
       var endNum = 0;
 
-      for (var _i3 = 1; _i3 <= oldFormatData.length && _i3 <= newFormatData.length; _i3++) {
-        if (!euqalLine(oldFormatData[oldFormatData.length - _i3], newFormatData[newFormatData.length - _i3])) {
+      for (var _i4 = 1; _i4 <= oldFormatData.length && _i4 <= newFormatData.length; _i4++) {
+        if (!euqalLine(oldFormatData[oldFormatData.length - _i4], newFormatData[newFormatData.length - _i4])) {
           break;
         }
 
         endNum += 1;
-      } // 校对(如果复用重叠了)
+      }
 
+      var minLength = Math.min(oldFormatData.length, newFormatData.length); // 校对(如果复用重叠了)
 
-      if (beginNum + endNum > this.__formatData.length) {
-        endNum = this.__formatData.length - beginNum;
+      if (beginNum + endNum >= minLength) {
+        endNum = minLength - beginNum - 1;
       } // 对比以后的差异信息
 
 
@@ -1126,6 +1141,7 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
         beginNum: beginNum,
         endNum: endNum
       };
+      console.log(minLength, beginNum, endNum);
     }
 
     return newFormatData;
@@ -2930,14 +2946,14 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
 
             tag = tag.replace(/^</, '');
             tagObj.tagName = "";
-            var _i4 = 0;
+            var _i5 = 0;
 
-            for (; _i4 < tag.length; _i4++) {
-              if (tag[_i4] == ' ') break;
-              tagObj.tagName += tag[_i4];
+            for (; _i5 < tag.length; _i5++) {
+              if (tag[_i5] == ' ') break;
+              tagObj.tagName += tag[_i5];
             }
 
-            var attrString = tag.substring(_i4);
+            var attrString = tag.substring(_i5);
 
             if (blanksReg$1.test(attrString)) {
               tagObj.attrs = {};
@@ -3129,7 +3145,7 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
             DomTree[currentIndex].parentNode = preTemp2Index;
             if (preTemp2Index != null) DomTree[preTemp2Index].childNodes.push(currentIndex); // 校对presNode
 
-            for (var _i5 = 0; _i5 < preDeep - currentDeep; _i5++) {
+            for (var _i6 = 0; _i6 < preDeep - currentDeep; _i6++) {
               presNode.pop();
             }
 
