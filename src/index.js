@@ -177,6 +177,8 @@ let wscode = function (options) {
     // 在当前光标位置输入新的内容
     this.input = (content = "", cursor = 0, number = 0) => {
 
+        content = this.$$filterText(content);
+
         // 先修改内容
         this._contentArray[this.__lineNum] =
             this._contentArray[this.__lineNum].substring(0, this.__leftNum + cursor) +

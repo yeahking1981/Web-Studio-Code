@@ -52,7 +52,7 @@ export function initDom() {
 
         this.__focusDOM.focus();
 
-    })
+    });
 
     // 光标
     this.__focusDOM = xhtml.appendTo(this._el, "<textarea></textarea>");

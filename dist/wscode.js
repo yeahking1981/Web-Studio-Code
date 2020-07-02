@@ -4,14 +4,14 @@
 *
 * author 心叶
 *
-* version 1.9.0-alpha.4
+* version 1.9.0-alpha.5
 *
 * build Fri May 08 2020
 *
 * Copyright yelloxing
 * Released under the MIT license
 *
-* Date:Thu Jul 02 2020 17:45:20 GMT+0800 (GMT+08:00)
+* Date:Thu Jul 02 2020 18:03:50 GMT+0800 (GMT+08:00)
 */
 
 "use strict";
@@ -3595,7 +3595,8 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
       var content = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : "";
       var cursor = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
       var number = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
-      // 先修改内容
+      content = _this6.$$filterText(content); // 先修改内容
+
       _this6._contentArray[_this6.__lineNum] = _this6._contentArray[_this6.__lineNum].substring(0, _this6.__leftNum + cursor) + content + _this6._contentArray[_this6.__lineNum].substring(_this6.__leftNum + cursor + number); // 修改光标位置
 
       _this6.__leftNum += cursor - -(content + "").length; // 输入以触发视图更新
