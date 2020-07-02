@@ -179,9 +179,9 @@ let wscode = function (options) {
 
         // 先修改内容
         this._contentArray[this.__lineNum] =
-            this._contentArray[this.__lineNum].substring(0, this.__leftNum - cursor) +
+            this._contentArray[this.__lineNum].substring(0, this.__leftNum + cursor) +
             content +
-            this._contentArray[this.__lineNum].substring(this.__leftNum - cursor + number);
+            this._contentArray[this.__lineNum].substring(this.__leftNum + cursor + number);
 
         // 修改光标位置
         this.__leftNum += cursor - -(content + "").length;
