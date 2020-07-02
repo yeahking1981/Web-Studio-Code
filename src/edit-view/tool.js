@@ -74,8 +74,24 @@ export function toTemplate(line, index) {
 };
 
 // 整理当前输入框信息
+
 export function getInputMessage(wscode) {
     return {
+
+        // 光标前面有多少个字符
+        leftNum: wscode.__leftNum,
+
+        // 当前行之前有多少行
+        lineNum: wscode.__lineNum,
+
+        // 光标left坐标
+        x: wscode.__cursorLeft,
+
+        // 光标top坐标
+        y: wscode.__cursorTop,
+
+        // 一行文本的高
+        lineHeight: 21
         
     };
 };

@@ -40,6 +40,10 @@ export function initDom() {
     // 辅助输入标签
     this.__helpInputDOM = xhtml.appendTo(this._el, "<div></div>");
 
+    xhtml.css(this.__helpInputDOM, {
+        position: "absolute"
+    });
+
     // 光标
     this.__focusDOM = xhtml.appendTo(this._el, "<textarea></textarea>");
 

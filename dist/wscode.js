@@ -4,14 +4,14 @@
 *
 * author 心叶
 *
-* version 1.9.0-alpha.0
+* version 1.9.0-alpha.1
 *
 * build Fri May 08 2020
 *
 * Copyright yelloxing
 * Released under the MIT license
 *
-* Date:Thu Jul 02 2020 11:59:44 GMT+0800 (GMT+08:00)
+* Date:Thu Jul 02 2020 14:39:40 GMT+0800 (GMT+08:00)
 */
 
 "use strict";
@@ -211,7 +211,18 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
 
 
   function getInputMessage(wscode) {
-    return {};
+    return {
+      // 光标前面有多少个字符
+      leftNum: wscode.__leftNum,
+      // 当前行之前有多少行
+      lineNum: wscode.__lineNum,
+      // 光标left坐标
+      x: wscode.__cursorLeft,
+      // 光标top坐标
+      y: wscode.__cursorTop,
+      // 一行文本的高
+      lineHeight: 21
+    };
   }
 
   var xhtml = {
@@ -363,7 +374,10 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
       "font-weight": this._fontWeight
     }); // 辅助输入标签
 
-    this.__helpInputDOM = xhtml.appendTo(this._el, "<div></div>"); // 光标
+    this.__helpInputDOM = xhtml.appendTo(this._el, "<div></div>");
+    xhtml.css(this.__helpInputDOM, {
+      position: "absolute"
+    }); // 光标
 
     this.__focusDOM = xhtml.appendTo(this._el, "<textarea></textarea>");
     xhtml.css(this.__focusDOM, {
@@ -516,9 +530,11 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
 
 
   function updateCursorPosition() {
+    this.__cursorTop = this.__lineNum * 21 + 10;
+    this.__cursorLeft = 40 + this.$$textWidth(this._contentArray[this.__lineNum].substring(0, this.__leftNum));
     xhtml.css(this.__focusDOM, {
-      top: this.__lineNum * 21 + 10 + "px",
-      left: 40 + this.$$textWidth(this._contentArray[this.__lineNum].substring(0, this.__leftNum)) + "px"
+      top: this.__cursorTop + "px",
+      left: this.__cursorLeft + "px"
     });
   } // 更新画布尺寸
 
@@ -855,7 +871,7 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
       _this5.__focusDOM.style.borderLeft = "none";
       update(); // 辅助输入
 
-      if (_this5.$input != null) _this5.$input(_this5.__helpInputDOM, getInputMessage(), _this5._contentArray);
+      if (_this5.$input != null) _this5.$input(_this5.__helpInputDOM, getInputMessage(_this5), _this5._contentArray);
     }); // 输入
 
     xhtml.bind(this.__focusDOM, 'input', function () {
@@ -863,7 +879,7 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
       if (_this5.__needUpdate) {
         update(); // 辅助输入
 
-        if (_this5.$input != null) _this5.$input(_this5.__helpInputDOM, getInputMessage(), _this5._contentArray);
+        if (_this5.$input != null) _this5.$input(_this5.__helpInputDOM, getInputMessage(_this5), _this5._contentArray);
       }
     }); // 处理键盘控制
 

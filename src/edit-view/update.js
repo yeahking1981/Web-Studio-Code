@@ -120,9 +120,12 @@ export function updateSelectView() {
 
 export function updateCursorPosition() {
 
+    this.__cursorTop = this.__lineNum * 21 + 10;
+    this.__cursorLeft = 40 + this.$$textWidth(this._contentArray[this.__lineNum].substring(0, this.__leftNum));
+
     xhtml.css(this.__focusDOM, {
-        top: (this.__lineNum * 21 + 10) + "px",
-        left: (40 + this.$$textWidth(this._contentArray[this.__lineNum].substring(0, this.__leftNum))) + "px",
+        top: this.__cursorTop + "px",
+        left: this.__cursorLeft + "px",
     });
 
 };

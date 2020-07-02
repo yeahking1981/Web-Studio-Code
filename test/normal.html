@@ -43,8 +43,16 @@
             //     debugger
             // },
 
+
+            // 测试辅助输入最基本的模型
+
             input: function (dom, options, contentArray) {
-                debugger
+
+                dom.innerHTML = "测试的文本";
+                dom.style.backgroundColor = 'white';
+                dom.style.left = options.x + 'px';
+                dom.style.top = (options.y + options.lineHeight) + "px";
+
             },
 
             // 初始化文本
