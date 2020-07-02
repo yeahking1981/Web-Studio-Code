@@ -1,4 +1,5 @@
 import keyString from '@yelloxing/core.js/tools/keyString';
+import isFunction from '@yelloxing/core.js/isFunction';
 import xhtml from '../xhtml';
 import { getInputMessage } from './tool';
 
@@ -81,6 +82,8 @@ export default function () {
 
     // 点击编辑界面
     xhtml.bind(this._el, 'click', event => {
+
+        this.__helpInputDOM.innerHTML = '';
 
         let position = xhtml.position(this._el, event);
         let topIndex = Math.round((position.y - 20.5) / 21);
@@ -179,7 +182,7 @@ export default function () {
         update();
 
         // 辅助输入
-        if (this.$input != null) this.$input(this.__helpInputDOM, getInputMessage(this), this._contentArray);
+        if (this.$input != null) this.__helpInputEvent = this.$input(this.__helpInputDOM, getInputMessage(this), this._contentArray) || {};
     });
 
     // 输入
@@ -189,14 +192,32 @@ export default function () {
             update();
 
             // 辅助输入
-            if (this.$input != null) this.$input(this.__helpInputDOM, getInputMessage(this), this._contentArray);
+            if (this.$input != null) this.__helpInputEvent = this.$input(this.__helpInputDOM, getInputMessage(this), this._contentArray) || {};
         }
     });
 
     // 处理键盘控制
     xhtml.bind(this._el, 'keydown', event => {
 
-        switch (keyString(event)) {
+        let keyStringCode = keyString(event);
+
+        // 辅助输入前置拦截
+
+        if (this.__helpInputDOM.innerHTML != '') {
+            let __helpInputEvent = this.__helpInputEvent[keyStringCode];
+
+            if (isFunction(__helpInputEvent)) {
+
+                // 如果返回true表示继续调用，否则此快捷键结束
+                if (!__helpInputEvent()) return;
+            } else {
+                this.__helpInputDOM.innerHTML = '';
+            }
+        }
+
+        // 进入常规快捷键
+
+        switch (keyStringCode) {
 
             // 全选
             case "ctrl+a": {

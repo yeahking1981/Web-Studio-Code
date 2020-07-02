@@ -4,14 +4,14 @@
 *
 * author 心叶
 *
-* version 1.9.0-alpha.1
+* version 1.9.0-alpha.2
 *
 * build Fri May 08 2020
 *
 * Copyright yelloxing
 * Released under the MIT license
 *
-* Date:Thu Jul 02 2020 14:39:40 GMT+0800 (GMT+08:00)
+* Date:Thu Jul 02 2020 15:50:40 GMT+0800 (GMT+08:00)
 */
 
 "use strict";
@@ -376,7 +376,14 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
 
     this.__helpInputDOM = xhtml.appendTo(this._el, "<div></div>");
     xhtml.css(this.__helpInputDOM, {
-      position: "absolute"
+      position: "absolute",
+      "z-index": 1
+    });
+    xhtml.bind(this.__helpInputDOM, 'click', function (event) {
+      xhtml.stopPropagation(event);
+      xhtml.preventDefault(event);
+
+      _this2.__focusDOM.focus();
     }); // 光标
 
     this.__focusDOM = xhtml.appendTo(this._el, "<textarea></textarea>");
@@ -789,6 +796,7 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
     }); // 点击编辑界面
 
     xhtml.bind(this._el, 'click', function (event) {
+      _this5.__helpInputDOM.innerHTML = '';
       var position = xhtml.position(_this5._el, event);
       var topIndex = Math.round((position.y - 20.5) / 21); // 如果超过了内容区域
 
@@ -871,7 +879,7 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
       _this5.__focusDOM.style.borderLeft = "none";
       update(); // 辅助输入
 
-      if (_this5.$input != null) _this5.$input(_this5.__helpInputDOM, getInputMessage(_this5), _this5._contentArray);
+      if (_this5.$input != null) _this5.__helpInputEvent = _this5.$input(_this5.__helpInputDOM, getInputMessage(_this5), _this5._contentArray) || {};
     }); // 输入
 
     xhtml.bind(this.__focusDOM, 'input', function () {
@@ -879,12 +887,26 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
       if (_this5.__needUpdate) {
         update(); // 辅助输入
 
-        if (_this5.$input != null) _this5.$input(_this5.__helpInputDOM, getInputMessage(_this5), _this5._contentArray);
+        if (_this5.$input != null) _this5.__helpInputEvent = _this5.$input(_this5.__helpInputDOM, getInputMessage(_this5), _this5._contentArray) || {};
       }
     }); // 处理键盘控制
 
     xhtml.bind(this._el, 'keydown', function (event) {
-      switch (keyString(event)) {
+      var keyStringCode = keyString(event); // 辅助输入前置拦截
+
+      if (_this5.__helpInputDOM.innerHTML != '') {
+        var __helpInputEvent = _this5.__helpInputEvent[keyStringCode];
+
+        if (isFunction(__helpInputEvent)) {
+          // 如果返回true表示继续调用，否则此快捷键结束
+          if (!__helpInputEvent()) return;
+        } else {
+          _this5.__helpInputDOM.innerHTML = '';
+        }
+      } // 进入常规快捷键
+
+
+      switch (keyStringCode) {
         // 全选
         case "ctrl+a":
           {

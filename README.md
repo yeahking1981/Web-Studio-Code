@@ -83,6 +83,21 @@ var wscode = new WSCode({
                 lineHeight:一行文本的高
             }
         */
+
+       // 返回的是键盘操作,可以有任意多个
+       return {
+            // keyString可以取:
+            //    ”up“:按下键盘向上键
+            //    ”down“:按下键盘向下键
+            //    等
+            // 具体的查看这里： https://yelloxing.github.io/core.js/tools-api/index.html#keyString
+            "keyString":function(){
+
+                // 最后返回true或false,默认false表示阻止默认行为（或原有行为）
+                return boolean;
+            },
+            ...
+       };
     },
 
     // 设置颜色（可选）

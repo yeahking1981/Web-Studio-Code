@@ -41,8 +41,18 @@ export function initDom() {
     this.__helpInputDOM = xhtml.appendTo(this._el, "<div></div>");
 
     xhtml.css(this.__helpInputDOM, {
-        position: "absolute"
+        position: "absolute",
+        "z-index": 1
     });
+
+    xhtml.bind(this.__helpInputDOM, 'click', event => {
+
+        xhtml.stopPropagation(event);
+        xhtml.preventDefault(event);
+
+        this.__focusDOM.focus();
+
+    })
 
     // 光标
     this.__focusDOM = xhtml.appendTo(this._el, "<textarea></textarea>");

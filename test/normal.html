@@ -48,15 +48,38 @@
 
             input: function (dom, options, contentArray) {
 
-                dom.innerHTML = "测试的文本";
+                // 拼接模板
+
+                dom.innerHTML = "<ul style='padding-right:20px'>"+
+                    "   <li>待选条目1</li>"+
+                    "   <li>待选条目2</li>"+
+                    "   <li>待选条目3</li>"+
+                    "   <li>待选条目4</li>"+
+                    "   <li>待选条目5</li>"+
+                    "   <li>待选条目6</li>"+
+                    "   <li>待选条目7</li>"+
+                    "</ul>";
                 dom.style.backgroundColor = 'white';
                 dom.style.left = options.x + 'px';
                 dom.style.top = (options.y + options.lineHeight) + "px";
+
+                // 注册交互
+
+                var i=1;
+                return {
+                    "up":function(){
+                        console.log(i--);
+                    },
+                    "down":function(){
+                        console.log(i++);
+                    }
+                };
 
             },
 
             // 初始化文本
             content: "我还惊讶地意识到， 在我生命中有很多时刻， 每当我遇到一个遥不可及、令人害怕的情境，\n并感到惊慌失措时， 我都能够应付——因为我回想起了很久以前自己上过的那一课。\n我提醒自己不要看下面遥远的岩石， 而是注意相对轻松、容易的第一小步， 迈出一小步、再一小步，\n就这样体会每一步带来的成就感， 直到完成了自己想要完成的， 达到了自己的目标，\n然后再回头看时， 不禁对自己走过的这段漫漫长路感到惊讶和自豪。\n                                        ———— 摘自 莫顿·亨特《走一步，再走一步》"
+
         });
 
         console.log(wscode);
