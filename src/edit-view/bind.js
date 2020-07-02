@@ -1,5 +1,6 @@
 import keyString from '@yelloxing/core.js/tools/keyString';
 import xhtml from '../xhtml';
+import { getInputMessage } from './tool';
 
 // 绑定键盘和鼠标等交互事件处理
 
@@ -176,12 +177,20 @@ export default function () {
         this.__focusDOM.style.color = this._colorCursor;
         this.__focusDOM.style.borderLeft = "none";
         update();
+
+        // 辅助输入
+        if (this.$input != null) this.$input(this.__helpInputDOM, getInputMessage(this), this._contentArray);
     });
 
     // 输入
     xhtml.bind(this.__focusDOM, 'input', () => {
         // 如果是中文输入开始，不应该更新
-        if (this.__needUpdate) update();
+        if (this.__needUpdate) {
+            update();
+
+            // 辅助输入
+            if (this.$input != null) this.$input(this.__helpInputDOM, getInputMessage(this), this._contentArray);
+        }
     });
 
     // 处理键盘控制

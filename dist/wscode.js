@@ -4,14 +4,14 @@
 *
 * author 心叶
 *
-* version 1.8.1
+* version 1.9.0-alpha.0
 *
 * build Fri May 08 2020
 *
 * Copyright yelloxing
 * Released under the MIT license
 *
-* Date:Wed Jul 01 2020 12:07:13 GMT+0800 (GMT+08:00)
+* Date:Thu Jul 02 2020 11:59:44 GMT+0800 (GMT+08:00)
 */
 
 "use strict";
@@ -152,8 +152,8 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
 
 
   function textWidth(text) {
-    this.__helpDOM.innerText = text;
-    return this.__helpDOM.offsetWidth;
+    this.__helpCalcDOM.innerText = text;
+    return this.__helpCalcDOM.offsetWidth;
   } // 计算最佳光标左边位置
 
 
@@ -207,6 +207,11 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
       template += "<span style='user-select: none;font-weight:" + _this._fontWeight + ";white-space: pre;color:" + text.color + "'>" + contentText + "</span>";
     });
     return template + "</div>";
+  } // 整理当前输入框信息
+
+
+  function getInputMessage(wscode) {
+    return {};
   }
 
   var xhtml = {
@@ -345,17 +350,20 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
       setTimeout(function () {
         _this2.__focusDOM.focus();
       });
-    }); // 辅助标签
+    }); // 辅助计算标签
 
-    this.__helpDOM = xhtml.appendTo(this._el, "<span></span>");
-    xhtml.css(this.__helpDOM, {
+    this.__helpCalcDOM = xhtml.appendTo(this._el, "<span></span>");
+    xhtml.css(this.__helpCalcDOM, {
       position: "absolute",
       "z-index": "-1",
       "white-space": "pre",
       "top": 0,
       "left": 0,
+      "color": "rgba(0,0,0,0)",
       "font-weight": this._fontWeight
-    }); // 光标
+    }); // 辅助输入标签
+
+    this.__helpInputDOM = xhtml.appendTo(this._el, "<div></div>"); // 光标
 
     this.__focusDOM = xhtml.appendTo(this._el, "<textarea></textarea>");
     xhtml.css(this.__focusDOM, {
@@ -455,7 +463,7 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
 
     this.__diff = "not update"; // 修改当前编辑的行
 
-    if (this.__lineDom) this.__lineDom.style.backgroundColor = this._colorBackground;
+    if (this.__lineDom) this.__lineDom.style.backgroundColor = "rgba(0, 0, 0, 0)";
     this.__lineDom = this.__showDOM.childNodes[this.__lineNum];
     this.__lineDom.style.backgroundColor = this._colorEdit;
   } // 更新编辑器选中视图
@@ -845,12 +853,18 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
       _this5.__needUpdate = true;
       _this5.__focusDOM.style.color = _this5._colorCursor;
       _this5.__focusDOM.style.borderLeft = "none";
-      update();
+      update(); // 辅助输入
+
+      if (_this5.$input != null) _this5.$input(_this5.__helpInputDOM, getInputMessage(), _this5._contentArray);
     }); // 输入
 
     xhtml.bind(this.__focusDOM, 'input', function () {
       // 如果是中文输入开始，不应该更新
-      if (_this5.__needUpdate) update();
+      if (_this5.__needUpdate) {
+        update(); // 辅助输入
+
+        if (_this5.$input != null) _this5.$input(_this5.__helpInputDOM, getInputMessage(), _this5._contentArray);
+      }
     }); // 处理键盘控制
 
     xhtml.bind(this._el, 'keydown', function (event) {
@@ -3499,7 +3513,9 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
 
       this.$shader = isFunction(options.shader) ? options.shader : shader[this._langType]; // 格式化方法
 
-      this.$format = isFunction(options.format) ? options.format : format[this._langType];
+      this.$format = isFunction(options.format) ? options.format : format[this._langType]; // 辅助输入
+
+      this.$input = isFunction(options.input) ? options.input : null;
     } else {
       // 挂载点是必须的，一定要有
       throw new Error('options.el is not a element!');

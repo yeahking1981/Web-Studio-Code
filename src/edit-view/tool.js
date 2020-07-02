@@ -2,8 +2,8 @@
 // 计算文字长度
 
 export function textWidth(text) {
-    this.__helpDOM.innerText = text;
-    return this.__helpDOM.offsetWidth;
+    this.__helpCalcDOM.innerText = text;
+    return this.__helpCalcDOM.offsetWidth;
 };
 
 // 计算最佳光标左边位置
@@ -71,4 +71,11 @@ export function toTemplate(line, index) {
     });
 
     return template + "</div>";
+};
+
+// 整理当前输入框信息
+export function getInputMessage(wscode) {
+    return {
+        
+    };
 };

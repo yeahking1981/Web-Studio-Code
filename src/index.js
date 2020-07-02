@@ -133,6 +133,9 @@ let wscode = function (options) {
         // 格式化方法
         this.$format = isFunction(options.format) ? options.format : format[this._langType];
 
+        // 辅助输入
+        this.$input = isFunction(options.input) ? options.input : null;
+
     } else {
 
         // 挂载点是必须的，一定要有

@@ -34,6 +34,8 @@ npm install --save wscode
 
 ## 如何使用
 
+- 特别注意：当前最后一个可用版本（非beta和alpha版本）请查看master分支的说明！
+
 ```js
 import WSCode from 'wscode';
 
@@ -43,7 +45,7 @@ var wscode = new WSCode({
     el: document.getElementById('wscode'),
 
     // 初始化文本（可选）
-    content:"初始化文本内容",
+    content: "初始化文本内容",
 
     // 编辑器字体（可选，默认"新宋体"）
     "font-family": string,
@@ -52,7 +54,7 @@ var wscode = new WSCode({
     "font-weight": number,
 
     // 着色方法（可选，默认不特殊着色）
-    shader:function(textString, colors){
+    shader: function(textString, colors){
         return [
             [{
                 content:"内容",
@@ -64,34 +66,49 @@ var wscode = new WSCode({
     },
 
     // 格式化方法（可选）
-    format:function(textString, tabNumber){
+    format: function(textString, tabNumber){
         return "格式化后的文本";
+    },
+
+    // 辅助输入（可选）
+    input: function(dom, options, contentArray){
+        /*
+        1.其中dom和contentArray分别表示辅助的悬浮结点和内容数组;
+        2.options的一些重要的辅助信息，是一个json，包括以下内容：
+            {
+                leftNum:光标前面有多少个字符
+                lineNum:当前行之前有多少行
+                x:光标left坐标
+                y:光标top坐标
+                lineHeight:一行文本的高
+            }
+        */
     },
 
     // 设置颜色（可选）
     color: {
-        background:"#d6d6e4", /*编辑器背景*/
+        background: "#d6d6e4", /*编辑器背景*/
         text : "#000000", /*文本颜色*/
-        number:"#888484", /*行号颜色*/
-        edit:"#eaeaf1", /*编辑行背景色*/
-        cursor:"#ff0000", /*光标颜色*/
-        select:"#6c6cf1", /*选择背景*/
+        number: "#888484", /*行号颜色*/
+        edit: "#eaeaf1", /*编辑行背景色*/
+        cursor: "#ff0000", /*光标颜色*/
+        select: "#6c6cf1", /*选择背景*/
     },
 
     // 设置一个tab表示多少个空格（可选，默认4）
-    tabSpace:number,
+    tabSpace: number,
 
     // 除了通过传递shader和format的方式实现着色和格式化外
     // 你还可以使用内置提供的语言来实现
     // 【特别提醒：shader和format的优先级均高于这里】
     // (可选)
-    lang:{
+    lang: {
 
         // 设置语言类型(默认值"normal"，表示普通文本，无特殊处理)
-        type:'normal|html|css|javascript|json',
+        type: 'normal|html|css|javascript|json',
 
         // 配置更细节的着色（可选）
-        color:{
+        color: {
             "annotation": "#6a9955",/*注释颜色*/
             "border": "#ffffff",/*边界颜色*/
             "tag": "#1e50b3",/*结点颜色*/

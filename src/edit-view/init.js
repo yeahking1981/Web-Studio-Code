@@ -24,17 +24,21 @@ export function initDom() {
 
     })
 
-    // 辅助标签
-    this.__helpDOM = xhtml.appendTo(this._el, "<span></span>");
+    // 辅助计算标签
+    this.__helpCalcDOM = xhtml.appendTo(this._el, "<span></span>");
 
-    xhtml.css(this.__helpDOM, {
+    xhtml.css(this.__helpCalcDOM, {
         position: "absolute",
         "z-index": "-1",
         "white-space": "pre",
         "top": 0,
         "left": 0,
+        "color": "rgba(0,0,0,0)",
         "font-weight": this._fontWeight
     });
+
+    // 辅助输入标签
+    this.__helpInputDOM = xhtml.appendTo(this._el, "<div></div>");
 
     // 光标
     this.__focusDOM = xhtml.appendTo(this._el, "<textarea></textarea>");
