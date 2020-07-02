@@ -84,7 +84,7 @@ var wscode = new WSCode({
             }
         */
 
-       // 返回的是键盘操作,可以有任意多个
+       // 返回的是键盘操作,可以有任意多个(可选)
        return {
             // keyString可以取:
             //    ”up“:按下键盘向上键
@@ -154,6 +154,13 @@ wscode.valueOf();
 
 ```js
 wscode.updated(callback);
+```
+
+- 在当前光标位置输入新的内容
+
+```js
+// cursor和length默认都是0，前者表示光标偏移量，后者表示替换个数
+wscode.input(content[, cursor, number]);
 ```
 
 ## 开源协议

@@ -4,14 +4,14 @@
 *
 * author 心叶
 *
-* version 1.9.0-alpha.2
+* version 1.9.0-alpha.3
 *
 * build Fri May 08 2020
 *
 * Copyright yelloxing
 * Released under the MIT license
 *
-* Date:Thu Jul 02 2020 15:50:40 GMT+0800 (GMT+08:00)
+* Date:Thu Jul 02 2020 17:21:51 GMT+0800 (GMT+08:00)
 */
 
 "use strict";
@@ -36,14 +36,6 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
   'use strict';
 
   var _dictionary2;
-
-  if (!window.Symbol) {
-    // 这里其实没有用到Symbol，只是为了兼容IE浏览器，因此没有提供真正的实现
-    window.Symbol = function () {
-      // 为了以防万一，添加错误提示
-      console.error("\n[Web Studio Code] Symbol Unexpected!\n------------------------------------------------------------------\nhttps://github.com/yelloxing/Web-Studio-Code/issues\n\n");
-    };
-  }
 
   var toString = Object.prototype.toString;
   /**
@@ -100,6 +92,133 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
 
   function isElement(value) {
     return value !== null && _typeof2(value) === 'object' && (value.nodeType === 1 || value.nodeType === 9 || value.nodeType === 11) && !isPlainObject(value);
+  }
+
+  var xhtml = {
+    // 阻止冒泡
+    "stopPropagation": function stopPropagation(event) {
+      event = event || window.event;
+
+      if (event.stopPropagation) {
+        //这是其他非IE浏览器
+        event.stopPropagation();
+      } else {
+        event.cancelBubble = true;
+      }
+    },
+    // 阻止默认事件
+    "preventDefault": function preventDefault(event) {
+      event = event || window.event;
+
+      if (event.preventDefault) {
+        event.preventDefault();
+      } else {
+        event.returnValue = false;
+      }
+    },
+    // 绑定事件
+    "bind": function bind(el, eventType, callback) {
+      if (window.attachEvent) {
+        el.attachEvent("on" + eventType, callback); // 后绑定的先执行
+      } else {
+        el.addEventListener(eventType, callback, false); // 捕获
+      }
+    },
+    // 触发事件
+    "trigger": function trigger(dom, eventType) {
+      var event; //创建event的对象实例。
+
+      if (document.createEventObject) {
+        // IE浏览器支持fireEvent方法
+        event = document.createEventObject();
+        dom.fireEvent('on' + eventType, event);
+      } // 其他标准浏览器使用dispatchEvent方法
+      else {
+          event = document.createEvent('HTMLEvents'); // 3个参数：事件类型，是否冒泡，是否阻止浏览器的默认行为
+
+          event.initEvent(eventType, true, false);
+          dom.dispatchEvent(event);
+        }
+    },
+    // 变成结点
+    "toNode": function toNode(template) {
+      var frame = document.createElement("div");
+      frame.innerHTML = template;
+      var childNodes = frame.childNodes;
+
+      for (var i = 0; i < childNodes.length; i++) {
+        if (isElement(childNodes[i])) return childNodes[i];
+      }
+
+      return null;
+    },
+    // 追加结点
+    "appendTo": function appendTo(el, template) {
+      var node = isElement(template) ? template : this.toNode(template);
+      el.appendChild(node);
+      return node;
+    },
+    // 删除结点
+    "remove": function remove(el) {
+      el.parentNode.removeChild(el);
+    },
+    // 在被指定元素之后插入结点
+    "after": function after(el, template) {
+      var node = isElement(template) ? template : this.toNode(template);
+      el.parentNode.insertBefore(node, el.nextSibling);
+      return node;
+    },
+    // 修改样式
+    "css": function css(el, styles) {
+      for (var key in styles) {
+        el.style[key] = styles[key];
+      }
+    },
+    // 修改属性
+    "attr": function attr(el, attrs) {
+      for (var key in attrs) {
+        el.setAttribute(key, attrs[key]);
+      }
+    },
+    // 获取鼠标相对特定元素左上角位置
+    "position": function position(el, event) {
+      event = event || window.event; // 返回元素的大小及其相对于视口的位置
+
+      var bounding = el.getBoundingClientRect();
+      if (!event || !event.clientX) throw new Error('Event is necessary!');
+      var temp = {
+        // 鼠标相对元素位置 = 鼠标相对窗口坐标 - 元素相对窗口坐标
+        "x": event.clientX - bounding.left + el.scrollLeft,
+        "y": event.clientY - bounding.top + el.scrollTop
+      };
+      return temp;
+    },
+    // 复制到剪切板
+    "copy": function copy(text) {
+      var el = this.appendTo(document.body, '<textarea>' + text + '</textarea>'); // 执行复制
+
+      el.select();
+
+      try {
+        var result = window.document.execCommand("copy", false, null);
+
+        if (result) {// console.log('已经复制到剪切板！');
+        } else {// console.log('复制到剪切板失败！');
+          }
+      } catch (e) {
+        console.error(e); // console.log('复制到剪切板失败！');
+      }
+
+      document.body.removeChild(el);
+    }
+  };
+
+  if (!window.Symbol) {
+    // 这里其实没有用到Symbol，只是为了兼容IE浏览器，因此没有提供真正的实现
+    window.Symbol = function () {
+      // 为了以防万一，添加错误提示
+      console.error("\n[Web Studio Code] Symbol Unexpected!\n------------------------------------------------------------------\nhttps://github.com/yelloxing/Web-Studio-Code/issues\n\n");
+    };
   }
   /**
    * 判断一个值是不是String。
@@ -223,126 +342,8 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
       // 一行文本的高
       lineHeight: 21
     };
-  }
+  } // 初始化结点
 
-  var xhtml = {
-    // 阻止冒泡
-    "stopPropagation": function stopPropagation(event) {
-      event = event || window.event;
-
-      if (event.stopPropagation) {
-        //这是其他非IE浏览器
-        event.stopPropagation();
-      } else {
-        event.cancelBubble = true;
-      }
-    },
-    // 阻止默认事件
-    "preventDefault": function preventDefault(event) {
-      event = event || window.event;
-
-      if (event.preventDefault) {
-        event.preventDefault();
-      } else {
-        event.returnValue = false;
-      }
-    },
-    // 绑定事件
-    "bind": function bind(el, eventType, callback) {
-      if (window.attachEvent) {
-        el.attachEvent("on" + eventType, callback); // 后绑定的先执行
-      } else {
-        el.addEventListener(eventType, callback, false); // 捕获
-      }
-    },
-    // 触发事件
-    "trigger": function trigger(dom, eventType) {
-      var event; //创建event的对象实例。
-
-      if (document.createEventObject) {
-        // IE浏览器支持fireEvent方法
-        event = document.createEventObject();
-        dom.fireEvent('on' + eventType, event);
-      } // 其他标准浏览器使用dispatchEvent方法
-      else {
-          event = document.createEvent('HTMLEvents'); // 3个参数：事件类型，是否冒泡，是否阻止浏览器的默认行为
-
-          event.initEvent(eventType, true, false);
-          dom.dispatchEvent(event);
-        }
-    },
-    // 变成结点
-    "toNode": function toNode(template) {
-      var frame = document.createElement("div");
-      frame.innerHTML = template;
-      var childNodes = frame.childNodes;
-
-      for (var i = 0; i < childNodes.length; i++) {
-        if (isElement(childNodes[i])) return childNodes[i];
-      }
-
-      return null;
-    },
-    // 追加结点
-    "appendTo": function appendTo(el, template) {
-      var node = isElement(template) ? template : this.toNode(template);
-      el.appendChild(node);
-      return node;
-    },
-    // 删除结点
-    "remove": function remove(el) {
-      el.parentNode.removeChild(el);
-    },
-    // 在被指定元素之后插入结点
-    "after": function after(el, template) {
-      var node = isElement(template) ? template : this.toNode(template);
-      el.parentNode.insertBefore(node, el.nextSibling);
-      return node;
-    },
-    // 修改样式
-    "css": function css(el, styles) {
-      for (var key in styles) {
-        el.style[key] = styles[key];
-      }
-    },
-    // 修改属性
-    "attr": function attr(el, attrs) {
-      for (var key in attrs) {
-        el.setAttribute(key, attrs[key]);
-      }
-    },
-    // 获取鼠标相对特定元素左上角位置
-    "position": function position(el, event) {
-      event = event || window.event; // 返回元素的大小及其相对于视口的位置
-
-      var bounding = el.getBoundingClientRect();
-      if (!event || !event.clientX) throw new Error('Event is necessary!');
-      var temp = {
-        // 鼠标相对元素位置 = 鼠标相对窗口坐标 - 元素相对窗口坐标
-        "x": event.clientX - bounding.left + el.scrollLeft,
-        "y": event.clientY - bounding.top + el.scrollTop
-      };
-      return temp;
-    },
-    // 复制到剪切板
-    "copy": function copy(text) {
-      var el = this.appendTo(document.body, '<textarea>' + text + '</textarea>'); // 执行复制
-
-      el.select();
-
-      try {
-        var result = window.document.execCommand("copy", false, null);
-
-        if (result) {// console.log('已经复制到剪切板！');
-        } else {// console.log('复制到剪切板失败！');
-          }
-      } catch (e) {
-        console.error(e); // console.log('复制到剪切板失败！');
-      }
-
-      document.body.removeChild(el);
-    }
-  }; // 初始化结点
 
   function initDom() {
     var _this2 = this;
@@ -3577,15 +3578,31 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
 
     this.$$bindEvent();
 
-    this.__updated__ = function () {};
+    this.__updated__ = function () {}; // 编辑器管理的文本发生改变后会主动触发callback方法
+
 
     this.updated = function (callback) {
       _this6.__updated__ = callback;
-    };
+    }; // 获取当前编辑器代码
+
 
     this.valueOf = function () {
       return _this6._contentArray.join('\n');
-    };
+    }; // 在当前光标位置输入新的内容
+
+
+    this.input = function () {
+      var content = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : "";
+      var cursor = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+      var number = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
+      // 先修改内容
+      _this6._contentArray[_this6.__lineNum] = _this6._contentArray[_this6.__lineNum].substring(0, _this6.__leftNum - cursor) + content + _this6._contentArray[_this6.__lineNum].substring(_this6.__leftNum - cursor + number); // 修改光标位置
+
+      _this6.__leftNum += cursor - -(content + "").length; // 输入以触发视图更新
+
+      xhtml.trigger(_this6.__focusDOM, 'input');
+    }; // 格式化代码
+
 
     this.format = function () {
       // 格式化内容

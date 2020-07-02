@@ -1,4 +1,6 @@
 
+import xhtml from './xhtml';
+
 // 兼容方法
 
 import './Polyfill/Symbol';
@@ -162,14 +164,34 @@ let wscode = function (options) {
     this.$$bindEvent();
 
     this.__updated__ = () => { };
+    // 编辑器管理的文本发生改变后会主动触发callback方法
     this.updated = callback => {
         this.__updated__ = callback;
     };
 
+    // 获取当前编辑器代码
     this.valueOf = () => {
         return this._contentArray.join('\n');
     };
 
+    // 在当前光标位置输入新的内容
+    this.input = (content = "", cursor = 0, number = 0) => {
+
+        // 先修改内容
+        this._contentArray[this.__lineNum] =
+            this._contentArray[this.__lineNum].substring(0, this.__leftNum - cursor) +
+            content +
+            this._contentArray[this.__lineNum].substring(this.__leftNum - cursor + number);
+
+        // 修改光标位置
+        this.__leftNum += cursor - -(content + "").length;
+
+        // 输入以触发视图更新
+        xhtml.trigger(this.__focusDOM, 'input');
+
+    };
+
+    // 格式化代码
     this.format = () => {
 
         // 格式化内容
