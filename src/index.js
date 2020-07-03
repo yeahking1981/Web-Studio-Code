@@ -177,18 +177,23 @@ let wscode = function (options) {
     // 在当前光标位置输入新的内容
     this.input = (content = "", cursor = 0, number = 0) => {
 
-        content = this.$$filterText(content);
+        // 先删除多余的内容
 
-        // 先修改内容
-        this._contentArray[this.__lineNum] =
-            this._contentArray[this.__lineNum].substring(0, this.__leftNum + cursor) +
-            content +
-            this._contentArray[this.__lineNum].substring(this.__leftNum + cursor + number);
+        if (cursor != 0) {
 
-        // 修改光标位置
-        this.__leftNum += cursor - -(content + "").length;
+            if (number != 0) {
+                this._contentArray[this.__lineNum] =
+                    this._contentArray[this.__lineNum].substring(0, this.__leftNum + cursor) +
+                    this._contentArray[this.__lineNum].substring(this.__leftNum + cursor + number);
+            }
 
-        // 输入以触发视图更新
+            // 修改光标位置
+            this.__leftNum += cursor;
+
+        }
+
+        // 输入以触发更新
+        this.__focusDOM.value = content;
         xhtml.trigger(this.__focusDOM, 'input');
 
     };

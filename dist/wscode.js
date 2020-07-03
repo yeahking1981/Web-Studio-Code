@@ -4,14 +4,14 @@
 *
 * author 心叶
 *
-* version 1.9.0-alpha.5
+* version 1.9.0-alpha.6
 *
 * build Fri May 08 2020
 *
 * Copyright yelloxing
 * Released under the MIT license
 *
-* Date:Thu Jul 02 2020 18:03:50 GMT+0800 (GMT+08:00)
+* Date:Fri Jul 03 2020 09:44:07 GMT+0800 (GMT+08:00)
 */
 
 "use strict";
@@ -3595,12 +3595,19 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
       var content = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : "";
       var cursor = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
       var number = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
-      content = _this6.$$filterText(content); // 先修改内容
 
-      _this6._contentArray[_this6.__lineNum] = _this6._contentArray[_this6.__lineNum].substring(0, _this6.__leftNum + cursor) + content + _this6._contentArray[_this6.__lineNum].substring(_this6.__leftNum + cursor + number); // 修改光标位置
+      // 先删除多余的内容
+      if (cursor != 0) {
+        if (number != 0) {
+          _this6._contentArray[_this6.__lineNum] = _this6._contentArray[_this6.__lineNum].substring(0, _this6.__leftNum + cursor) + _this6._contentArray[_this6.__lineNum].substring(_this6.__leftNum + cursor + number);
+        } // 修改光标位置
 
-      _this6.__leftNum += cursor - -(content + "").length; // 输入以触发视图更新
 
+        _this6.__leftNum += cursor;
+      } // 输入以触发更新
+
+
+      _this6.__focusDOM.value = content;
       xhtml.trigger(_this6.__focusDOM, 'input');
     }; // 格式化代码
 
