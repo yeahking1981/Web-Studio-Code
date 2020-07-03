@@ -4,14 +4,14 @@
 *
 * author 心叶
 *
-* version 1.9.0-alpha.6
+* version 1.9.0-beta
 *
 * build Fri May 08 2020
 *
 * Copyright yelloxing
 * Released under the MIT license
 *
-* Date:Fri Jul 03 2020 09:44:07 GMT+0800 (GMT+08:00)
+* Date:Fri Jul 03 2020 10:17:23 GMT+0800 (GMT+08:00)
 */
 
 "use strict";
@@ -3609,6 +3609,8 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
 
       _this6.__focusDOM.value = content;
       xhtml.trigger(_this6.__focusDOM, 'input');
+
+      _this6.__focusDOM.focus();
     }; // 格式化代码
 
 

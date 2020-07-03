@@ -8,6 +8,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="shortcut icon" href="../logo.png">
     <script src="../dist/wscode.js"></script>
+    <link rel="stylesheet" href="../node_modules/@yelloxing/normalize.css/index.css">
     <title>普通文本测试 | Web Studio Code</title>
 
     <style>
@@ -16,7 +17,28 @@
             width: 900px;
             height: 700px;
         }
+
+        .help-input-ul>li {
+            background-color: aliceblue;
+            padding: 5px 10px;
+        }
+
+        .help-input-ul>li:hover {
+            background-color: red;
+            color: white;
+            cursor: pointer;
+        }
     </style>
+
+    <script>
+
+        // 辅助输入的测试方法
+        function doInputHelp(index) {
+            wscode.input("[" + index + ":测试]", -1, 1);
+            temp.innerHTML = "";
+        }
+
+    </script>
 
 </head>
 
@@ -48,16 +70,18 @@
 
             input: function (dom, options, contentArray) {
 
+                window.temp = dom;
+
                 // 拼接模板
 
-                dom.innerHTML = "<ul style='padding-right:20px'>"+
-                    "   <li>待选条目1</li>"+
-                    "   <li>待选条目2</li>"+
-                    "   <li>待选条目3</li>"+
-                    "   <li>待选条目4</li>"+
-                    "   <li>待选条目5</li>"+
-                    "   <li>待选条目6</li>"+
-                    "   <li>待选条目7</li>"+
+                dom.innerHTML = "<ul class='help-input-ul'>" +
+                    "   <li onClick='doInputHelp(1)'>待选条目1</li>" +
+                    "   <li onClick='doInputHelp(2)'>待选条目2</li>" +
+                    "   <li onClick='doInputHelp(3)'>待选条目3</li>" +
+                    "   <li onClick='doInputHelp(4)'>待选条目4</li>" +
+                    "   <li onClick='doInputHelp(5)'>待选条目5</li>" +
+                    "   <li onClick='doInputHelp(6)'>待选条目6</li>" +
+                    "   <li onClick='doInputHelp(7)'>待选条目7</li>" +
                     "</ul>";
                 dom.style.backgroundColor = 'white';
                 dom.style.left = options.x + 'px';
@@ -65,12 +89,12 @@
 
                 // 注册交互
 
-                var i=1;
+                var i = 1;
                 return {
-                    "up":function(){
+                    "up": function () {
                         console.log(i--);
                     },
-                    "down":function(){
+                    "down": function () {
                         console.log(i++);
                     }
                 };

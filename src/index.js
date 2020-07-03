@@ -195,6 +195,7 @@ let wscode = function (options) {
         // 输入以触发更新
         this.__focusDOM.value = content;
         xhtml.trigger(this.__focusDOM, 'input');
+        this.__focusDOM.focus();
 
     };
 
