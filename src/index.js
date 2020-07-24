@@ -1,10 +1,6 @@
 
 import xhtml from './xhtml';
 
-// 兼容方法
-
-import './Polyfill/Symbol';
-
 import isElement from '@yelloxing/core.js/isElement';
 import isString from '@yelloxing/core.js/isString';
 import isFunction from '@yelloxing/core.js/isFunction';
@@ -19,20 +15,6 @@ import bindEvent from './edit-view/bind';
 import diff from './edit-view/diff';
 
 import filterText from './edit-view/filter';
-
-// 引入内置的语言支持
-
-import html_shader from './lang/html/shader';
-import html_format from './lang/html/format';
-
-import css_shader from './lang/css/shader';
-import css_format from './lang/css/format';
-
-import javascript_shader from './lang/javascript/shader';
-import javascript_format from './lang/javascript/format';
-
-import json_shader from './lang/json/shader';
-import json_format from './lang/json/format';
 
 let wscode = function (options) {
 
@@ -54,26 +36,14 @@ let wscode = function (options) {
     if (isElement(options.el)) {
 
         // 着色器
-        let shader = {
-            html: html_shader,
-            css: css_shader,
-            javascript: javascript_shader,
-            json: json_shader,
-            normal: () => {
-                let resultData = [];
-                this._contentArray.forEach(text => { resultData.push([{ content: text, color: this._colorText }]); });
-                return resultData;
-            }
+        let shader = () => {
+            let resultData = [];
+            this._contentArray.forEach(text => { resultData.push([{ content: text, color: this._colorText }]); });
+            return resultData;
         };
 
         // 格式化
-        let format = {
-            html: html_format,
-            css: css_format,
-            javascript: javascript_format,
-            json: json_format,
-            normal: textString => textString
-        };
+        let format = textString => textString;
 
         this._el = options.el;
 
@@ -89,51 +59,14 @@ let wscode = function (options) {
         this._fontWeight = options["font-weight"] || 600;/*字重*/
         this._tabSpace = options.tabSpace || 4;/*设置一个tab表示多少个空格*/
 
-        // 语言类型
-        let lang = options.lang || {};
-        this._langType = lang.type || "normal"; /*默认普通文本*/
-        this._langColors = lang.color || {}; this._langColors.text = this._colorText;
-
-        let initOptions = function (defaultOptinos, configOptions) {
-
-            configOptions = configOptions || {};
-            for (let key in configOptions) {
-                defaultOptinos[key] = configOptions[key];
-            }
-
-            return defaultOptinos;
-
-        };
-        // 着色色彩配置
-
-        this._langColors = initOptions({
-
-            "annotation": "#6a9955",/*注释颜色*/
-            "border": "#ffffff",/*边界颜色*/
-            "tag": "#1e50b3",/*结点颜色*/
-            "attr": "#1e83b1",/*属性颜色*/
-            "string": "#ac4c1e",/*字符串颜色*/
-            "key": "#ff0000",/*关键字颜色*/
-
-        }, this._langColors);
-
-        // 语言类型校对
-        if (["normal", "html", "css", "javascript", "json"].indexOf(this._langType) < 0) {
-
-            console.error("[错误]配置的语言类型‘" + this._langType + "’不支持！");
-
-            // 重置默认类型
-            this._langType = "normal";
-        }
-
         // 文本
         this._contentArray = isString(options.content) ? (this.$$filterText(options.content) + "").split("\n") : [""];
 
         // 着色方法
-        this.$shader = isFunction(options.shader) ? options.shader : shader[this._langType];
+        this.$shader = isFunction(options.shader) ? options.shader : shader;
 
         // 格式化方法
-        this.$format = isFunction(options.format) ? options.format : format[this._langType];
+        this.$format = isFunction(options.format) ? options.format : format;
 
         // 辅助输入
         this.$input = isFunction(options.input) ? options.input : null;
@@ -152,7 +85,7 @@ let wscode = function (options) {
     this.__lineNum = this._contentArray.length - 1;
     this.__leftNum = this._contentArray[this.__lineNum].length;
     this.__cursor1 = this.__cursor2 = { leftNum: 0, lineNum: 0 };
-    this.__formatData = this.$$diff(this.$shader(this._contentArray.join('\n'), this._langColors));
+    this.__formatData = this.$$diff(this.$shader(this._contentArray.join('\n')));
 
     // 初始化视图
     this.$$initView();
@@ -209,7 +142,7 @@ let wscode = function (options) {
         this.__leftNum = this._contentArray[this.__lineNum].length;
 
         // 着色
-        this.__formatData = this.$$diff(this.$shader(this._contentArray.join('\n'), this._langColors));
+        this.__formatData = this.$$diff(this.$shader(this._contentArray.join('\n')));
 
         // 更新视图
         this.$$updateView();

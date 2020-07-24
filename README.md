@@ -54,7 +54,7 @@ var wscode = new WSCode({
     "font-weight": number,
 
     // 着色方法（可选，默认不特殊着色）
-    shader: function(textString, colors){
+    shader: function(textString){
         return [
             [{
                 content:"内容",
@@ -111,27 +111,7 @@ var wscode = new WSCode({
     },
 
     // 设置一个tab表示多少个空格（可选，默认4）
-    tabSpace: number,
-
-    // 除了通过传递shader和format的方式实现着色和格式化外
-    // 你还可以使用内置提供的语言来实现
-    // 【特别提醒：shader和format的优先级均高于这里】
-    // (可选)
-    lang: {
-
-        // 设置语言类型(默认值"normal"，表示普通文本，无特殊处理)
-        type: 'normal|html|css|javascript|json',
-
-        // 配置更细节的着色（可选）
-        color: {
-            "annotation": "#6a9955",/*注释颜色*/
-            "border": "#ffffff",/*边界颜色*/
-            "tag": "#1e50b3",/*结点颜色*/
-            "attr": "#1e83b1",/*属性颜色*/
-            "string": "#ac4c1e",/*字符串颜色*/
-            "key": "#ff0000",/*关键字颜色*/
-        }
-    }
+    tabSpace: number
 
 });
 ```
