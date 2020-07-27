@@ -4,14 +4,14 @@
 *
 * author 心叶
 *
-* version 2.0.0-alpha
+* version 2.0.0
 *
 * build Fri May 08 2020
 *
 * Copyright yelloxing
 * Released under the MIT license
 *
-* Date:Fri Jul 24 2020 15:51:08 GMT+0800 (GMT+08:00)
+* Date:Mon Jul 27 2020 10:35:31 GMT+0800 (GMT+08:00)
 */
 
 "use strict";

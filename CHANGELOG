@@ -98,3 +98,7 @@ v1.9.0:
     changes:
       -  添加输入辅助方法（input配置提供：https://github.com/yelloxing/Web-Studio-Code/issues/9）
       -  对整体的UI进行比较小的优化
+v2.0.0:
+    date:2020-07-27
+    changes:
+      -  废弃内置的语言支持，专心提供通用的编辑器
